@@ -1,1 +1,44 @@
 /* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+:root {
+  /* Turma do Gatil Color Palette */
+  --p-primary-color: #F2BBAE;
+  --p-primary-600: #E5A693;
+  --p-primary-700: #D8917E;
+  --p-secondary-color: #D1A69B;
+  --p-accent-color: #FEC7B3;
+  
+  /* Surface Colors */
+  --p-surface-ground: #FAF9F7;
+  --p-surface-card: #ffffff;
+  --p-surface-border: #E8E2E0;
+  --p-surface-hover: rgba(242, 187, 174, 0.1);
+  --p-surface-selected: rgba(242, 187, 174, 0.15);
+  
+  /* Text Colors */
+  --p-text-color: #2D2D2D;
+  --p-text-color-secondary: #6B6B6B;
+  --p-text-color-muted: #8A8A8A;
+  
+  /* Font Family */
+  --p-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Gradients */
+  --gradient-warm: linear-gradient(135deg, #FEC7B3, #D1A69B);
+  --gradient-primary: linear-gradient(135deg, #F2BBAE, #E5A693);
+  --gradient-soft: linear-gradient(135deg, #FFFFFF, #FAF9F7);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--p-font-family);
+  background-color: var(--p-surface-ground);
+  color: var(--p-text-color);
+}
