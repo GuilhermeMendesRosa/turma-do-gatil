@@ -1,0 +1,24 @@
+.page-container {
+  padding: 1rem;
+}
+
+h1 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.content-card {
+  background: var(--surface-card);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--surface-border);
+  margin-top: 1rem;
+}
+
+.content-card h3 {
+  margin-top: 0;
+  color: var(--text-color);
+}

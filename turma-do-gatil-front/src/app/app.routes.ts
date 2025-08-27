@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home.component';
-import { GatosComponent } from './pages/gatos.component';
-import { AdocoesComponent } from './pages/adocoes.component';
-import { AdotantesComponent } from './pages/adotantes.component';
+import { HomeComponent } from './pages/home/home.component';
+import { GatosComponent } from './pages/gatos/gatos.component';
+import { AdocoesComponent } from './pages/adocoes/adocoes.component';
+import { AdotantesComponent } from './pages/adotantes/adotantes.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
