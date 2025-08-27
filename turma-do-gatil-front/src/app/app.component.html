@@ -17,15 +17,6 @@
   </div>
   
   <div class="header-right">
-    <div class="user-section">
-      <span class="welcome-text">Bem-vindo!</span>
-      <p-avatar 
-        icon="pi pi-user" 
-        shape="circle" 
-        class="user-avatar"
-        [style]="{'background-color': '#F2BBAE', 'color': '#2D2D2D'}">
-      </p-avatar>
-    </div>
     <p-button 
       icon="pi pi-cog" 
       [text]="true" 
@@ -33,6 +24,13 @@
       pTooltip="Configurações"
       tooltipPosition="bottom">
     </p-button>
+    <p-avatar 
+      icon="pi pi-user" 
+      shape="circle" 
+      class="user-avatar"
+      pTooltip="Perfil do usuário"
+      tooltipPosition="bottom">
+    </p-avatar>
   </div>
 </div>
 

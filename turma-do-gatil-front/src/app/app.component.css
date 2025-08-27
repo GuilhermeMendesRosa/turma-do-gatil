@@ -54,51 +54,55 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
-}
-
-.user-section {
-  display: flex;
-  align-items: center;
+  justify-content: flex-end;
   gap: 0.75rem;
-  padding: 0.5rem 1rem;
-  background: rgba(242, 187, 174, 0.15);
-  border-radius: 25px;
-  border: 1px solid rgba(242, 187, 174, 0.3);
-  transition: all 0.2s ease;
+  min-width: 100px;
 }
 
-.user-section:hover {
-  background: rgba(99, 102, 241, 0.1);
-  border-color: rgba(99, 102, 241, 0.2);
+.user-avatar {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(242, 187, 174, 0.2);
+  width: 40px !important;
+  height: 40px !important;
 }
 
-.welcome-text {
-  color: var(--p-text-color);
-  font-weight: 500;
-  font-size: 0.9rem;
+.user-avatar::ng-deep .p-avatar {
+  background-color: #F2BBAE !important;
+  color: #2D2D2D !important;
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.user-avatar::ng-deep .p-avatar .p-avatar-icon {
+  color: #2D2D2D !important;
+  font-size: 1.2rem !important;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(242, 187, 174, 0.3);
 }
 
 .menu-button, .config-button {
   border-radius: 12px !important;
   transition: all 0.2s ease !important;
   border: 1px solid transparent !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 .menu-button:hover, .config-button:hover {
-  background: rgba(99, 102, 241, 0.1) !important;
-  border-color: rgba(99, 102, 241, 0.2) !important;
+  background: rgba(242, 187, 174, 0.2) !important;
+  border-color: rgba(242, 187, 174, 0.3) !important;
 }
 
-.user-avatar {
-  cursor: pointer;
-  transition: transform 0.2s ease;
-    box-shadow: 0 2px 8px rgba(242, 187, 174, 0.2);
-}
-
-.user-avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(242, 187, 174, 0.3);
+.menu-button .p-button-icon, .config-button .p-button-icon {
+  font-size: 1.2rem !important;
+  color: #2D2D2D !important;
 }
 
 /* Sidebar Styles */
@@ -230,14 +234,6 @@
   
   .app-title {
     font-size: 1.1rem;
-  }
-  
-  .welcome-text {
-    display: none;
-  }
-  
-  .user-section {
-    padding: 0.25rem 0.5rem;
   }
   
   .sidebar {
