@@ -1,7 +1,8 @@
-<po-menu [p-menus]="menus"></po-menu>
+<div class="po-wrapper">
+  <header class="navbar">
+    <po-avatar (click)="openUserProfile()" class="btn" p-src="https://po-ui.io/assets/graphics/logo-po.png"> </po-avatar>
+  </header>
 
-<div class="main-container">
-  <div class="content-area">
-    <router-outlet></router-outlet>
-  </div>
+  <po-menu [p-menus]="menus"></po-menu>
+  <router-outlet></router-outlet>
 </div>

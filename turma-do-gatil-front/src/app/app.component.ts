@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {PoHeaderModule, PoMenuItem, PoMenuModule} from '@po-ui/ng-components';
+import {PoAvatarModule, PoButtonModule, PoHeaderModule, PoMenuItem, PoMenuModule} from '@po-ui/ng-components';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, PoMenuModule, PoHeaderModule],
+  imports: [RouterOutlet, PoMenuModule, PoHeaderModule, PoButtonModule, PoAvatarModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -28,4 +28,8 @@ export class AppComponent {
       shortLabel: 'Timekeeping',
     },
   ];
+
+  openUserProfile() {
+    console.log('openUserProfile');
+  }
 }
