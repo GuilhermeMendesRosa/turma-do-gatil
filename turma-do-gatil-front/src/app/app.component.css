@@ -249,7 +249,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 900px) {
   .sidebar-overlay {
     display: none;
   }
@@ -277,6 +277,10 @@
   }
   
   .menu-button {
-    display: none;
+    display: none !important;
+  }
+  
+  .header-left .menu-button {
+    display: none !important;
   }
 }
