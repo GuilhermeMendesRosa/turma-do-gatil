@@ -22,7 +22,7 @@ export class AppComponent {
   menuItems: MenuItem[] = [
     {
       label: 'Dashboard',
-      icon: 'pi pi-home',
+      icon: 'pi pi-chart-bar',
       routerLink: '/home'
     },
     {
@@ -31,8 +31,13 @@ export class AppComponent {
       routerLink: '/gatos'
     },
     {
+      label: 'Castrações',
+      icon: 'pi pi-briefcase',
+      routerLink: '/castracoes'
+    },
+    {
       label: 'Adoções',
-      icon: 'pi pi-check-circle',
+      icon: 'pi pi-home',
       routerLink: '/adocoes'
     },
     {

@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-adocoes',
+  selector: 'app-castracoes',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './adocoes.component.html',
-  styleUrls: ['./adocoes.component.css']
+  templateUrl: './castracoes.component.html',
+  styleUrls: ['./castracoes.component.css']
 })
-export class AdocoesComponent {
+export class CastracoesComponent {
 
 }
