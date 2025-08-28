@@ -10,6 +10,8 @@ import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { ImageModule } from 'primeng/image';
+import { DialogModule } from 'primeng/dialog';
+import { DividerModule } from 'primeng/divider';
 import { CatService } from '../../services/cat.service';
 import { Cat, Color, Sex, CatFilters, Page } from '../../models/cat.model';
 
@@ -27,7 +29,9 @@ import { Cat, Color, Sex, CatFilters, Page } from '../../models/cat.model';
     TagModule,
     SkeletonModule,
     TooltipModule,
-    ImageModule
+    ImageModule,
+    DialogModule,
+    DividerModule
   ],
   templateUrl: './gatos.component.html',
   styleUrl: './gatos.component.css'
@@ -38,6 +42,10 @@ export class GatosComponent implements OnInit {
   totalRecords = 0;
   currentPage = 0;
   pageSize = 12;
+
+  // Dialog de detalhes do gato
+  catDetailsDialog = false;
+  selectedCat: Cat | null = null;
 
   // Filtros
   filters: CatFilters = {
@@ -196,8 +204,13 @@ export class GatosComponent implements OnInit {
   }
 
   viewCatDetails(cat: Cat): void {
-    // TODO: Implementar navegação para detalhes do gato
-    console.log('Ver detalhes do gato:', cat);
+    this.selectedCat = cat;
+    this.catDetailsDialog = true;
+  }
+
+  closeCatDetailsDialog(): void {
+    this.catDetailsDialog = false;
+    this.selectedCat = null;
   }
 
   editCat(cat: Cat): void {
@@ -262,5 +275,23 @@ export class GatosComponent implements OnInit {
 
   onImageError(event: any): void {
     event.target.src = this.getDefaultImage();
+  }
+
+  getDaysInShelter(entryDate: string): number {
+    const entry = new Date(entryDate);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - entry.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  formatDateTime(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 }
