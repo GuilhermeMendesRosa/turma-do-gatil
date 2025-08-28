@@ -75,6 +75,24 @@ export class GatosComponent implements OnInit {
     { label: 'Todos', value: null }
   ];
 
+  sortOptions = [
+    { label: 'Nome (A-Z)', value: 'name' },
+    { label: 'Nome (Z-A)', value: 'name-desc' },
+    { label: 'Idade (Mais novo)', value: 'birthDate' },
+    { label: 'Idade (Mais velho)', value: 'birthDate-desc' },
+    { label: 'Data de entrada', value: 'shelterEntryDate' }
+  ];
+
+  pageSizeOptions = [
+    { label: '6', value: 6 },
+    { label: '12', value: 12 },
+    { label: '24', value: 24 },
+    { label: '48', value: 48 }
+  ];
+
+  // Expor Math para o template
+  Math = Math;
+
   constructor(private catService: CatService) { }
 
   ngOnInit(): void {
@@ -117,6 +135,19 @@ export class GatosComponent implements OnInit {
     this.loadCats();
   }
 
+  onSortChange(): void {
+    const sortValue = this.filters.sortBy;
+    if (sortValue?.includes('-desc')) {
+      this.filters.sortBy = sortValue.replace('-desc', '');
+      this.filters.sortDir = 'desc';
+    } else {
+      this.filters.sortBy = sortValue;
+      this.filters.sortDir = 'asc';
+    }
+    this.filters.page = 0;
+    this.loadCats();
+  }
+
   clearFilters(): void {
     this.filters = {
       adopted: false,
@@ -125,6 +156,66 @@ export class GatosComponent implements OnInit {
       sortBy: 'name',
       sortDir: 'asc'
     };
+    this.loadCats();
+  }
+
+  getAvailableCatsCount(): number {
+    if (this.filters.adopted === false) {
+      return this.totalRecords;
+    }
+    return this.cats.filter(cat => !cat.adopted).length;
+  }
+
+  getAdoptedCatsCount(): number {
+    if (this.filters.adopted === true) {
+      return this.totalRecords;
+    }
+    return this.cats.filter(cat => cat.adopted).length;
+  }
+
+  openAddCatDialog(): void {
+    // TODO: Implementar dialog para adicionar novo gato
+    console.log('Abrir dialog para adicionar novo gato');
+  }
+
+  trackByCatId(index: number, cat: Cat): string {
+    return cat.id;
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  }
+
+  viewCatDetails(cat: Cat): void {
+    // TODO: Implementar navegação para detalhes do gato
+    console.log('Ver detalhes do gato:', cat);
+  }
+
+  editCat(cat: Cat): void {
+    // TODO: Implementar edição do gato
+    console.log('Editar gato:', cat);
+  }
+
+  adoptCat(cat: Cat): void {
+    // TODO: Implementar processo de adoção
+    console.log('Adotar gato:', cat);
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.filters.name || 
+             this.filters.color || 
+             this.filters.sex || 
+             (this.filters.adopted !== false && this.filters.adopted !== null));
+  }
+
+  onPageSizeChange(): void {
+    this.filters.size = this.pageSize;
+    this.filters.page = 0;
     this.loadCats();
   }
 

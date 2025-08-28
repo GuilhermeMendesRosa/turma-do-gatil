@@ -1,32 +1,82 @@
-<div class="gatos-container">
+<div class="page-container">
   <!-- Cabeçalho -->
-  <div class="header">
+  <div class="page-header">
     <h1 class="page-title">
       <i class="fas fa-cat"></i>
       Gestão de Gatos
     </h1>
-    <p class="page-subtitle">Gerencie os gatos disponíveis para adoção</p>
+    <p class="page-subtitle">Gerencie os gatos disponíveis para adoção no abrigo</p>
+  </div>
+
+  <!-- Estatísticas -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-icon available">
+        <i class="fas fa-heart"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ getAvailableCatsCount() }}</h3>
+        <p>Disponíveis</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon adopted">
+        <i class="fas fa-home"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ getAdoptedCatsCount() }}</h3>
+        <p>Adotados</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon total">
+        <i class="fas fa-cat"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ totalRecords }}</h3>
+        <p>Total</p>
+      </div>
+    </div>
   </div>
 
   <!-- Filtros -->
   <div class="filters-section">
     <div class="filters-card">
-      <h3>Filtros</h3>
+      <div class="filters-header">
+        <h3>
+          <i class="fas fa-filter"></i>
+          Filtros de Busca
+        </h3>
+        <p-button 
+          label="Novo Gato" 
+          icon="pi pi-plus" 
+          (onClick)="openAddCatDialog()"
+          severity="success"
+          size="small">
+        </p-button>
+      </div>
+      
       <div class="filters-grid">
         <div class="filter-group">
-          <label for="nameFilter">Nome</label>
+          <label for="nameFilter">
+            <i class="pi pi-search"></i>
+            Nome do Gato
+          </label>
           <input 
             id="nameFilter"
             type="text" 
             pInputText 
             [(ngModel)]="filters.name" 
             (ngModelChange)="onFilterChange()"
-            placeholder="Buscar por nome..." 
+            placeholder="Digite o nome do gato..." 
             class="filter-input">
         </div>
 
         <div class="filter-group">
-          <label for="colorFilter">Cor</label>
+          <label for="colorFilter">
+            <i class="pi pi-palette"></i>
+            Cor
+          </label>
           <p-select
             id="colorFilter"
             [(ngModel)]="filters.color"
@@ -34,13 +84,16 @@
             [options]="colorOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Selecione uma cor"
+            placeholder="Todas as cores"
             class="filter-select">
           </p-select>
         </div>
 
         <div class="filter-group">
-          <label for="sexFilter">Sexo</label>
+          <label for="sexFilter">
+            <i class="pi pi-user"></i>
+            Sexo
+          </label>
           <p-select
             id="sexFilter"
             [(ngModel)]="filters.sex"
@@ -48,13 +101,16 @@
             [options]="sexOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Selecione o sexo"
+            placeholder="Todos os sexos"
             class="filter-select">
           </p-select>
         </div>
 
         <div class="filter-group">
-          <label for="adoptionFilter">Status de Adoção</label>
+          <label for="adoptionFilter">
+            <i class="pi pi-heart-fill"></i>
+            Status
+          </label>
           <p-select
             id="adoptionFilter"
             [(ngModel)]="filters.adopted"
@@ -67,12 +123,30 @@
           </p-select>
         </div>
 
+        <div class="filter-group">
+          <label for="sortFilter">
+            <i class="pi pi-sort"></i>
+            Ordenar por
+          </label>
+          <p-select
+            id="sortFilter"
+            [(ngModel)]="filters.sortBy"
+            (ngModelChange)="onSortChange()"
+            [options]="sortOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Ordenação"
+            class="filter-select">
+          </p-select>
+        </div>
+
         <div class="filter-actions">
           <p-button 
-            label="Limpar Filtros" 
+            label="Limpar" 
             icon="pi pi-filter-slash" 
             (onClick)="clearFilters()"
             [outlined]="true"
+            severity="secondary"
             size="small">
           </p-button>
         </div>
@@ -83,63 +157,91 @@
   <!-- Loading skeleton -->
   <div class="cats-grid" *ngIf="loading">
     <div class="cat-card-skeleton" *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12]">
-      <p-skeleton height="200px" class="mb-2"></p-skeleton>
-      <p-skeleton height="4rem" class="mb-2"></p-skeleton>
-      <p-skeleton height="2rem" width="70%"></p-skeleton>
+      <div class="skeleton-content">
+        <p-skeleton height="200px" class="skeleton-image"></p-skeleton>
+        <div class="skeleton-body">
+          <p-skeleton height="1.5rem" width="70%" class="skeleton-title"></p-skeleton>
+          <p-skeleton height="1rem" width="50%" class="skeleton-text"></p-skeleton>
+          <p-skeleton height="1rem" width="40%" class="skeleton-text"></p-skeleton>
+          <div class="skeleton-actions">
+            <p-skeleton height="2rem" width="45%"></p-skeleton>
+            <p-skeleton height="2rem" width="45%"></p-skeleton>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Grid de gatos -->
   <div class="cats-grid" *ngIf="!loading">
-    <div class="cat-card" *ngFor="let cat of cats">
-      <p-card>
-        <ng-template pTemplate="header">
-          <div class="cat-image-container">
-            <img 
-              [src]="cat.photoUrl || getDefaultImage()" 
-              [alt]="cat.name"
-              (error)="onImageError($event)"
-              class="cat-image">
-            <div class="adoption-status" [class.adopted]="cat.adopted">
-              <p-tag 
-                [value]="cat.adopted ? 'Adotado' : 'Disponível'" 
-                [severity]="cat.adopted ? 'secondary' : 'success'">
-              </p-tag>
+    <div class="cat-card" *ngFor="let cat of cats; trackBy: trackByCatId">
+      <div class="cat-card-inner">
+        <!-- Imagem do gato -->
+        <div class="cat-image-container">
+          <img 
+            [src]="cat.photoUrl || getDefaultImage()" 
+            [alt]="cat.name"
+            (error)="onImageError($event)"
+            class="cat-image">
+          
+          <!-- Status de adoção -->
+          <div class="adoption-status-overlay">
+            <div class="adoption-badge" [class.adopted]="cat.adopted">
+              <i class="fas" [class.fa-heart]="!cat.adopted" [class.fa-home]="cat.adopted"></i>
+              <span>{{ cat.adopted ? 'Adotado' : 'Disponível' }}</span>
             </div>
           </div>
-        </ng-template>
 
-        <ng-template pTemplate="content">
-          <div class="cat-info">
+          <!-- Ícone de favorito -->
+          <div class="favorite-icon">
+            <i class="fas fa-heart" [class.favorited]="cat.adopted"></i>
+          </div>
+        </div>
+
+        <!-- Informações do gato -->
+        <div class="cat-content">
+          <div class="cat-header">
             <h3 class="cat-name">{{ cat.name }}</h3>
-            
-            <div class="cat-details">
+            <div class="cat-age">{{ getAge(cat.birthDate) }}</div>
+          </div>
+          
+          <div class="cat-details">
+            <div class="detail-row">
               <div class="detail-item">
-                <i class="pi pi-palette"></i>
-                <span>{{ getColorLabel(cat.color) }}</span>
+                <div class="detail-icon color-icon">
+                  <i class="fas fa-palette"></i>
+                </div>
+                <span class="detail-text">{{ getColorLabel(cat.color) }}</span>
               </div>
               
               <div class="detail-item">
-                <i class="pi pi-user"></i>
-                <span>{{ getSexLabel(cat.sex) }}</span>
-              </div>
-              
-              <div class="detail-item">
-                <i class="pi pi-calendar"></i>
-                <span>{{ getAge(cat.birthDate) }}</span>
+                <div class="detail-icon sex-icon">
+                  <i class="fas" [class.fa-mars]="cat.sex === 'MALE'" [class.fa-venus]="cat.sex === 'FEMALE'"></i>
+                </div>
+                <span class="detail-text">{{ getSexLabel(cat.sex) }}</span>
               </div>
             </div>
+            
+            <div class="detail-item entry-date">
+              <div class="detail-icon date-icon">
+                <i class="fas fa-calendar-plus"></i>
+              </div>
+              <span class="detail-text">
+                No abrigo desde {{ formatDate(cat.shelterEntryDate) }}
+              </span>
+            </div>
           </div>
-        </ng-template>
 
-        <ng-template pTemplate="footer">
+          <!-- Ações do gato -->
           <div class="cat-actions">
             <p-button 
-              label="Ver Detalhes" 
+              label="Ver Perfil" 
               icon="pi pi-eye" 
               [outlined]="true"
               size="small"
-              pTooltip="Ver informações completas">
+              severity="info"
+              (onClick)="viewCatDetails(cat)"
+              pTooltip="Ver informações completas do gato">
             </p-button>
             
             <p-button 
@@ -147,37 +249,91 @@
               icon="pi pi-pencil" 
               size="small"
               severity="secondary"
+              (onClick)="editCat(cat)"
               pTooltip="Editar informações do gato">
             </p-button>
+
+            <p-button 
+              *ngIf="!cat.adopted"
+              label="Adotar" 
+              icon="pi pi-heart" 
+              size="small"
+              severity="success"
+              (onClick)="adoptCat(cat)"
+              pTooltip="Registrar adoção">
+            </p-button>
           </div>
-        </ng-template>
-      </p-card>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Mensagem quando não há gatos -->
-  <div class="no-cats-message" *ngIf="!loading && cats.length === 0">
+  <div class="empty-state-container" *ngIf="!loading && cats.length === 0">
     <div class="empty-state">
-      <i class="fas fa-cat empty-icon"></i>
+      <div class="empty-icon">
+        <i class="fas fa-cat"></i>
+      </div>
       <h3>Nenhum gato encontrado</h3>
-      <p>Não há gatos que correspondam aos filtros selecionados.</p>
-      <p-button 
-        label="Limpar Filtros" 
-        icon="pi pi-refresh" 
-        (onClick)="clearFilters()">
-      </p-button>
+      <p *ngIf="hasActiveFilters(); else noGatsMessage">
+        Não há gatos que correspondam aos filtros selecionados.
+        <br>Tente ajustar os filtros ou limpar a busca.
+      </p>
+      <ng-template #noGatsMessage>
+        <p>Ainda não há gatos cadastrados no sistema.</p>
+      </ng-template>
+      
+      <div class="empty-actions">
+        <p-button 
+          *ngIf="hasActiveFilters()"
+          label="Limpar Filtros" 
+          icon="pi pi-filter-slash" 
+          (onClick)="clearFilters()"
+          [outlined]="true">
+        </p-button>
+        <p-button 
+          label="Cadastrar Primeiro Gato" 
+          icon="pi pi-plus" 
+          (onClick)="openAddCatDialog()"
+          severity="success">
+        </p-button>
+      </div>
     </div>
   </div>
 
-  <!-- Paginação -->
-  <div class="pagination-section" *ngIf="!loading && totalRecords > pageSize">
-    <p-paginator
-      [rows]="pageSize"
-      [totalRecords]="totalRecords"
-      [first]="currentPage * pageSize"
-      (onPageChange)="onPageChange($event)"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} gatos">
-    </p-paginator>
+  <!-- Resultados e Paginação -->
+  <div class="results-section" *ngIf="!loading && cats.length > 0">
+    <div class="results-info">
+      <span class="results-text">
+        Mostrando {{ (currentPage * pageSize) + 1 }} - {{ Math.min((currentPage + 1) * pageSize, totalRecords) }} 
+        de {{ totalRecords }} gatos
+      </span>
+      
+      <div class="page-size-selector">
+        <label>Itens por página:</label>
+        <p-select
+          [(ngModel)]="pageSize"
+          (ngModelChange)="onPageSizeChange()"
+          [options]="pageSizeOptions"
+          optionLabel="label"
+          optionValue="value">
+        </p-select>
+      </div>
+    </div>
+
+    <!-- Paginação -->
+    <div class="pagination-container" *ngIf="totalRecords > pageSize">
+      <p-paginator
+        [rows]="pageSize"
+        [totalRecords]="totalRecords"
+        [first]="currentPage * pageSize"
+        (onPageChange)="onPageChange($event)"
+        [showCurrentPageReport]="true"
+        [showJumpToPageDropdown]="true"
+        [showPageLinks]="true"
+        [pageLinkSize]="5"
+        currentPageReportTemplate="Página {currentPage} de {totalPages}">
+      </p-paginator>
+    </div>
   </div>
 </div>
