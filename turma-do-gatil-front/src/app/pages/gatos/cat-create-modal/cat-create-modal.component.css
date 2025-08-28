@@ -246,11 +246,14 @@
   background: var(--gradient-primary);
   color: white;
   border-radius: 12px 12px 0 0;
+  padding: 1rem 1.5rem;
 }
 
 :host ::ng-deep .p-dialog-header .p-dialog-title {
   font-weight: 600;
   font-size: 1.125rem;
+  padding: 0;
+  margin: 0;
 }
 
 :host ::ng-deep .p-dialog-header .p-dialog-header-icon {
@@ -266,6 +269,7 @@
   padding: 0 1.5rem 1.5rem 1.5rem;
   border-top: none;
   background: var(--p-surface-card);
+  border-radius: 0 0 12px 12px;
 }
 
 :host ::ng-deep .p-divider {
