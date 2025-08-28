@@ -103,7 +103,7 @@ export class CatDetailsModalComponent {
   }
 
   getDefaultImage(): string {
-    return 'https://via.placeholder.com/400x220/f0f0f0/666666?text=🐱';
+    return 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
   }
 
   onImageError(event: any): void {

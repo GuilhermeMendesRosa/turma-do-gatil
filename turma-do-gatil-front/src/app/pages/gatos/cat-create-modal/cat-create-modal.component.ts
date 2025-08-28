@@ -128,7 +128,7 @@ export class CatCreateModalComponent implements OnInit {
         sex: formValue.sex,
         birthDate: new Date(formValue.birthDate).toISOString(),
         shelterEntryDate: new Date(formValue.shelterEntryDate).toISOString(),
-        photoUrl: this.previewUrl || 'https://via.placeholder.com/400x220/f0f0f0/666666?text=🐱',
+        photoUrl: this.previewUrl || 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
         adopted: false // Sempre false para novos gatos
       };
 
@@ -176,6 +176,6 @@ export class CatCreateModalComponent implements OnInit {
   }
 
   getDefaultImage(): string {
-    return 'https://via.placeholder.com/400x220/f0f0f0/666666?text=🐱';
+    return 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
   }
 }

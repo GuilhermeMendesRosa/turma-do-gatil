@@ -10,6 +10,9 @@ import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { ImageModule } from 'primeng/image';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { CatService } from '../../services/cat.service';
 import { Cat, Color, Sex, CatFilters, Page } from '../../models/cat.model';
 import { CatDetailsModalComponent } from './cat-details-modal/cat-details-modal.component';
@@ -30,9 +33,12 @@ import { CatCreateModalComponent } from './cat-create-modal/cat-create-modal.com
     SkeletonModule,
     TooltipModule,
     ImageModule,
+    ConfirmDialogModule,
+    ToastModule,
     CatDetailsModalComponent,
     CatCreateModalComponent
   ],
+  providers: [ConfirmationService, MessageService],
   templateUrl: './gatos.component.html',
   styleUrl: './gatos.component.css'
 })
@@ -104,7 +110,11 @@ export class GatosComponent implements OnInit {
   // Expor Math para o template
   Math = Math;
 
-  constructor(private catService: CatService) { }
+  constructor(
+    private catService: CatService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
+  ) { }
 
   ngOnInit(): void {
     this.loadCats();
@@ -229,12 +239,36 @@ export class GatosComponent implements OnInit {
   }
 
   deleteCat(cat: Cat): void {
-    // TODO: Implementar confirmação e exclusão do gato
-    console.log('Deletar gato:', cat);
-    // Implementar confirmação antes de deletar
-    // Após implementar, fechar o diálogo e recarregar os dados
-    // this.closeCatDetailsDialog();
-    // this.loadCats();
+    this.confirmationService.confirm({
+      message: `Tem certeza de que deseja excluir o gato "${cat.name}"? Esta ação não pode ser desfeita.`,
+      header: 'Confirmar Exclusão',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, excluir',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.catService.deleteCat(cat.id).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Sucesso',
+              detail: `O gato "${cat.name}" foi excluído com sucesso.`
+            });
+            this.catDetailsDialog = false;
+            this.selectedCat = null;
+            this.loadCats(); // Recarrega a lista
+          },
+          error: (error) => {
+            console.error('Erro ao deletar gato:', error);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro',
+              detail: 'Ocorreu um erro ao tentar excluir o gato. Tente novamente.'
+            });
+          }
+        });
+      }
+    });
   }
 
   hasActiveFilters(): boolean {
@@ -284,7 +318,7 @@ export class GatosComponent implements OnInit {
   }
 
   getDefaultImage(): string {
-    return 'https://via.placeholder.com/400x220/f0f0f0/666666?text=🐱';
+    return 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
   }
 
   onImageError(event: any): void {
