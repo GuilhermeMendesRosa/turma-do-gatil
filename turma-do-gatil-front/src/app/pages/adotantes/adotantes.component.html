@@ -1,9 +1,139 @@
 <div class="page-container">
-  <h1><i class="pi pi-users"></i> Adotantes</h1>
-  <p>Página para gerenciar informações dos adotantes.</p>
+  <div class="page-header">
+    <h1><i class="pi pi-users"></i> Adotantes</h1>
+    <p>Gerencie as informações dos adotantes cadastrados no sistema.</p>
+  </div>
   
   <div class="content-card">
-    <h3>Cadastro de Adotantes</h3>
-    <p>Aqui você poderá visualizar e gerenciar o cadastro das pessoas interessadas em adotar.</p>
+    <div class="card-header">
+      <h3>Lista de Adotantes</h3>
+      <div class="actions">
+        <button class="p-button p-button-primary">
+          <i class="pi pi-plus"></i>
+          Novo Adotante
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="adopters-table" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th (click)="onSort({field: 'firstName', order: 1})" class="sortable">
+              Nome 
+              <i class="pi pi-sort-alt"></i>
+            </th>
+            <th (click)="onSort({field: 'email', order: 1})" class="sortable">
+              Email 
+              <i class="pi pi-sort-alt"></i>
+            </th>
+            <th (click)="onSort({field: 'cpf', order: 1})" class="sortable">
+              CPF 
+              <i class="pi pi-sort-alt"></i>
+            </th>
+            <th>Telefone</th>
+            <th (click)="onSort({field: 'registrationDate', order: 1})" class="sortable">
+              Data de Cadastro 
+              <i class="pi pi-sort-alt"></i>
+            </th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let adopter of adopters">
+            <td>
+              <div class="adopter-name">
+                <strong>{{ getFullName(adopter) }}</strong>
+              </div>
+            </td>
+            <td>{{ adopter.email }}</td>
+            <td>{{ formatCpf(adopter.cpf) }}</td>
+            <td>{{ formatPhone(adopter.phone) }}</td>
+            <td>{{ formatDate(adopter.registrationDate) }}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="p-button-icon p-button-info" title="Visualizar">
+                  <i class="pi pi-eye"></i>
+                </button>
+                <button class="p-button-icon p-button-warning" title="Editar">
+                  <i class="pi pi-pencil"></i>
+                </button>
+                <button class="p-button-icon p-button-danger" title="Excluir">
+                  <i class="pi pi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Loading skeleton -->
+          <tr *ngIf="loading">
+            <td colspan="6">
+              <div class="loading-message">
+                <i class="pi pi-spin pi-spinner"></i>
+                Carregando adotantes...
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Empty message -->
+          <tr *ngIf="!loading && adopters.length === 0">
+            <td colspan="6">
+              <div class="empty-message">
+                <i class="pi pi-info-circle"></i>
+                <p>Nenhum adotante encontrado.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="!loading && totalRecords > 0">
+        <div class="pagination-info">
+          Mostrando {{ (first + 1) }} - {{ getMinRecord() }} de {{ totalRecords }} registros
+        </div>
+        <div class="pagination-controls">
+          <button 
+            class="p-button-icon p-button-secondary" 
+            [disabled]="first === 0"
+            (click)="onPageChange({first: 0, rows: rows, page: 0})"
+            title="Primeira página">
+            <i class="pi pi-angle-double-left"></i>
+          </button>
+          <button 
+            class="p-button-icon p-button-secondary" 
+            [disabled]="first === 0"
+            (click)="onPageChange({first: first - rows, rows: rows, page: (first / rows) - 1})"
+            title="Página anterior">
+            <i class="pi pi-angle-left"></i>
+          </button>
+          
+          <select 
+            class="page-select" 
+            [value]="rows" 
+            (change)="onRowsChange($event)">
+            <option value="5">5 por página</option>
+            <option value="10">10 por página</option>
+            <option value="20">20 por página</option>
+            <option value="50">50 por página</option>
+          </select>
+          
+          <button 
+            class="p-button-icon p-button-secondary" 
+            [disabled]="first + rows >= totalRecords"
+            (click)="onPageChange({first: first + rows, rows: rows, page: (first / rows) + 1})"
+            title="Próxima página">
+            <i class="pi pi-angle-right"></i>
+          </button>
+          <button 
+            class="p-button-icon p-button-secondary" 
+            [disabled]="first + rows >= totalRecords"
+            (click)="onPageChange({first: getLastPageFirst(), rows: rows, page: getLastPage()})"
+            title="Última página">
+            <i class="pi pi-angle-double-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
