@@ -73,8 +73,7 @@ export class CatCreateModalComponent implements OnInit {
       color: [null, Validators.required],
       sex: [null, Validators.required],
       birthDate: ['', Validators.required],
-      shelterEntryDate: [todayString, Validators.required],
-      adopted: [false]
+      shelterEntryDate: [todayString, Validators.required]
     });
   }
 
@@ -90,8 +89,7 @@ export class CatCreateModalComponent implements OnInit {
     const todayString = today.toISOString().split('T')[0];
     
     this.catForm.patchValue({
-      shelterEntryDate: todayString,
-      adopted: false
+      shelterEntryDate: todayString
     });
     this.selectedFile = null;
     this.previewUrl = null;
@@ -131,7 +129,7 @@ export class CatCreateModalComponent implements OnInit {
         birthDate: new Date(formValue.birthDate).toISOString(),
         shelterEntryDate: new Date(formValue.shelterEntryDate).toISOString(),
         photoUrl: this.previewUrl || 'https://via.placeholder.com/400x220/f0f0f0/666666?text=🐱',
-        adopted: formValue.adopted
+        adopted: false // Sempre false para novos gatos
       };
 
       this.catService.createCat(catData).subscribe({

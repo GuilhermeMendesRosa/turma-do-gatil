@@ -4,6 +4,37 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
+/* Máscara de fundo com desfoque - igual ao modal de detalhes */
+::ng-deep .p-dialog-mask.cat-create-dialog,
+::ng-deep .cat-create-dialog .p-dialog-mask,
+::ng-deep .p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  -moz-backdrop-filter: blur(8px) !important;
+  -ms-backdrop-filter: blur(8px) !important;
+}
+
+/* Regra específica para garantir o desfoque */
+:host ::ng-deep .p-dialog-mask {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Fallback caso backdrop-filter não seja suportado */
+@supports not (backdrop-filter: blur(8px)) {
+  ::ng-deep .p-dialog-mask {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+}
+
+/* Dialog principal */
+::ng-deep .cat-create-dialog .p-dialog {
+  background: var(--p-surface-card) !important;
+  border: 1px solid var(--p-surface-border);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
+}
+
 .cat-create-form {
   padding: 0;
 }
@@ -182,45 +213,6 @@
   border-color: #ef4444 !important;
 }
 
-/* Checkbox Field */
-.checkbox-field {
-  grid-column: 1 / -1;
-  margin-top: 0.5rem;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.checkbox-input {
-  width: 18px;
-  height: 18px;
-  accent-color: #6366f1;
-}
-
-.checkbox-label {
-  font-weight: 500;
-  color: #374151;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0;
-}
-
-.checkbox-label i {
-  font-size: 0.75rem;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.checkbox-input:checked + .checkbox-label i {
-  opacity: 1;
-  color: #6366f1;
-}
-
 /* Error Messages */
 .error-message {
   color: #ef4444;
@@ -251,7 +243,7 @@
 
 /* PrimeNG Overrides */
 :host ::ng-deep .p-dialog-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   color: white;
   border-radius: 12px 12px 0 0;
 }
@@ -267,11 +259,13 @@
 
 :host ::ng-deep .p-dialog-content {
   padding: 1.5rem;
+  background: var(--p-surface-card);
 }
 
 :host ::ng-deep .p-dialog-footer {
   padding: 0 1.5rem 1.5rem 1.5rem;
   border-top: none;
+  background: var(--p-surface-card);
 }
 
 :host ::ng-deep .p-divider {
@@ -312,4 +306,9 @@
 :host ::ng-deep .p-select-overlay {
   border-radius: 8px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Definir variável do gradiente caso não esteja disponível */
+:host {
+  --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
 }
