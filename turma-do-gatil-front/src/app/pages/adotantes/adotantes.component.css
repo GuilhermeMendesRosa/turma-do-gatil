@@ -451,3 +451,29 @@
     font-size: 0.85rem;
   }
 }
+
+/* ===== CUSTOMIZAÇÕES DE BOTÕES (igual aos gatos) ===== */
+::ng-deep .p-button {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep .p-button:hover {
+  transform: translateY(-2px) !important;
+}
+
+::ng-deep .p-button-success {
+  background: var(--p-primary-color) !important;
+  border-color: var(--p-primary-color) !important;
+}
+
+/* ===== CORES E TEMAS ===== */
+:host {
+  --primary-color: var(--p-primary-color, #F2BBAE);
+  --text-color: var(--p-text-color, #1f2937);
+  --text-color-secondary: var(--p-text-color-secondary, #6b7280);
+  --surface-card: var(--p-surface-card, #ffffff);
+  --surface-border: var(--p-surface-border, #e5e7eb);
+  --surface-ground: var(--p-surface-ground, #f9fafb);
+}
