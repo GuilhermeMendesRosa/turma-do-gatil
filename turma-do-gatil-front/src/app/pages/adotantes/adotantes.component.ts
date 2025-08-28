@@ -1,13 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
 import { AdopterService } from '../../services/adopter.service';
 import { Adopter, AdopterFilters } from '../../models/adopter.model';
+import { AdopterCreateModalComponent } from './adopter-create-modal/adopter-create-modal.component';
 
 @Component({
   selector: 'app-adotantes',
   standalone: true,
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    ButtonModule,
+    InputTextModule,
+    AdopterCreateModalComponent
   ],
   templateUrl: './adotantes.component.html',
   styleUrls: ['./adotantes.component.css']
@@ -18,6 +26,10 @@ export class AdotantesComponent implements OnInit {
   loading: boolean = false;
   first: number = 0;
   rows: number = 10;
+  
+  // Modal states
+  showCreateModal: boolean = false;
+  selectedAdopter: Adopter | null = null;
   
   filters: AdopterFilters = {
     page: 0,
@@ -66,6 +78,13 @@ export class AdotantesComponent implements OnInit {
     this.onPageChange({first: 0, rows: +target.value, page: 0});
   }
 
+  onFilterChange(): void {
+    // Reset para primeira página quando filtros mudam
+    this.first = 0;
+    this.filters.page = 0;
+    this.loadAdopters();
+  }
+
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('pt-BR');
   }
@@ -103,5 +122,38 @@ export class AdotantesComponent implements OnInit {
 
   mathFloor(value: number): number {
     return Math.floor(value);
+  }
+
+  // Métodos para o modal
+  openCreateModal(): void {
+    this.selectedAdopter = null;
+    this.showCreateModal = true;
+  }
+
+  openEditModal(adopter: Adopter): void {
+    this.selectedAdopter = adopter;
+    this.showCreateModal = true;
+  }
+
+  onAdopterCreated(): void {
+    this.loadAdopters();
+  }
+
+  onAdopterUpdated(): void {
+    this.loadAdopters();
+  }
+
+  deleteAdopter(adopter: Adopter): void {
+    if (confirm(`Tem certeza que deseja excluir o adotante ${this.getFullName(adopter)}?`)) {
+      this.adopterService.deleteAdopter(adopter.id).subscribe({
+        next: () => {
+          this.loadAdopters();
+        },
+        error: (error) => {
+          console.error('Erro ao excluir adotante:', error);
+          alert('Erro ao excluir adotante. Tente novamente.');
+        }
+      });
+    }
   }
 }

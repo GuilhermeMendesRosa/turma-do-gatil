@@ -1,7 +1,76 @@
 <div class="page-container">
   <div class="page-header">
-    <h1><i class="pi pi-users"></i> Adotantes</h1>
-    <p>Gerencie as informações dos adotantes cadastrados no sistema.</p>
+    <h1 class="page-title">
+      <i class="fas fa-users"></i>
+      Gestão de Adotantes
+    </h1>
+    <p class="page-subtitle">Gerencie as informações dos adotantes cadastrados no sistema</p>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-section">
+    <div class="filters-card">
+      <div class="filters-header">
+        <h3>
+          <i class="fas fa-filter"></i>
+          Filtros de Busca
+        </h3>
+        <p-button 
+          label="Novo Adotante" 
+          icon="pi pi-plus" 
+          (onClick)="openCreateModal()"
+          severity="success"
+          size="small">
+        </p-button>
+      </div>
+      
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="nameFilter">
+            <i class="pi pi-search"></i>
+            Nome do Adotante
+          </label>
+          <input 
+            id="nameFilter"
+            type="text" 
+            pInputText 
+            [(ngModel)]="filters.name" 
+            (ngModelChange)="onFilterChange()"
+            placeholder="Digite o nome..."
+            class="filter-input">
+        </div>
+
+        <div class="filter-group">
+          <label for="emailFilter">
+            <i class="pi pi-envelope"></i>
+            Email
+          </label>
+          <input 
+            id="emailFilter"
+            type="email" 
+            pInputText 
+            [(ngModel)]="filters.email" 
+            (ngModelChange)="onFilterChange()"
+            placeholder="Digite o email..."
+            class="filter-input">
+        </div>
+
+        <div class="filter-group">
+          <label for="cpfFilter">
+            <i class="pi pi-id-card"></i>
+            CPF
+          </label>
+          <input 
+            id="cpfFilter"
+            type="text" 
+            pInputText 
+            [(ngModel)]="filters.cpf" 
+            (ngModelChange)="onFilterChange()"
+            placeholder="000.000.000-00"
+            class="filter-input">
+        </div>
+      </div>
+    </div>
   </div>
   
   <div class="content-card">
@@ -46,12 +115,22 @@
             <td>{{ formatDate(adopter.registrationDate) }}</td>
             <td>
               <div class="action-buttons">
-                <button class="p-button-icon p-button-info" title="Visualizar">
-                  <i class="pi pi-eye"></i>
-                </button>
-                <button class="p-button-icon p-button-danger" title="Excluir">
-                  <i class="pi pi-trash"></i>
-                </button>
+                <p-button 
+                  icon="pi pi-pencil" 
+                  severity="info"
+                  size="small"
+                  [outlined]="true"
+                  (onClick)="openEditModal(adopter)"
+                  title="Editar">
+                </p-button>
+                <p-button 
+                  icon="pi pi-trash" 
+                  severity="danger"
+                  size="small"
+                  [outlined]="true"
+                  (onClick)="deleteAdopter(adopter)"
+                  title="Excluir">
+                </p-button>
               </div>
             </td>
           </tr>
@@ -128,5 +207,13 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de Criação/Edição de Adotante -->
+<app-adopter-create-modal
+  [(visible)]="showCreateModal"
+  [adopter]="selectedAdopter"
+  (adopterCreated)="onAdopterCreated()"
+  (adopterUpdated)="onAdopterUpdated()">
+</app-adopter-create-modal>
 
 

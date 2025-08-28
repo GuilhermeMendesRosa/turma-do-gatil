@@ -1,0 +1,182 @@
+<!-- Diálogo de Criação/Edição de Adotante -->
+<p-dialog 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="adopter-create-dialog"
+  maskStyleClass="blur-backdrop"
+  [style]="{width: '90vw', maxWidth: '700px'}"
+  [header]="isEditMode ? 'Editar Adotante' : 'Adicionar Novo Adotante'"
+  (onHide)="onHide()">
+  
+  <form [formGroup]="adopterForm" (ngSubmit)="onSubmit()" class="adopter-create-form">
+
+    <!-- Informações Pessoais -->
+    <div class="form-section">
+      <h3>
+        <i class="fas fa-user"></i>
+        Informações Pessoais
+      </h3>
+      
+      <div class="form-grid">
+        <!-- Nome -->
+        <div class="form-field">
+          <label for="firstName">Nome *</label>
+          <input 
+            pInputText 
+            id="firstName" 
+            formControlName="firstName"
+            placeholder="Digite o primeiro nome"
+            [class.ng-invalid]="isFieldInvalid('firstName')"
+            class="form-input">
+          <small class="error-message" *ngIf="getFieldError('firstName')">
+            {{ getFieldError('firstName') }}
+          </small>
+        </div>
+
+        <!-- Sobrenome -->
+        <div class="form-field">
+          <label for="lastName">Sobrenome *</label>
+          <input 
+            pInputText 
+            id="lastName" 
+            formControlName="lastName"
+            placeholder="Digite o sobrenome"
+            [class.ng-invalid]="isFieldInvalid('lastName')"
+            class="form-input">
+          <small class="error-message" *ngIf="getFieldError('lastName')">
+            {{ getFieldError('lastName') }}
+          </small>
+        </div>
+
+        <!-- Data de Nascimento -->
+        <div class="form-field">
+          <label for="birthDate">Data de Nascimento *</label>
+          <input 
+            type="date" 
+            id="birthDate" 
+            formControlName="birthDate"
+            [class.ng-invalid]="isFieldInvalid('birthDate')"
+            class="form-input date-input">
+          <small class="error-message" *ngIf="getFieldError('birthDate')">
+            {{ getFieldError('birthDate') }}
+          </small>
+        </div>
+
+        <!-- CPF -->
+        <div class="form-field">
+          <label for="cpf">CPF *</label>
+          <p-inputMask 
+            id="cpf"
+            formControlName="cpf"
+            mask="999.999.999-99"
+            placeholder="000.000.000-00"
+            [class.ng-invalid]="isFieldInvalid('cpf')"
+            class="form-input">
+          </p-inputMask>
+          <small class="error-message" *ngIf="getFieldError('cpf')">
+            {{ getFieldError('cpf') }}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Informações de Contato -->
+    <div class="form-section">
+      <h3>
+        <i class="fas fa-address-book"></i>
+        Informações de Contato
+      </h3>
+      
+      <div class="form-grid">
+        <!-- Telefone -->
+        <div class="form-field">
+          <label for="phone">Telefone *</label>
+          <p-inputMask 
+            id="phone"
+            formControlName="phone"
+            mask="(99) 99999-9999"
+            placeholder="(00) 00000-0000"
+            [class.ng-invalid]="isFieldInvalid('phone')"
+            class="form-input">
+          </p-inputMask>
+          <small class="error-message" *ngIf="getFieldError('phone')">
+            {{ getFieldError('phone') }}
+          </small>
+        </div>
+
+        <!-- Email -->
+        <div class="form-field">
+          <label for="email">Email *</label>
+          <input 
+            pInputText 
+            id="email" 
+            type="email"
+            formControlName="email"
+            placeholder="exemplo@email.com"
+            [class.ng-invalid]="isFieldInvalid('email')"
+            class="form-input">
+          <small class="error-message" *ngIf="getFieldError('email')">
+            {{ getFieldError('email') }}
+          </small>
+        </div>
+
+        <!-- Endereço -->
+        <div class="form-field form-field-full">
+          <label for="address">Endereço Completo *</label>
+          <input 
+            pInputText 
+            id="address" 
+            formControlName="address"
+            placeholder="Rua, número, bairro, cidade - CEP"
+            [class.ng-invalid]="isFieldInvalid('address')"
+            class="form-input">
+          <small class="error-message" *ngIf="getFieldError('address')">
+            {{ getFieldError('address') }}
+          </small>
+        </div>
+
+        <!-- Data de Cadastro -->
+        <div class="form-field">
+          <label for="registrationDate">Data de Cadastro *</label>
+          <input 
+            type="date" 
+            id="registrationDate" 
+            formControlName="registrationDate"
+            [class.ng-invalid]="isFieldInvalid('registrationDate')"
+            class="form-input date-input">
+          <small class="error-message" *ngIf="getFieldError('registrationDate')">
+            {{ getFieldError('registrationDate') }}
+          </small>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <div class="action-buttons">
+        <p-button 
+          label="Cancelar" 
+          icon="pi pi-times" 
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="onHide()">
+        </p-button>
+        
+        <p-button 
+          [label]="isEditMode ? 'Salvar Alterações' : 'Salvar Adotante'" 
+          icon="pi pi-check" 
+          severity="success"
+          [loading]="loading"
+          [disabled]="!adopterForm.valid"
+          (onClick)="onSubmit()">
+        </p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>

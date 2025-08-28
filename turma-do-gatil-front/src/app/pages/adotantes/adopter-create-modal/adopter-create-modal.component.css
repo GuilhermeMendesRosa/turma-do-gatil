@@ -1,0 +1,293 @@
+/* Dialog Styles */
+.adopter-create-dialog {
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Máscara de fundo com desfoque - igual ao modal de detalhes */
+::ng-deep .p-dialog-mask.adopter-create-dialog,
+::ng-deep .adopter-create-dialog .p-dialog-mask,
+::ng-deep .p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  -moz-backdrop-filter: blur(8px) !important;
+  -ms-backdrop-filter: blur(8px) !important;
+}
+
+/* Regra específica para garantir o desfoque */
+:host ::ng-deep .p-dialog-mask {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Fallback caso backdrop-filter não seja suportado */
+@supports not (backdrop-filter: blur(8px)) {
+  ::ng-deep .p-dialog-mask {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+}
+
+/* Dialog principal */
+::ng-deep .adopter-create-dialog .p-dialog {
+  background: var(--p-surface-card) !important;
+  border: 1px solid var(--p-surface-border);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
+}
+
+.adopter-create-form {
+  padding: 0;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 1.5rem;
+}
+
+.form-section h3 {
+  color: #374151;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-section h3 i {
+  color: #6366f1;
+  font-size: 1rem;
+}
+
+/* Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-field-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-field-full {
+    grid-column: 1;
+  }
+}
+
+/* Form Fields */
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-input.ng-invalid.ng-touched {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.date-input {
+  color-scheme: light;
+}
+
+/* Custom PrimeNG Select Styles */
+::ng-deep .p-select {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .p-select:not(.p-disabled):hover {
+  border-color: #9ca3af;
+}
+
+::ng-deep .p-select:not(.p-disabled).p-focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+::ng-deep .p-select.ng-invalid.ng-touched {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+::ng-deep .p-select .p-inputtext {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  border: none;
+  background: transparent;
+}
+
+/* Custom PrimeNG InputMask Styles */
+::ng-deep .p-inputmask {
+  width: 100%;
+}
+
+::ng-deep .p-inputmask .p-inputtext {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: white;
+  width: 100%;
+}
+
+::ng-deep .p-inputmask .p-inputtext:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+::ng-deep .p-inputmask.ng-invalid.ng-touched .p-inputtext {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Error Messages */
+.error-message {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Dialog Footer */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Button Customizations */
+::ng-deep .p-button {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .p-button.p-button-secondary {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+::ng-deep .p-button.p-button-secondary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+::ng-deep .p-button.p-button-success {
+  background: #059669;
+  border: 1px solid #059669;
+}
+
+::ng-deep .p-button.p-button-success:hover {
+  background: #047857;
+  border-color: #047857;
+}
+
+::ng-deep .p-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  ::ng-deep .adopter-create-dialog .p-dialog {
+    margin: 1rem;
+    width: calc(100vw - 2rem) !important;
+    max-width: none !important;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  ::ng-deep .p-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Loading State */
+::ng-deep .p-button .p-button-loading-icon {
+  margin-right: 0.5rem;
+}
+
+/* Divider Customization */
+::ng-deep .p-divider {
+  margin: 1.5rem 0;
+}
+
+::ng-deep .p-divider .p-divider-content {
+  background: var(--p-surface-card);
+}
+
+/* Form validation states */
+.form-field.ng-touched .form-input.ng-invalid {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+/* Focus styles for accessibility */
+.form-input:focus-visible,
+::ng-deep .p-select:focus-visible,
+::ng-deep .p-inputmask .p-inputtext:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .form-input,
+  ::ng-deep .p-select,
+  ::ng-deep .p-inputmask .p-inputtext {
+    border-width: 2px;
+  }
+  
+  .error-message {
+    font-weight: 600;
+  }
+}
