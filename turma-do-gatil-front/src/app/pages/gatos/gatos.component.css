@@ -800,12 +800,13 @@
 
 /* ===== CORES E TEMAS ===== */
 :host {
-  --primary-color: var(--p-primary-color);
-  --text-color: var(--p-text-color);
-  --text-color-secondary: var(--p-text-color-secondary);
-  --surface-card: var(--p-surface-card);
-  --surface-border: var(--p-surface-border);
-  --surface-ground: var(--p-surface-ground);
+  --primary-color: var(--p-primary-color, #3b82f6);
+  --text-color: var(--p-text-color, #1f2937);
+  --text-color-secondary: var(--p-text-color-secondary, #6b7280);
+  --surface-card: var(--p-surface-card, #ffffff);
+  --surface-border: var(--p-surface-border, #e5e7eb);
+  --surface-ground: var(--p-surface-ground, #f9fafb);
+  --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #3b82f6) 0%, var(--p-blue-600, #2563eb) 100%);
 }
 
 /* ===== CLASSES CUSTOM SELECT ===== */
@@ -830,6 +831,16 @@
 }
 
 /* ===== DIÁLOGO DE DETALHES DO GATO ===== */
+::ng-deep .cat-details-dialog .p-dialog {
+  background: var(--p-surface-card) !important;
+  border: 1px solid var(--p-surface-border);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
+}
+
+::ng-deep .cat-details-dialog .p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
 ::ng-deep .cat-details-dialog .p-dialog-header {
   background: var(--gradient-primary);
   color: white;
@@ -850,10 +861,18 @@
 ::ng-deep .cat-details-dialog .p-dialog-content {
   padding: 0;
   border-radius: 0 0 12px 12px;
+  background: var(--p-surface-card) !important;
+}
+
+::ng-deep .cat-details-dialog .p-dialog-footer {
+  background: var(--p-surface-card) !important;
+  border-radius: 0 0 12px 12px;
+  border-top: 1px solid var(--p-surface-border);
 }
 
 .cat-profile-container {
   padding: 2rem;
+  background: var(--p-surface-card);
 }
 
 /* Cabeçalho do perfil */
