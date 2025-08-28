@@ -1,0 +1,697 @@
+openapi: 3.0.3
+info:
+  title: Turma do Gatil - API
+  description: API REST para gerenciamento do sistema Turma do Gatil - Sistema de adoção de gatos
+  version: 1.0.0
+  contact:
+    name: Equipe Turma do Gatil
+    email: contato@turmadogatil.com
+  license:
+    name: MIT License
+    url: https://choosealicense.com/licenses/mit/
+  termsOfService: https://turmadogatil.com/terms
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor de Desenvolvimento
+
+tags:
+  - name: Cats
+    description: Operações relacionadas aos gatos
+  - name: Adopters
+    description: Operações relacionadas aos adotantes
+  - name: Adoptions
+    description: Operações relacionadas às adoções
+  - name: Notes
+    description: Operações relacionadas às anotações
+  - name: Sterilizations
+    description: Operações relacionadas às esterilizações
+
+paths:
+  /api/cats:
+    get:
+      tags:
+        - Cats
+      summary: Lista todos os gatos
+      description: Retorna uma lista paginada de gatos com filtros opcionais
+      parameters:
+        - name: page
+          in: query
+          description: Número da página (inicia em 0)
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Quantidade de itens por página
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          description: Campo para ordenação
+          required: false
+          schema:
+            type: string
+            default: name
+        - name: sortDir
+          in: query
+          description: Direção da ordenação
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
+        - name: name
+          in: query
+          description: Filtro por nome do gato
+          required: false
+          schema:
+            type: string
+        - name: color
+          in: query
+          description: Filtro por cor do gato
+          required: false
+          schema:
+            $ref: '#/components/schemas/Color'
+        - name: sex
+          in: query
+          description: Filtro por sexo do gato
+          required: false
+          schema:
+            $ref: '#/components/schemas/Sex'
+        - name: adopted
+          in: query
+          description: Filtro por status de adoção
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Lista de gatos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageCat'
+    post:
+      tags:
+        - Cats
+      summary: Cria um novo gato
+      description: Adiciona um novo gato ao sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatRequest'
+      responses:
+        '201':
+          description: Gato criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cat'
+        '400':
+          description: Dados inválidos
+
+  /api/cats/{id}:
+    get:
+      tags:
+        - Cats
+      summary: Busca gato por ID
+      description: Retorna um gato específico pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único do gato
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Gato encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cat'
+        '404':
+          description: Gato não encontrado
+    put:
+      tags:
+        - Cats
+      summary: Atualiza um gato
+      description: Atualiza os dados de um gato existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único do gato
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatRequest'
+      responses:
+        '200':
+          description: Gato atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cat'
+        '404':
+          description: Gato não encontrado
+        '400':
+          description: Dados inválidos
+    delete:
+      tags:
+        - Cats
+      summary: Remove um gato
+      description: Remove um gato do sistema
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único do gato
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Gato removido com sucesso
+        '404':
+          description: Gato não encontrado
+
+  /api/adopters:
+    get:
+      tags:
+        - Adopters
+      summary: Lista todos os adotantes
+      description: Retorna uma lista paginada de adotantes com filtros opcionais
+      parameters:
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Quantidade de itens por página
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          description: Campo para ordenação
+          required: false
+          schema:
+            type: string
+            default: firstName
+        - name: sortDir
+          in: query
+          description: Direção da ordenação
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
+        - name: name
+          in: query
+          description: Filtro por nome do adotante
+          required: false
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Filtro por email do adotante
+          required: false
+          schema:
+            type: string
+        - name: cpf
+          in: query
+          description: Filtro por CPF do adotante
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de adotantes retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageAdopter'
+    post:
+      tags:
+        - Adopters
+      summary: Cria um novo adotante
+      description: Adiciona um novo adotante ao sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdopterRequest'
+      responses:
+        '201':
+          description: Adotante criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adopter'
+        '400':
+          description: Dados inválidos ou CPF/email já cadastrado
+
+  /api/adoptions:
+    get:
+      tags:
+        - Adoptions
+      summary: Lista todas as adoções
+      description: Retorna uma lista paginada de adoções com filtros opcionais
+      parameters:
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Quantidade de itens por página
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: status
+          in: query
+          description: Filtro por status da adoção
+          required: false
+          schema:
+            $ref: '#/components/schemas/AdoptionStatus'
+        - name: catId
+          in: query
+          description: Filtro por ID do gato
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: adopterId
+          in: query
+          description: Filtro por ID do adotante
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lista de adoções retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageAdoption'
+    post:
+      tags:
+        - Adoptions
+      summary: Cria uma nova adoção
+      description: Registra uma nova adoção no sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdoptionRequest'
+      responses:
+        '201':
+          description: Adoção criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adoption'
+        '400':
+          description: Dados inválidos
+
+components:
+  schemas:
+    Cat:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único do gato
+        name:
+          type: string
+          description: Nome do gato
+        color:
+          $ref: '#/components/schemas/Color'
+        sex:
+          $ref: '#/components/schemas/Sex'
+        birthDate:
+          type: string
+          format: date-time
+          description: Data de nascimento do gato
+        shelterEntryDate:
+          type: string
+          format: date-time
+          description: Data de entrada no abrigo
+        photoUrl:
+          type: string
+          description: URL da foto do gato
+        adopted:
+          type: boolean
+          description: Status de adoção do gato
+
+    CatRequest:
+      type: object
+      required:
+        - name
+        - color
+        - sex
+        - birthDate
+        - shelterEntryDate
+      properties:
+        name:
+          type: string
+          description: Nome do gato
+        color:
+          $ref: '#/components/schemas/Color'
+        sex:
+          $ref: '#/components/schemas/Sex'
+        birthDate:
+          type: string
+          format: date-time
+          description: Data de nascimento do gato
+        shelterEntryDate:
+          type: string
+          format: date-time
+          description: Data de entrada no abrigo
+        photoUrl:
+          type: string
+          description: URL da foto do gato
+        adopted:
+          type: boolean
+          default: false
+          description: Status de adoção do gato
+
+    Adopter:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único do adotante
+        firstName:
+          type: string
+          description: Primeiro nome do adotante
+        lastName:
+          type: string
+          description: Sobrenome do adotante
+        birthDate:
+          type: string
+          format: date-time
+          description: Data de nascimento do adotante
+        cpf:
+          type: string
+          description: CPF do adotante
+        phone:
+          type: string
+          description: Telefone do adotante
+        email:
+          type: string
+          format: email
+          description: Email do adotante
+        address:
+          type: string
+          description: Endereço do adotante
+        registrationDate:
+          type: string
+          format: date-time
+          description: Data de cadastro do adotante
+
+    AdopterRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - birthDate
+        - cpf
+        - phone
+        - email
+        - address
+        - registrationDate
+      properties:
+        firstName:
+          type: string
+          description: Primeiro nome do adotante
+        lastName:
+          type: string
+          description: Sobrenome do adotante
+        birthDate:
+          type: string
+          format: date-time
+          description: Data de nascimento do adotante
+        cpf:
+          type: string
+          description: CPF do adotante (deve ser único)
+        phone:
+          type: string
+          description: Telefone do adotante
+        email:
+          type: string
+          format: email
+          description: Email do adotante (deve ser único)
+        address:
+          type: string
+          description: Endereço do adotante
+        registrationDate:
+          type: string
+          format: date-time
+          description: Data de cadastro do adotante
+
+    Adoption:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único da adoção
+        catId:
+          type: string
+          format: uuid
+          description: ID do gato adotado
+        adopterId:
+          type: string
+          format: uuid
+          description: ID do adotante
+        adoptionDate:
+          type: string
+          format: date-time
+          description: Data da adoção
+        status:
+          $ref: '#/components/schemas/AdoptionStatus'
+
+    AdoptionRequest:
+      type: object
+      required:
+        - catId
+        - adopterId
+        - adoptionDate
+        - status
+      properties:
+        catId:
+          type: string
+          format: uuid
+          description: ID do gato a ser adotado
+        adopterId:
+          type: string
+          format: uuid
+          description: ID do adotante
+        adoptionDate:
+          type: string
+          format: date-time
+          description: Data da adoção
+        status:
+          $ref: '#/components/schemas/AdoptionStatus'
+
+    Note:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único da anotação
+        catId:
+          type: string
+          format: uuid
+          description: ID do gato relacionado
+        date:
+          type: string
+          format: date-time
+          description: Data da anotação
+        text:
+          type: string
+          description: Conteúdo da anotação
+
+    Sterilization:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único da esterilização
+        catId:
+          type: string
+          format: uuid
+          description: ID do gato
+        sterilizationDate:
+          type: string
+          format: date-time
+          description: Data da esterilização
+        status:
+          $ref: '#/components/schemas/SterilizationStatus'
+        notes:
+          type: string
+          description: Observações sobre a esterilização
+
+    Color:
+      type: string
+      enum:
+        - WHITE
+        - BLACK
+        - GRAY
+        - BROWN
+        - ORANGE
+        - MIXED
+        - CALICO
+        - TABBY
+        - SIAMESE
+        - OTHER
+      description: Cor do gato
+
+    Sex:
+      type: string
+      enum:
+        - MALE
+        - FEMALE
+      description: Sexo do gato
+
+    AdoptionStatus:
+      type: string
+      enum:
+        - COMPLETED
+        - CANCELED
+        - PENDING
+      description: Status da adoção
+
+    SterilizationStatus:
+      type: string
+      enum:
+        - SCHEDULED
+        - COMPLETED
+        - CANCELED
+      description: Status da esterilização
+
+    PageCat:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Cat'
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+        last:
+          type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+
+    PageAdopter:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Adopter'
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+        last:
+          type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+
+    PageAdoption:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Adoption'
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+        last:
+          type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+
+    Pageable:
+      type: object
+      properties:
+        sort:
+          type: object
+          properties:
+            sorted:
+              type: boolean
+            unsorted:
+              type: boolean
+        pageNumber:
+          type: integer
+        pageSize:
+          type: integer
+        offset:
+          type: integer
+        paged:
+          type: boolean
+        unpaged:
+          type: boolean
