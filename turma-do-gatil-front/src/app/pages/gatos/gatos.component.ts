@@ -53,8 +53,9 @@ export class GatosComponent implements OnInit {
   catDetailsDialog = false;
   selectedCat: Cat | null = null;
 
-  // Dialog de criação de gato
+  // Dialog de criação/edição de gato
   catCreateDialog = false;
+  catToEdit: Cat | null = null; // Gato sendo editado (null para criação)
 
   // Dialog de confirmação de delete
   deleteConfirmDialog = false;
@@ -202,11 +203,19 @@ export class GatosComponent implements OnInit {
   }
 
   openAddCatDialog(): void {
+    this.catToEdit = null; // Limpar gato para criação
     this.catCreateDialog = true;
   }
 
   onCatCreated(): void {
     this.catCreateDialog = false;
+    this.catToEdit = null;
+    this.loadCats(); // Recarrega a lista de gatos
+  }
+
+  onCatUpdated(): void {
+    this.catCreateDialog = false;
+    this.catToEdit = null;
     this.loadCats(); // Recarrega a lista de gatos
   }
 
@@ -229,8 +238,9 @@ export class GatosComponent implements OnInit {
   }
 
   editCat(cat: Cat): void {
-    // TODO: Implementar edição do gato
-    console.log('Editar gato:', cat);
+    this.catToEdit = cat;
+    this.catCreateDialog = true;
+    this.catDetailsDialog = false; // Fechar o modal de detalhes
   }
 
   adoptCat(cat: Cat): void {

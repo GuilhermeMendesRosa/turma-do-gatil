@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
@@ -7,7 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
-import { CatRequest, Color, Sex } from '../../../models/cat.model';
+import { Cat, CatRequest, Color, Sex } from '../../../models/cat.model';
 import { CatService } from '../../../services/cat.service';
 
 @Component({
@@ -27,15 +27,18 @@ import { CatService } from '../../../services/cat.service';
   templateUrl: './cat-create-modal.component.html',
   styleUrl: './cat-create-modal.component.css'
 })
-export class CatCreateModalComponent implements OnInit {
+export class CatCreateModalComponent implements OnInit, OnChanges {
   @Input() visible: boolean = false;
+  @Input() cat: Cat | null = null; // Gato para edição (null para criação)
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() catCreated = new EventEmitter<void>();
+  @Output() catUpdated = new EventEmitter<void>();
 
   catForm!: FormGroup;
   loading = false;
   selectedFile: File | null = null;
   previewUrl: string | null = null;
+  isEditMode = false;
 
   colorOptions = [
     { label: 'Branco', value: Color.WHITE },
@@ -64,6 +67,12 @@ export class CatCreateModalComponent implements OnInit {
     this.initForm();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['cat'] && this.catForm) {
+      this.updateFormForEditing();
+    }
+  }
+
   initForm(): void {
     const today = new Date();
     const todayString = today.toISOString().split('T')[0];
@@ -75,6 +84,34 @@ export class CatCreateModalComponent implements OnInit {
       birthDate: ['', Validators.required],
       shelterEntryDate: [todayString, Validators.required]
     });
+
+    // Atualizar o formulário se estiver editando
+    this.updateFormForEditing();
+  }
+
+  updateFormForEditing(): void {
+    if (this.cat) {
+      this.isEditMode = true;
+      
+      // Formatar datas para input type="date"
+      const birthDate = new Date(this.cat.birthDate).toISOString().split('T')[0];
+      const shelterEntryDate = new Date(this.cat.shelterEntryDate).toISOString().split('T')[0];
+      
+      this.catForm.patchValue({
+        name: this.cat.name,
+        color: this.cat.color,
+        sex: this.cat.sex,
+        birthDate: birthDate,
+        shelterEntryDate: shelterEntryDate
+      });
+
+      // Definir preview da foto existente
+      if (this.cat.photoUrl) {
+        this.previewUrl = this.cat.photoUrl;
+      }
+    } else {
+      this.isEditMode = false;
+    }
   }
 
   onHide(): void {
@@ -94,6 +131,7 @@ export class CatCreateModalComponent implements OnInit {
     this.selectedFile = null;
     this.previewUrl = null;
     this.loading = false;
+    this.isEditMode = false;
   }
 
   onFileSelect(event: any): void {
@@ -128,23 +166,41 @@ export class CatCreateModalComponent implements OnInit {
         sex: formValue.sex,
         birthDate: new Date(formValue.birthDate).toISOString(),
         shelterEntryDate: new Date(formValue.shelterEntryDate).toISOString(),
-        photoUrl: this.previewUrl || 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-        adopted: false // Sempre false para novos gatos
+        photoUrl: this.previewUrl || this.getDefaultImage(),
+        adopted: this.isEditMode ? this.cat?.adopted : false // Manter status atual na edição
       };
 
-      this.catService.createCat(catData).subscribe({
-        next: () => {
-          this.catCreated.emit();
-          this.onHide();
-        },
-        error: (error) => {
-          console.error('Erro ao criar gato:', error);
-          this.loading = false;
-        },
-        complete: () => {
-          this.loading = false;
-        }
-      });
+      if (this.isEditMode && this.cat) {
+        // Atualizar gato existente
+        this.catService.updateCat(this.cat.id, catData).subscribe({
+          next: () => {
+            this.catUpdated.emit();
+            this.onHide();
+          },
+          error: (error) => {
+            console.error('Erro ao atualizar gato:', error);
+            this.loading = false;
+          },
+          complete: () => {
+            this.loading = false;
+          }
+        });
+      } else {
+        // Criar novo gato
+        this.catService.createCat(catData).subscribe({
+          next: () => {
+            this.catCreated.emit();
+            this.onHide();
+          },
+          error: (error) => {
+            console.error('Erro ao criar gato:', error);
+            this.loading = false;
+          },
+          complete: () => {
+            this.loading = false;
+          }
+        });
+      }
     } else {
       this.markFormGroupTouched();
     }

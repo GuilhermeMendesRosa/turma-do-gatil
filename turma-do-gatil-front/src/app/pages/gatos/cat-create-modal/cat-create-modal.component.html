@@ -8,7 +8,7 @@
   styleClass="cat-create-dialog"
   maskStyleClass="blur-backdrop"
   [style]="{width: '90vw', maxWidth: '600px'}"
-  header="Adicionar Novo Gato"
+  [header]="isEditMode ? 'Editar Gato' : 'Adicionar Novo Gato'"
   (onHide)="onHide()">
   
   <form [formGroup]="catForm" (ngSubmit)="onSubmit()" class="cat-create-form">
@@ -153,7 +153,7 @@
         </p-button>
         
         <p-button 
-          label="Salvar Gato" 
+          [label]="isEditMode ? 'Salvar Alterações' : 'Salvar Gato'" 
           icon="pi pi-check" 
           severity="success"
           [loading]="loading"

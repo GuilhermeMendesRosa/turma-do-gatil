@@ -322,10 +322,12 @@
   (deleteCat)="deleteCat($event)">
 </app-cat-details-modal>
 
-<!-- Modal de Criação de Gato -->
+<!-- Modal de Criação/Edição de Gato -->
 <app-cat-create-modal
   [(visible)]="catCreateDialog"
-  (catCreated)="onCatCreated()">
+  [cat]="catToEdit"
+  (catCreated)="onCatCreated()"
+  (catUpdated)="onCatUpdated()">
 </app-cat-create-modal>
 
 <!-- Dialog de Confirmação de Delete -->
