@@ -321,3 +321,9 @@
   (editCat)="editCat($event)"
   (deleteCat)="deleteCat($event)">
 </app-cat-details-modal>
+
+<!-- Modal de Criação de Gato -->
+<app-cat-create-modal
+  [(visible)]="catCreateDialog"
+  (catCreated)="onCatCreated()">
+</app-cat-create-modal>

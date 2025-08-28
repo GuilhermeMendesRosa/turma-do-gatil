@@ -56,18 +56,21 @@
 
 ::ng-deep .cat-details-dialog .p-dialog-content {
   padding: 0;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0;
   background: var(--p-surface-card) !important;
+  margin-bottom: 0;
 }
 
 ::ng-deep .cat-details-dialog .p-dialog-footer {
   background: var(--p-surface-card) !important;
   border-radius: 0 0 12px 12px;
   border-top: 1px solid var(--p-surface-border);
+  margin-top: 0;
+  padding: 0.75rem 2rem;
 }
 
 .cat-profile-container {
-  padding: 2rem;
+  padding: 2rem 2rem 1rem 2rem;
   background: var(--p-surface-card);
 }
 
@@ -231,7 +234,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 1.5rem 0;
+  padding: 0.75rem 0;
 }
 
 .dialog-footer .action-buttons {

@@ -13,6 +13,7 @@ import { ImageModule } from 'primeng/image';
 import { CatService } from '../../services/cat.service';
 import { Cat, Color, Sex, CatFilters, Page } from '../../models/cat.model';
 import { CatDetailsModalComponent } from './cat-details-modal/cat-details-modal.component';
+import { CatCreateModalComponent } from './cat-create-modal/cat-create-modal.component';
 
 @Component({
   selector: 'app-gatos',
@@ -29,7 +30,8 @@ import { CatDetailsModalComponent } from './cat-details-modal/cat-details-modal.
     SkeletonModule,
     TooltipModule,
     ImageModule,
-    CatDetailsModalComponent
+    CatDetailsModalComponent,
+    CatCreateModalComponent
   ],
   templateUrl: './gatos.component.html',
   styleUrl: './gatos.component.css'
@@ -44,6 +46,9 @@ export class GatosComponent implements OnInit {
   // Dialog de detalhes do gato
   catDetailsDialog = false;
   selectedCat: Cat | null = null;
+
+  // Dialog de criação de gato
+  catCreateDialog = false;
 
   // Filtros
   filters: CatFilters = {
@@ -184,8 +189,12 @@ export class GatosComponent implements OnInit {
   }
 
   openAddCatDialog(): void {
-    // TODO: Implementar dialog para adicionar novo gato
-    console.log('Abrir dialog para adicionar novo gato');
+    this.catCreateDialog = true;
+  }
+
+  onCatCreated(): void {
+    this.catCreateDialog = false;
+    this.loadCats(); // Recarrega a lista de gatos
   }
 
   trackByCatId(index: number, cat: Cat): string {

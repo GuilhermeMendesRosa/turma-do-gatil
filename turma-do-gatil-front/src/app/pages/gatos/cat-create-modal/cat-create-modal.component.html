@@ -1,0 +1,181 @@
+<!-- Diálogo de Criação de Gato -->
+<p-dialog 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="cat-create-dialog"
+  maskStyleClass="blur-backdrop"
+  [style]="{width: '90vw', maxWidth: '600px'}"
+  header="Adicionar Novo Gato"
+  (onHide)="onHide()">
+  
+  <form [formGroup]="catForm" (ngSubmit)="onSubmit()" class="cat-create-form">
+    
+    <!-- Upload de Foto -->
+    <div class="form-section">
+      <h3>
+        <i class="fas fa-camera"></i>
+        Foto do Gato
+      </h3>
+      
+      <div class="photo-upload-section">
+        <div class="photo-preview" *ngIf="previewUrl">
+          <img [src]="previewUrl" alt="Preview" class="preview-image">
+          <button 
+            type="button" 
+            class="remove-photo-btn" 
+            (click)="onFileRemove()"
+            title="Remover foto">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <div class="upload-placeholder" *ngIf="!previewUrl">
+          <i class="fas fa-camera upload-icon"></i>
+          <p>Clique para adicionar uma foto</p>
+          <input 
+            type="file" 
+            accept="image/*" 
+            (change)="onFileSelect($event)"
+            class="file-input"
+            #fileInput>
+          <button 
+            type="button" 
+            class="upload-btn"
+            (click)="fileInput.click()">
+            Escolher Arquivo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Informações Básicas -->
+    <div class="form-section">
+      <h3>
+        <i class="fas fa-info-circle"></i>
+        Informações Básicas
+      </h3>
+      
+      <div class="form-grid">
+        <!-- Nome -->
+        <div class="form-field">
+          <label for="name">Nome *</label>
+          <input 
+            pInputText 
+            id="name" 
+            formControlName="name"
+            placeholder="Digite o nome do gato"
+            [class.ng-invalid]="isFieldInvalid('name')"
+            class="form-input">
+          <small class="error-message" *ngIf="getFieldError('name')">
+            {{ getFieldError('name') }}
+          </small>
+        </div>
+
+        <!-- Cor -->
+        <div class="form-field">
+          <label for="color">Cor *</label>
+          <p-select 
+            [options]="colorOptions" 
+            formControlName="color"
+            placeholder="Selecione a cor"
+            optionLabel="label"
+            optionValue="value"
+            [class.ng-invalid]="isFieldInvalid('color')"
+            class="form-select">
+          </p-select>
+          <small class="error-message" *ngIf="getFieldError('color')">
+            {{ getFieldError('color') }}
+          </small>
+        </div>
+
+        <!-- Sexo -->
+        <div class="form-field">
+          <label for="sex">Sexo *</label>
+          <p-select 
+            [options]="sexOptions" 
+            formControlName="sex"
+            placeholder="Selecione o sexo"
+            optionLabel="label"
+            optionValue="value"
+            [class.ng-invalid]="isFieldInvalid('sex')"
+            class="form-select">
+          </p-select>
+          <small class="error-message" *ngIf="getFieldError('sex')">
+            {{ getFieldError('sex') }}
+          </small>
+        </div>
+
+        <!-- Data de Nascimento -->
+        <div class="form-field">
+          <label for="birthDate">Data de Nascimento *</label>
+          <input 
+            type="date" 
+            id="birthDate" 
+            formControlName="birthDate"
+            [class.ng-invalid]="isFieldInvalid('birthDate')"
+            class="form-input date-input">
+          <small class="error-message" *ngIf="getFieldError('birthDate')">
+            {{ getFieldError('birthDate') }}
+          </small>
+        </div>
+
+        <!-- Data de Entrada no Abrigo -->
+        <div class="form-field">
+          <label for="shelterEntryDate">Data de Entrada no Abrigo *</label>
+          <input 
+            type="date" 
+            id="shelterEntryDate" 
+            formControlName="shelterEntryDate"
+            [class.ng-invalid]="isFieldInvalid('shelterEntryDate')"
+            class="form-input date-input">
+          <small class="error-message" *ngIf="getFieldError('shelterEntryDate')">
+            {{ getFieldError('shelterEntryDate') }}
+          </small>
+        </div>
+
+        <!-- Status de Adoção -->
+        <div class="form-field checkbox-field">
+          <div class="checkbox-container">
+            <input 
+              type="checkbox" 
+              id="adopted" 
+              formControlName="adopted"
+              class="checkbox-input">
+            <label for="adopted" class="checkbox-label">
+              <i class="fas fa-check"></i>
+              Já foi adotado
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <div class="action-buttons">
+        <p-button 
+          label="Cancelar" 
+          icon="pi pi-times" 
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="onHide()">
+        </p-button>
+        
+        <p-button 
+          label="Salvar Gato" 
+          icon="pi pi-check" 
+          severity="success"
+          [loading]="loading"
+          [disabled]="!catForm.valid"
+          (onClick)="onSubmit()">
+        </p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>
