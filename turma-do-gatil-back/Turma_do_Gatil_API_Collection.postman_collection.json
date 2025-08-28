@@ -1,0 +1,805 @@
+{
+	"info": {
+		"_postman_id": "turma-do-gatil-api-collection",
+		"name": "Turma do Gatil - API Collection",
+		"description": "Collection completa para testar todas as APIs do sistema Turma do Gatil",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "turma-do-gatil"
+	},
+	"item": [
+		{
+			"name": "Cats API",
+			"item": [
+				{
+					"name": "Get All Cats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cats?page=0&size=10&sortBy=name&sortDir=asc",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cats"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "sortBy", "value": "name"},
+								{"key": "sortDir", "value": "asc"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Cats with Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cats?page=0&size=10&name=Miau&color=WHITE&sex=FEMALE&adopted=false",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cats"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "name", "value": "Miau"},
+								{"key": "color", "value": "WHITE"},
+								{"key": "sex", "value": "FEMALE"},
+								{"key": "adopted", "value": "false"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Cat by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cats/{{catId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cats", "{{catId}}"]
+						}
+					}
+				},
+				{
+					"name": "Create Cat",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Whiskers\",\n  \"color\": \"WHITE\",\n  \"sex\": \"FEMALE\",\n  \"birthDate\": \"2023-01-15T10:00:00\",\n  \"shelterEntryDate\": \"2023-02-01T09:30:00\",\n  \"photoUrl\": \"https://example.com/photo.jpg\",\n  \"adopted\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cats",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cats"]
+						}
+					}
+				},
+				{
+					"name": "Update Cat",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Whiskers Updated\",\n  \"color\": \"BLACK\",\n  \"sex\": \"FEMALE\",\n  \"birthDate\": \"2023-01-15T10:00:00\",\n  \"shelterEntryDate\": \"2023-02-01T09:30:00\",\n  \"photoUrl\": \"https://example.com/photo-updated.jpg\",\n  \"adopted\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/cats/{{catId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cats", "{{catId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Cat",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cats/{{catId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cats", "{{catId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Cats by Adoption Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cats/adopted/false?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cats", "adopted", "false"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Cats by Color",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cats/color/WHITE?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cats", "color", "WHITE"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Cats by Sex",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/cats/sex/FEMALE?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "cats", "sex", "FEMALE"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Adopters API",
+			"item": [
+				{
+					"name": "Get All Adopters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adopters?page=0&size=10&sortBy=firstName&sortDir=asc",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adopters"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "sortBy", "value": "firstName"},
+								{"key": "sortDir", "value": "asc"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Adopters with Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adopters?page=0&size=10&name=João&email=joao&cpf=123",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adopters"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "name", "value": "João"},
+								{"key": "email", "value": "joao"},
+								{"key": "cpf", "value": "123"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Adopter by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adopters/{{adopterId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adopters", "{{adopterId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Adopter by CPF",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adopters/cpf/12345678901",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adopters", "cpf", "12345678901"]
+						}
+					}
+				},
+				{
+					"name": "Get Adopter by Email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adopters/email/joao@example.com",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adopters", "email", "joao@example.com"]
+						}
+					}
+				},
+				{
+					"name": "Create Adopter",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"João\",\n  \"lastName\": \"Silva\",\n  \"birthDate\": \"1990-05-15T00:00:00\",\n  \"cpf\": \"12345678901\",\n  \"phone\": \"(11) 99999-9999\",\n  \"email\": \"joao.silva@example.com\",\n  \"address\": \"Rua das Flores, 123, São Paulo, SP\",\n  \"registrationDate\": \"2024-01-15T10:30:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/adopters",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adopters"]
+						}
+					}
+				},
+				{
+					"name": "Update Adopter",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"João Carlos\",\n  \"lastName\": \"Silva Santos\",\n  \"birthDate\": \"1990-05-15T00:00:00\",\n  \"cpf\": \"12345678901\",\n  \"phone\": \"(11) 88888-8888\",\n  \"email\": \"joao.carlos@example.com\",\n  \"address\": \"Rua das Rosas, 456, São Paulo, SP\",\n  \"registrationDate\": \"2024-01-15T10:30:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/adopters/{{adopterId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adopters", "{{adopterId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Adopter",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adopters/{{adopterId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adopters", "{{adopterId}}"]
+						}
+					}
+				},
+				{
+					"name": "Search Adopters by Name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adopters/search/name?name=João&page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adopters", "search", "name"],
+							"query": [
+								{"key": "name", "value": "João"},
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Adoptions API",
+			"item": [
+				{
+					"name": "Get All Adoptions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions?page=0&size=10&sortBy=adoptionDate&sortDir=desc",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "sortBy", "value": "adoptionDate"},
+								{"key": "sortDir", "value": "desc"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Adoptions with Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions?page=0&size=10&status=PENDING&startDate=2024-01-01T00:00:00&endDate=2024-12-31T23:59:59",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "status", "value": "PENDING"},
+								{"key": "startDate", "value": "2024-01-01T00:00:00"},
+								{"key": "endDate", "value": "2024-12-31T23:59:59"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Adoption by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions/{{adoptionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions", "{{adoptionId}}"]
+						}
+					}
+				},
+				{
+					"name": "Create Adoption",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"catId\": \"{{catId}}\",\n  \"adopterId\": \"{{adopterId}}\",\n  \"adoptionDate\": \"2024-03-15T14:30:00\",\n  \"status\": \"PENDING\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions"]
+						}
+					}
+				},
+				{
+					"name": "Update Adoption",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"catId\": \"{{catId}}\",\n  \"adopterId\": \"{{adopterId}}\",\n  \"adoptionDate\": \"2024-03-15T14:30:00\",\n  \"status\": \"COMPLETED\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions/{{adoptionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions", "{{adoptionId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Adoption",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions/{{adoptionId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions", "{{adoptionId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Adoptions by Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions/status/PENDING?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions", "status", "PENDING"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Adoptions by Cat ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions/cat/{{catId}}?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions", "cat", "{{catId}}"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Adoptions by Adopter ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions/adopter/{{adopterId}}?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions", "adopter", "{{adopterId}}"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Adoptions by Cat ID and Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/adoptions/cat/{{catId}}/status/COMPLETED",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "adoptions", "cat", "{{catId}}", "status", "COMPLETED"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Notes API",
+			"item": [
+				{
+					"name": "Get All Notes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/notes?page=0&size=10&sortBy=date&sortDir=desc",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "notes"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "sortBy", "value": "date"},
+								{"key": "sortDir", "value": "desc"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Notes with Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/notes?page=0&size=10&text=medicamento&startDate=2024-01-01T00:00:00&endDate=2024-12-31T23:59:59",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "notes"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "text", "value": "medicamento"},
+								{"key": "startDate", "value": "2024-01-01T00:00:00"},
+								{"key": "endDate", "value": "2024-12-31T23:59:59"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Note by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "notes", "{{noteId}}"]
+						}
+					}
+				},
+				{
+					"name": "Create Note",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"catId\": \"{{catId}}\",\n  \"date\": \"2024-03-15T10:30:00\",\n  \"text\": \"Gato chegou ao abrigo em boas condições de saúde. Muito carinhoso e brincalhão.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/notes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "notes"]
+						}
+					}
+				},
+				{
+					"name": "Update Note",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"catId\": \"{{catId}}\",\n  \"date\": \"2024-03-15T10:30:00\",\n  \"text\": \"Gato chegou ao abrigo em boas condições de saúde. Muito carinhoso e brincalhão. Atualização: passou por consulta veterinária.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "notes", "{{noteId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Note",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/notes/{{noteId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "notes", "{{noteId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Notes by Cat ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/notes/cat/{{catId}}?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "notes", "cat", "{{catId}}"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Search Notes by Text",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/notes/search/text?text=medicamento&page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "notes", "search", "text"],
+							"query": [
+								{"key": "text", "value": "medicamento"},
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Notes by Date Range",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/notes/date-range?startDate=2024-01-01T00:00:00&endDate=2024-03-31T23:59:59&page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "notes", "date-range"],
+							"query": [
+								{"key": "startDate", "value": "2024-01-01T00:00:00"},
+								{"key": "endDate", "value": "2024-03-31T23:59:59"},
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Sterilizations API",
+			"item": [
+				{
+					"name": "Get All Sterilizations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sterilizations?page=0&size=10&sortBy=sterilizationDate&sortDir=desc",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "sterilizations"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "sortBy", "value": "sterilizationDate"},
+								{"key": "sortDir", "value": "desc"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get All Sterilizations with Filters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sterilizations?page=0&size=10&status=SCHEDULED&startDate=2024-01-01T00:00:00&endDate=2024-12-31T23:59:59",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "sterilizations"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"},
+								{"key": "status", "value": "SCHEDULED"},
+								{"key": "startDate", "value": "2024-01-01T00:00:00"},
+								{"key": "endDate", "value": "2024-12-31T23:59:59"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Sterilization by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sterilizations/{{sterilizationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "sterilizations", "{{sterilizationId}}"]
+						}
+					}
+				},
+				{
+					"name": "Create Sterilization",
+					"request": {
+						"method": "POST",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"catId\": \"{{catId}}\",\n  \"sterilizationDate\": \"2024-04-20T09:00:00\",\n  \"status\": \"SCHEDULED\",\n  \"notes\": \"Procedimento agendado com veterinário Dr. Silva\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/sterilizations",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "sterilizations"]
+						}
+					}
+				},
+				{
+					"name": "Update Sterilization",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{"key": "Content-Type", "value": "application/json"}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"catId\": \"{{catId}}\",\n  \"sterilizationDate\": \"2024-04-20T09:00:00\",\n  \"status\": \"COMPLETED\",\n  \"notes\": \"Procedimento realizado com sucesso. Recuperação normal.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/sterilizations/{{sterilizationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "sterilizations", "{{sterilizationId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Sterilization",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sterilizations/{{sterilizationId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "sterilizations", "{{sterilizationId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Sterilizations by Cat ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sterilizations/cat/{{catId}}?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "sterilizations", "cat", "{{catId}}"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Sterilizations by Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sterilizations/status/SCHEDULED?page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "sterilizations", "status", "SCHEDULED"],
+							"query": [
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Sterilizations by Date Range",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/sterilizations/date-range?startDate=2024-01-01T00:00:00&endDate=2024-06-30T23:59:59&page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "sterilizations", "date-range"],
+							"query": [
+								{"key": "startDate", "value": "2024-01-01T00:00:00"},
+								{"key": "endDate", "value": "2024-06-30T23:59:59"},
+								{"key": "page", "value": "0"},
+								{"key": "size", "value": "10"}
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "catId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adopterId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adoptionId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "noteId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "sterilizationId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
+
