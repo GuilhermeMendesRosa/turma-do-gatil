@@ -62,6 +62,8 @@ public class CatService {
     }
 
     public Page<Cat> findWithFilters(String name, Color color, Sex sex, Boolean adopted, Pageable pageable) {
-        return catRepository.findWithFilters(name, color, sex, adopted, pageable);
+        String colorStr = color != null ? color.name() : null;
+        String sexStr = sex != null ? sex.name() : null;
+        return catRepository.findWithFilters(name, colorStr, sexStr, adopted, pageable);
     }
 }

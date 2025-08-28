@@ -16,7 +16,7 @@ public class Cat {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255)")
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -33,7 +33,7 @@ public class Cat {
     @Column(name = "shelter_entry_date", nullable = false)
     private LocalDateTime shelterEntryDate;
 
-    @Column(name = "photo_url")
+    @Column(name = "photo_url", columnDefinition = "VARCHAR(500)")
     private String photoUrl;
 
     @Column(nullable = false)

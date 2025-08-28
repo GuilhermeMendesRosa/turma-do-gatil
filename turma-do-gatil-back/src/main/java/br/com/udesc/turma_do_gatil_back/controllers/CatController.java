@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cats")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*", maxAge = 3600)
 public class CatController {
 
     @Autowired

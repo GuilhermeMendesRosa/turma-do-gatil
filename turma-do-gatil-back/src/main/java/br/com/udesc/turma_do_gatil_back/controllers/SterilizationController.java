@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/sterilizations")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*", maxAge = 3600)
 public class SterilizationController {
 
     @Autowired

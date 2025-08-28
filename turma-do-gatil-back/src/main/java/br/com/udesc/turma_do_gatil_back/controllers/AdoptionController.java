@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/adoptions")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*", maxAge = 3600)
 public class AdoptionController {
 
     @Autowired

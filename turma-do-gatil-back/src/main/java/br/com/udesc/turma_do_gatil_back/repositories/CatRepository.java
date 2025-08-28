@@ -23,14 +23,16 @@ public interface CatRepository extends JpaRepository<Cat, UUID> {
 
     Page<Cat> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
-    @Query("SELECT c FROM Cat c WHERE " +
-           "(:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+    @Query(value = "SELECT * FROM cats c WHERE " +
+           "(:name IS NULL OR LOWER(c.name::text) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
            "(:color IS NULL OR c.color = :color) AND " +
            "(:sex IS NULL OR c.sex = :sex) AND " +
-           "(:adopted IS NULL OR c.adopted = :adopted)")
+           "(:adopted IS NULL OR c.adopted = :adopted) " +
+           "ORDER BY c.name",
+           nativeQuery = true)
     Page<Cat> findWithFilters(@Param("name") String name,
-                             @Param("color") Color color,
-                             @Param("sex") Sex sex,
+                             @Param("color") String color,
+                             @Param("sex") String sex,
                              @Param("adopted") Boolean adopted,
                              Pageable pageable);
 }

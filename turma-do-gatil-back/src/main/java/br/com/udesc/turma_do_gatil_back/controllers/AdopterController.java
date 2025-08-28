@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/adopters")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*", maxAge = 3600)
 public class AdopterController {
 
     @Autowired

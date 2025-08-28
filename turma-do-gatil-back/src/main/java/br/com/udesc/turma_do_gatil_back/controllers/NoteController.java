@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/notes")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*", maxAge = 3600)
 public class NoteController {
 
     @Autowired
