@@ -171,21 +171,24 @@
   font-size: 0.85rem;
 }
 
-.filter-input,
-.filter-select {
-  width: 100%;
-  border-radius: 8px !important;
-}
-
 .filter-input {
+  width: 100%;
   padding: 0.75rem 1rem !important;
   border: 2px solid var(--p-surface-border) !important;
+  border-radius: 8px !important;
+  background: var(--p-surface-card) !important;
+  color: var(--p-text-color) !important;
   transition: all 0.3s ease !important;
 }
 
 .filter-input:focus {
   border-color: var(--p-primary-color) !important;
   box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.1) !important;
+  outline: none !important;
+}
+
+.filter-input::placeholder {
+  color: var(--p-text-color-secondary) !important;
 }
 
 .filter-actions {
@@ -670,6 +673,100 @@
 }
 
 /* ===== CUSTOMIZAÇÃO DE COMPONENTES PRIMENG ===== */
+::ng-deep .p-select {
+  width: 100% !important;
+  border-radius: 8px !important;
+  border: 2px solid var(--p-surface-border) !important;
+  background: var(--p-surface-card) !important;
+  background-color: white !important;
+  transition: all 0.3s ease !important;
+  min-height: 45px !important;
+}
+
+::ng-deep .p-select:not(.p-disabled) {
+  background: white !important;
+  background-color: white !important;
+}
+
+::ng-deep .p-select:not(.p-disabled).p-focus {
+  border-color: var(--p-primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.1) !important;
+  background: white !important;
+  background-color: white !important;
+}
+
+::ng-deep .p-select .p-select-label {
+  padding: 0.75rem 1rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: var(--p-text-color) !important;
+  border: none !important;
+  line-height: 1.4 !important;
+}
+
+::ng-deep .p-select .p-select-label.p-placeholder {
+  color: var(--p-text-color-secondary) !important;
+}
+
+::ng-deep .p-select .p-select-dropdown {
+  border: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: var(--p-primary-color) !important;
+  width: 2.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+::ng-deep .p-select .p-select-clear-icon {
+  color: var(--p-text-color-secondary) !important;
+  right: 2.5rem !important;
+}
+
+::ng-deep .p-select-overlay {
+  border-radius: 8px !important;
+  border: 1px solid var(--p-surface-border) !important;
+  box-shadow: 0 8px 25px rgba(242, 187, 174, 0.15) !important;
+  background: white !important;
+  background-color: white !important;
+}
+
+::ng-deep .p-select-overlay .p-select-items {
+  background: white !important;
+  background-color: white !important;
+  border-radius: 8px !important;
+}
+
+::ng-deep .p-select-overlay .p-select-items .p-select-item {
+  padding: 0.75rem 1rem !important;
+  color: var(--p-text-color) !important;
+  transition: all 0.2s ease !important;
+  background: white !important;
+  background-color: white !important;
+}
+
+::ng-deep .p-select-overlay .p-select-items .p-select-item:hover {
+  background: var(--p-surface-hover) !important;
+  background-color: var(--p-surface-hover) !important;
+  color: var(--p-text-color) !important;
+}
+
+::ng-deep .p-select-overlay .p-select-items .p-select-item.p-selected {
+  background: var(--p-primary-color) !important;
+  background-color: var(--p-primary-color) !important;
+  color: white !important;
+}
+
+/* Forçar background nos estados específicos */
+::ng-deep .filter-select .p-select,
+::ng-deep .filter-select .p-select:not(.p-disabled),
+::ng-deep .filter-select .p-select:focus,
+::ng-deep .filter-select .p-select:hover {
+  background: white !important;
+  background-color: white !important;
+}
+
 ::ng-deep .p-paginator {
   background: var(--p-surface-card) !important;
   border: 1px solid var(--p-surface-border) !important;
@@ -697,15 +794,6 @@
   transform: translateY(-2px) !important;
 }
 
-::ng-deep .p-select {
-  border-radius: 8px !important;
-}
-
-::ng-deep .p-select:not(.p-disabled).p-focus {
-  border-color: var(--p-primary-color) !important;
-  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.1) !important;
-}
-
 ::ng-deep .p-skeleton {
   border-radius: 8px !important;
 }
@@ -718,4 +806,25 @@
   --surface-card: var(--p-surface-card);
   --surface-border: var(--p-surface-border);
   --surface-ground: var(--p-surface-ground);
+}
+
+/* ===== CLASSES CUSTOM SELECT ===== */
+.custom-select ::ng-deep .p-select {
+  background: white !important;
+  background-color: white !important;
+}
+
+.custom-select ::ng-deep .p-select-label {
+  background: white !important;
+  background-color: white !important;
+}
+
+.custom-select ::ng-deep .p-select:hover {
+  background: white !important;
+  background-color: white !important;
+}
+
+.custom-select ::ng-deep .p-select:focus {
+  background: white !important;
+  background-color: white !important;
 }

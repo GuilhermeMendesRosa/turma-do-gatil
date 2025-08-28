@@ -85,7 +85,8 @@
             optionLabel="label"
             optionValue="value"
             placeholder="Todas as cores"
-            class="filter-select">
+            [showClear]="true"
+            class="filter-select custom-select">
           </p-select>
         </div>
 
@@ -102,7 +103,8 @@
             optionLabel="label"
             optionValue="value"
             placeholder="Todos os sexos"
-            class="filter-select">
+            [showClear]="true"
+            class="filter-select custom-select">
           </p-select>
         </div>
 
@@ -118,8 +120,9 @@
             [options]="adoptionStatusOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Status de adoção"
-            class="filter-select">
+            placeholder="Disponíveis para adoção"
+            [showClear]="true"
+            class="filter-select custom-select">
           </p-select>
         </div>
 
@@ -136,7 +139,7 @@
             optionLabel="label"
             optionValue="value"
             placeholder="Ordenação"
-            class="filter-select">
+            class="filter-select custom-select">
           </p-select>
         </div>
 

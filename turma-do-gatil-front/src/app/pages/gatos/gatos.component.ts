@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { SelectModule } from 'primeng/select';
+import { Select } from 'primeng/select';
 import { PaginatorModule } from 'primeng/paginator';
 import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -22,7 +22,7 @@ import { Cat, Color, Sex, CatFilters, Page } from '../../models/cat.model';
     CardModule,
     ButtonModule,
     InputTextModule,
-    SelectModule,
+    Select,
     PaginatorModule,
     TagModule,
     SkeletonModule,
@@ -70,9 +70,9 @@ export class GatosComponent implements OnInit {
   ];
 
   adoptionStatusOptions = [
-    { label: 'Não adotados', value: false },
-    { label: 'Adotados', value: true },
-    { label: 'Todos', value: null }
+    { label: 'Disponíveis para adoção', value: false },
+    { label: 'Já adotados', value: true },
+    { label: 'Todos os gatos', value: null }
   ];
 
   sortOptions = [
@@ -150,7 +150,7 @@ export class GatosComponent implements OnInit {
 
   clearFilters(): void {
     this.filters = {
-      adopted: false,
+      adopted: false, // Manter filtro padrão para não adotados
       page: 0,
       size: 12,
       sortBy: 'name',
@@ -160,16 +160,20 @@ export class GatosComponent implements OnInit {
   }
 
   getAvailableCatsCount(): number {
+    // Se não há filtro de adoção ou está filtrando por não adotados, retorna o total
     if (this.filters.adopted === false) {
       return this.totalRecords;
     }
+    // Caso contrário, conta os não adotados na lista atual
     return this.cats.filter(cat => !cat.adopted).length;
   }
 
   getAdoptedCatsCount(): number {
+    // Se está filtrando por adotados, retorna o total
     if (this.filters.adopted === true) {
       return this.totalRecords;
     }
+    // Caso contrário, conta os adotados na lista atual
     return this.cats.filter(cat => cat.adopted).length;
   }
 
@@ -210,7 +214,7 @@ export class GatosComponent implements OnInit {
     return !!(this.filters.name || 
              this.filters.color || 
              this.filters.sex || 
-             (this.filters.adopted !== false && this.filters.adopted !== null));
+             (this.filters.adopted !== false && this.filters.adopted !== undefined));
   }
 
   onPageSizeChange(): void {
