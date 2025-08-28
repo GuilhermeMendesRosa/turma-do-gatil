@@ -167,8 +167,7 @@
           <p-skeleton height="1rem" width="50%" class="skeleton-text"></p-skeleton>
           <p-skeleton height="1rem" width="40%" class="skeleton-text"></p-skeleton>
           <div class="skeleton-actions">
-            <p-skeleton height="2rem" width="45%"></p-skeleton>
-            <p-skeleton height="2rem" width="45%"></p-skeleton>
+            <p-skeleton height="2rem" width="100%"></p-skeleton>
           </div>
         </div>
       </div>
@@ -245,25 +244,6 @@
               severity="info"
               (onClick)="viewCatDetails(cat)"
               pTooltip="Ver informações completas do gato">
-            </p-button>
-            
-            <p-button 
-              label="Editar" 
-              icon="pi pi-pencil" 
-              size="small"
-              severity="secondary"
-              (onClick)="editCat(cat)"
-              pTooltip="Editar informações do gato">
-            </p-button>
-
-            <p-button 
-              *ngIf="!cat.adopted"
-              label="Adotar" 
-              icon="pi pi-heart" 
-              size="small"
-              severity="success"
-              (onClick)="adoptCat(cat)"
-              pTooltip="Registrar adoção">
             </p-button>
           </div>
         </div>
