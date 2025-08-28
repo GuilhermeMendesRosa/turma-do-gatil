@@ -882,72 +882,15 @@
   background-color: white !important;
 }
 
-/* ===== DIÁLOGO DE DETALHES DO GATO ===== */
-/* Máscara de fundo com desfoque */
-::ng-deep .p-dialog-mask.cat-details-dialog,
-::ng-deep .cat-details-dialog .p-dialog-mask,
-::ng-deep .p-dialog-mask {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  -moz-backdrop-filter: blur(8px) !important;
-  -ms-backdrop-filter: blur(8px) !important;
-}
-
-/* Regra específica para garantir o desfoque */
-:host ::ng-deep .p-dialog-mask {
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-}
-
-/* Fallback caso backdrop-filter não seja suportado */
-@supports not (backdrop-filter: blur(8px)) {
-  ::ng-deep .p-dialog-mask {
-    background-color: rgba(0, 0, 0, 0.6) !important;
-  }
-}
-
-/* Classe específica para o backdrop desfocado */
-::ng-deep .blur-backdrop {
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  -moz-backdrop-filter: blur(8px) !important;
-  background-color: rgba(0, 0, 0, 0.4) !important;
-}
-
-::ng-deep .cat-details-dialog .p-dialog {
-  background: var(--p-surface-card) !important;
-  border: 1px solid var(--p-surface-border);
-  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
-}
-
-::ng-deep .cat-details-dialog .p-dialog-header {
-  background: var(--gradient-primary);
-  color: white;
-  border-radius: 12px 12px 0 0;
-  padding: 1.5rem 2rem;
-}
-
-::ng-deep .cat-details-dialog .p-dialog-header .p-dialog-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: white;
-}
-
-::ng-deep .cat-details-dialog .p-dialog-header .p-dialog-header-icon {
-  color: white;
-}
-
-::ng-deep .cat-details-dialog .p-dialog-content {
-  padding: 0;
-  border-radius: 0 0 12px 12px;
-  background: var(--p-surface-card) !important;
-}
-
-::ng-deep .cat-details-dialog .p-dialog-footer {
-  background: var(--p-surface-card) !important;
-  border-radius: 0 0 12px 12px;
-  border-top: 1px solid var(--p-surface-border);
+/* ===== CORES E TEMAS ===== */
+:host {
+  --primary-color: var(--p-primary-color, #F2BBAE);
+  --text-color: var(--p-text-color, #1f2937);
+  --text-color-secondary: var(--p-text-color-secondary, #6b7280);
+  --surface-card: var(--p-surface-card, #ffffff);
+  --surface-border: var(--p-surface-border, #e5e7eb);
+  --surface-ground: var(--p-surface-ground, #f9fafb);
+  --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
 }
 
 .cat-profile-container {

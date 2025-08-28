@@ -10,10 +10,9 @@ import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { ImageModule } from 'primeng/image';
-import { DialogModule } from 'primeng/dialog';
-import { DividerModule } from 'primeng/divider';
 import { CatService } from '../../services/cat.service';
 import { Cat, Color, Sex, CatFilters, Page } from '../../models/cat.model';
+import { CatDetailsModalComponent } from './cat-details-modal/cat-details-modal.component';
 
 @Component({
   selector: 'app-gatos',
@@ -30,8 +29,7 @@ import { Cat, Color, Sex, CatFilters, Page } from '../../models/cat.model';
     SkeletonModule,
     TooltipModule,
     ImageModule,
-    DialogModule,
-    DividerModule
+    CatDetailsModalComponent
   ],
   templateUrl: './gatos.component.html',
   styleUrl: './gatos.component.css'
@@ -208,11 +206,6 @@ export class GatosComponent implements OnInit {
     this.catDetailsDialog = true;
   }
 
-  closeCatDetailsDialog(): void {
-    this.catDetailsDialog = false;
-    this.selectedCat = null;
-  }
-
   editCat(cat: Cat): void {
     // TODO: Implementar edição do gato
     console.log('Editar gato:', cat);
@@ -287,23 +280,5 @@ export class GatosComponent implements OnInit {
 
   onImageError(event: any): void {
     event.target.src = this.getDefaultImage();
-  }
-
-  getDaysInShelter(entryDate: string): number {
-    const entry = new Date(entryDate);
-    const today = new Date();
-    const diffTime = Math.abs(today.getTime() - entry.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  }
-
-  formatDateTime(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
   }
 }
