@@ -167,7 +167,7 @@
           <p-skeleton height="1rem" width="50%" class="skeleton-text"></p-skeleton>
           <p-skeleton height="1rem" width="40%" class="skeleton-text"></p-skeleton>
           <div class="skeleton-actions">
-            <p-skeleton height="2rem" width="100%"></p-skeleton>
+            <!-- Sem skeleton de botões pois o card é clicável -->
           </div>
         </div>
       </div>
@@ -177,7 +177,7 @@
   <!-- Grid de gatos -->
   <div class="cats-grid" *ngIf="!loading">
     <div class="cat-card" *ngFor="let cat of cats; trackBy: trackByCatId">
-      <div class="cat-card-inner">
+      <div class="cat-card-inner clickable-card" (click)="viewCatDetails(cat)" pTooltip="Clique para ver o perfil completo">
         <!-- Imagem do gato -->
         <div class="cat-image-container">
           <img 
@@ -236,15 +236,7 @@
 
           <!-- Ações do gato -->
           <div class="cat-actions">
-            <p-button 
-              label="Ver Perfil" 
-              icon="pi pi-eye" 
-              [outlined]="true"
-              size="small"
-              severity="info"
-              (onClick)="viewCatDetails(cat)"
-              pTooltip="Ver informações completas do gato">
-            </p-button>
+            <!-- Card clicável - sem botão Ver Perfil -->
           </div>
         </div>
       </div>
@@ -329,6 +321,7 @@
   [draggable]="false"
   [resizable]="false"
   styleClass="cat-details-dialog"
+  maskStyleClass="blur-backdrop"
   [style]="{width: '90vw', maxWidth: '800px'}"
   header="Perfil do Gato"
   (onHide)="closeCatDetailsDialog()">
@@ -437,12 +430,33 @@
 
   <ng-template pTemplate="footer">
     <div class="dialog-footer">
-      <p-button 
-        label="Fechar" 
-        icon="pi pi-times" 
-        (onClick)="closeCatDetailsDialog()"
-        [outlined]="true">
-      </p-button>
+      <div class="action-buttons">
+        <p-button 
+          *ngIf="!selectedCat?.adopted"
+          label="Adotar" 
+          icon="pi pi-heart" 
+          severity="success"
+          (onClick)="adoptCat(selectedCat!)"
+          pTooltip="Registrar adoção do gato">
+        </p-button>
+        
+        <p-button 
+          label="Editar" 
+          icon="pi pi-pencil" 
+          severity="secondary"
+          (onClick)="editCat(selectedCat!)"
+          pTooltip="Editar informações do gato">
+        </p-button>
+        
+        <p-button 
+          label="Deletar" 
+          icon="pi pi-trash" 
+          severity="danger"
+          [outlined]="true"
+          (onClick)="deleteCat(selectedCat!)"
+          pTooltip="Remover gato do sistema">
+        </p-button>
+      </div>
     </div>
   </ng-template>
 </p-dialog>
