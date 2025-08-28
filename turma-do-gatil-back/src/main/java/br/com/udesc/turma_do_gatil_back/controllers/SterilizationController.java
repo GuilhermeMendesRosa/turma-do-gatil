@@ -1,7 +1,9 @@
 package br.com.udesc.turma_do_gatil_back.controllers;
 
+import br.com.udesc.turma_do_gatil_back.dto.SterilizationDto;
 import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
 import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
+import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.SterilizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,7 +29,7 @@ public class SterilizationController {
     private SterilizationService sterilizationService;
 
     @GetMapping
-    public ResponseEntity<Page<Sterilization>> getAllSterilizations(
+    public ResponseEntity<Page<SterilizationDto>> getAllSterilizations(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "sterilizationDate") String sortBy,
@@ -49,31 +52,34 @@ public class SterilizationController {
             sterilizations = sterilizationService.findAll(pageable);
         }
 
-        return ResponseEntity.ok(sterilizations);
+        Page<SterilizationDto> sterilizationsDto = EntityMapper.toPage(sterilizations, EntityMapper::toSterilizationDto);
+        return ResponseEntity.ok(sterilizationsDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Sterilization> getSterilizationById(@PathVariable UUID id) {
+    public ResponseEntity<SterilizationDto> getSterilizationById(@PathVariable UUID id) {
         Optional<Sterilization> sterilization = sterilizationService.findById(id);
-        return sterilization.map(ResponseEntity::ok)
+        return sterilization.map(s -> ResponseEntity.ok(EntityMapper.toSterilizationDto(s)))
                            .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Sterilization> createSterilization(@RequestBody Sterilization sterilization) {
+    public ResponseEntity<SterilizationDto> createSterilization(@RequestBody SterilizationDto sterilizationDto) {
         try {
+            Sterilization sterilization = EntityMapper.toSterilizationEntity(sterilizationDto);
             Sterilization savedSterilization = sterilizationService.save(sterilization);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedSterilization);
+            return ResponseEntity.status(HttpStatus.CREATED).body(EntityMapper.toSterilizationDto(savedSterilization));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Sterilization> updateSterilization(@PathVariable UUID id, @RequestBody Sterilization sterilization) {
+    public ResponseEntity<SterilizationDto> updateSterilization(@PathVariable UUID id, @RequestBody SterilizationDto sterilizationDto) {
         try {
+            Sterilization sterilization = EntityMapper.toSterilizationEntity(sterilizationDto);
             Sterilization updatedSterilization = sterilizationService.update(id, sterilization);
-            return ResponseEntity.ok(updatedSterilization);
+            return ResponseEntity.ok(EntityMapper.toSterilizationDto(updatedSterilization));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -92,25 +98,16 @@ public class SterilizationController {
     }
 
     @GetMapping("/cat/{catId}")
-    public ResponseEntity<Page<Sterilization>> getSterilizationsByCatId(
-            @PathVariable UUID catId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "sterilizationDate") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Sterilization> sterilizations = sterilizationService.findByCatId(catId, pageable);
-
-        return ResponseEntity.ok(sterilizations);
+    public ResponseEntity<List<SterilizationDto>> getSterilizationsByCatId(@PathVariable UUID catId) {
+        // Como o serviço retorna Page, vamos usar paginação com valores padrão
+        Pageable pageable = PageRequest.of(0, 1000); // Página grande para pegar todos
+        Page<Sterilization> sterilizationsPage = sterilizationService.findByCatId(catId, pageable);
+        List<SterilizationDto> sterilizationsDto = EntityMapper.toList(sterilizationsPage.getContent(), EntityMapper::toSterilizationDto);
+        return ResponseEntity.ok(sterilizationsDto);
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<Page<Sterilization>> getSterilizationsByStatus(
+    public ResponseEntity<Page<SterilizationDto>> getSterilizationsByStatus(
             @PathVariable SterilizationStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -122,27 +119,9 @@ public class SterilizationController {
             : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
+
         Page<Sterilization> sterilizations = sterilizationService.findByStatus(status, pageable);
-
-        return ResponseEntity.ok(sterilizations);
-    }
-
-    @GetMapping("/date-range")
-    public ResponseEntity<Page<Sterilization>> getSterilizationsByDateRange(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "sterilizationDate") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Sterilization> sterilizations = sterilizationService.findByDateRange(startDate, endDate, pageable);
-
-        return ResponseEntity.ok(sterilizations);
+        Page<SterilizationDto> sterilizationsDto = EntityMapper.toPage(sterilizations, EntityMapper::toSterilizationDto);
+        return ResponseEntity.ok(sterilizationsDto);
     }
 }

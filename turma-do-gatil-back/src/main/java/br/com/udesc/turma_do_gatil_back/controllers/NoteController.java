@@ -1,6 +1,8 @@
 package br.com.udesc.turma_do_gatil_back.controllers;
 
+import br.com.udesc.turma_do_gatil_back.dto.NoteDto;
 import br.com.udesc.turma_do_gatil_back.entities.Note;
+import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,7 +28,7 @@ public class NoteController {
     private NoteService noteService;
 
     @GetMapping
-    public ResponseEntity<Page<Note>> getAllNotes(
+    public ResponseEntity<Page<NoteDto>> getAllNotes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "date") String sortBy,
@@ -48,31 +51,34 @@ public class NoteController {
             notes = noteService.findAll(pageable);
         }
 
-        return ResponseEntity.ok(notes);
+        Page<NoteDto> notesDto = EntityMapper.toPage(notes, EntityMapper::toNoteDto);
+        return ResponseEntity.ok(notesDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Note> getNoteById(@PathVariable UUID id) {
+    public ResponseEntity<NoteDto> getNoteById(@PathVariable UUID id) {
         Optional<Note> note = noteService.findById(id);
-        return note.map(ResponseEntity::ok)
+        return note.map(n -> ResponseEntity.ok(EntityMapper.toNoteDto(n)))
                   .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Note> createNote(@RequestBody Note note) {
+    public ResponseEntity<NoteDto> createNote(@RequestBody NoteDto noteDto) {
         try {
+            Note note = EntityMapper.toNoteEntity(noteDto);
             Note savedNote = noteService.save(note);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedNote);
+            return ResponseEntity.status(HttpStatus.CREATED).body(EntityMapper.toNoteDto(savedNote));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Note> updateNote(@PathVariable UUID id, @RequestBody Note note) {
+    public ResponseEntity<NoteDto> updateNote(@PathVariable UUID id, @RequestBody NoteDto noteDto) {
         try {
+            Note note = EntityMapper.toNoteEntity(noteDto);
             Note updatedNote = noteService.update(id, note);
-            return ResponseEntity.ok(updatedNote);
+            return ResponseEntity.ok(EntityMapper.toNoteDto(updatedNote));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -91,57 +97,11 @@ public class NoteController {
     }
 
     @GetMapping("/cat/{catId}")
-    public ResponseEntity<Page<Note>> getNotesByCatId(
-            @PathVariable UUID catId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "date") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Note> notes = noteService.findByCatId(catId, pageable);
-
-        return ResponseEntity.ok(notes);
-    }
-
-    @GetMapping("/search/text")
-    public ResponseEntity<Page<Note>> searchNotesByText(
-            @RequestParam String text,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "date") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Note> notes = noteService.findByTextContaining(text, pageable);
-
-        return ResponseEntity.ok(notes);
-    }
-
-    @GetMapping("/date-range")
-    public ResponseEntity<Page<Note>> getNotesByDateRange(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "date") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Note> notes = noteService.findByDateRange(startDate, endDate, pageable);
-
-        return ResponseEntity.ok(notes);
+    public ResponseEntity<List<NoteDto>> getNotesByCatId(@PathVariable UUID catId) {
+        // Como o serviço retorna Page, vamos usar paginação com valores padrão
+        Pageable pageable = PageRequest.of(0, 1000); // Página grande para pegar todos
+        Page<Note> notesPage = noteService.findByCatId(catId, pageable);
+        List<NoteDto> notesDto = EntityMapper.toList(notesPage.getContent(), EntityMapper::toNoteDto);
+        return ResponseEntity.ok(notesDto);
     }
 }

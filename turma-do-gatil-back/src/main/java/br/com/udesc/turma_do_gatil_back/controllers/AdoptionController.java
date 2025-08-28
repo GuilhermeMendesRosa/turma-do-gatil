@@ -1,7 +1,9 @@
 package br.com.udesc.turma_do_gatil_back.controllers;
 
+import br.com.udesc.turma_do_gatil_back.dto.AdoptionDto;
 import br.com.udesc.turma_do_gatil_back.entities.Adoption;
 import br.com.udesc.turma_do_gatil_back.enums.AdoptionStatus;
+import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.AdoptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +29,7 @@ public class AdoptionController {
     private AdoptionService adoptionService;
 
     @GetMapping
-    public ResponseEntity<Page<Adoption>> getAllAdoptions(
+    public ResponseEntity<Page<AdoptionDto>> getAllAdoptions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "adoptionDate") String sortBy,
@@ -51,31 +53,34 @@ public class AdoptionController {
             adoptions = adoptionService.findAll(pageable);
         }
 
-        return ResponseEntity.ok(adoptions);
+        Page<AdoptionDto> adoptionsDto = EntityMapper.toPage(adoptions, EntityMapper::toAdoptionDto);
+        return ResponseEntity.ok(adoptionsDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Adoption> getAdoptionById(@PathVariable UUID id) {
+    public ResponseEntity<AdoptionDto> getAdoptionById(@PathVariable UUID id) {
         Optional<Adoption> adoption = adoptionService.findById(id);
-        return adoption.map(ResponseEntity::ok)
+        return adoption.map(a -> ResponseEntity.ok(EntityMapper.toAdoptionDto(a)))
                       .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Adoption> createAdoption(@RequestBody Adoption adoption) {
+    public ResponseEntity<AdoptionDto> createAdoption(@RequestBody AdoptionDto adoptionDto) {
         try {
+            Adoption adoption = EntityMapper.toAdoptionEntity(adoptionDto);
             Adoption savedAdoption = adoptionService.save(adoption);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedAdoption);
+            return ResponseEntity.status(HttpStatus.CREATED).body(EntityMapper.toAdoptionDto(savedAdoption));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Adoption> updateAdoption(@PathVariable UUID id, @RequestBody Adoption adoption) {
+    public ResponseEntity<AdoptionDto> updateAdoption(@PathVariable UUID id, @RequestBody AdoptionDto adoptionDto) {
         try {
+            Adoption adoption = EntityMapper.toAdoptionEntity(adoptionDto);
             Adoption updatedAdoption = adoptionService.update(id, adoption);
-            return ResponseEntity.ok(updatedAdoption);
+            return ResponseEntity.ok(EntityMapper.toAdoptionDto(updatedAdoption));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -93,8 +98,26 @@ public class AdoptionController {
         }
     }
 
+    @GetMapping("/cat/{catId}")
+    public ResponseEntity<List<AdoptionDto>> getAdoptionsByCatId(@PathVariable UUID catId) {
+        // Como o serviço retorna Page, vamos usar paginação com valores padrão
+        Pageable pageable = PageRequest.of(0, 1000); // Página grande para pegar todos
+        Page<Adoption> adoptionsPage = adoptionService.findByCatId(catId, pageable);
+        List<AdoptionDto> adoptionsDto = EntityMapper.toList(adoptionsPage.getContent(), EntityMapper::toAdoptionDto);
+        return ResponseEntity.ok(adoptionsDto);
+    }
+
+    @GetMapping("/adopter/{adopterId}")
+    public ResponseEntity<List<AdoptionDto>> getAdoptionsByAdopterId(@PathVariable UUID adopterId) {
+        // Como o serviço retorna Page, vamos usar paginação com valores padrão
+        Pageable pageable = PageRequest.of(0, 1000); // Página grande para pegar todos
+        Page<Adoption> adoptionsPage = adoptionService.findByAdopterId(adopterId, pageable);
+        List<AdoptionDto> adoptionsDto = EntityMapper.toList(adoptionsPage.getContent(), EntityMapper::toAdoptionDto);
+        return ResponseEntity.ok(adoptionsDto);
+    }
+
     @GetMapping("/status/{status}")
-    public ResponseEntity<Page<Adoption>> getAdoptionsByStatus(
+    public ResponseEntity<Page<AdoptionDto>> getAdoptionsByStatus(
             @PathVariable AdoptionStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -106,53 +129,9 @@ public class AdoptionController {
             : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
+
         Page<Adoption> adoptions = adoptionService.findByStatus(status, pageable);
-
-        return ResponseEntity.ok(adoptions);
-    }
-
-    @GetMapping("/cat/{catId}")
-    public ResponseEntity<Page<Adoption>> getAdoptionsByCatId(
-            @PathVariable UUID catId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "adoptionDate") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Adoption> adoptions = adoptionService.findByCatId(catId, pageable);
-
-        return ResponseEntity.ok(adoptions);
-    }
-
-    @GetMapping("/adopter/{adopterId}")
-    public ResponseEntity<Page<Adoption>> getAdoptionsByAdopterId(
-            @PathVariable UUID adopterId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "adoptionDate") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Adoption> adoptions = adoptionService.findByAdopterId(adopterId, pageable);
-
-        return ResponseEntity.ok(adoptions);
-    }
-
-    @GetMapping("/cat/{catId}/status/{status}")
-    public ResponseEntity<List<Adoption>> getAdoptionsByCatIdAndStatus(
-            @PathVariable UUID catId,
-            @PathVariable AdoptionStatus status) {
-
-        List<Adoption> adoptions = adoptionService.findByCatIdAndStatus(catId, status);
-        return ResponseEntity.ok(adoptions);
+        Page<AdoptionDto> adoptionsDto = EntityMapper.toPage(adoptions, EntityMapper::toAdoptionDto);
+        return ResponseEntity.ok(adoptionsDto);
     }
 }

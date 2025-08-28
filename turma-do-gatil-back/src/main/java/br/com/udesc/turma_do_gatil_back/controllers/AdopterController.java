@@ -1,6 +1,8 @@
 package br.com.udesc.turma_do_gatil_back.controllers;
 
+import br.com.udesc.turma_do_gatil_back.dto.AdopterDto;
 import br.com.udesc.turma_do_gatil_back.entities.Adopter;
+import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.AdopterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,7 +25,7 @@ public class AdopterController {
     private AdopterService adopterService;
 
     @GetMapping
-    public ResponseEntity<Page<Adopter>> getAllAdopters(
+    public ResponseEntity<Page<AdopterDto>> getAllAdopters(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "firstName") String sortBy,
@@ -45,35 +47,37 @@ public class AdopterController {
             adopters = adopterService.findAll(pageable);
         }
 
-        return ResponseEntity.ok(adopters);
+        Page<AdopterDto> adoptersDto = EntityMapper.toPage(adopters, EntityMapper::toAdopterDto);
+        return ResponseEntity.ok(adoptersDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Adopter> getAdopterById(@PathVariable UUID id) {
+    public ResponseEntity<AdopterDto> getAdopterById(@PathVariable UUID id) {
         Optional<Adopter> adopter = adopterService.findById(id);
-        return adopter.map(ResponseEntity::ok)
+        return adopter.map(a -> ResponseEntity.ok(EntityMapper.toAdopterDto(a)))
                      .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<Adopter> getAdopterByCpf(@PathVariable String cpf) {
+    public ResponseEntity<AdopterDto> getAdopterByCpf(@PathVariable String cpf) {
         Optional<Adopter> adopter = adopterService.findByCpf(cpf);
-        return adopter.map(ResponseEntity::ok)
+        return adopter.map(a -> ResponseEntity.ok(EntityMapper.toAdopterDto(a)))
                      .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<Adopter> getAdopterByEmail(@PathVariable String email) {
+    public ResponseEntity<AdopterDto> getAdopterByEmail(@PathVariable String email) {
         Optional<Adopter> adopter = adopterService.findByEmail(email);
-        return adopter.map(ResponseEntity::ok)
+        return adopter.map(a -> ResponseEntity.ok(EntityMapper.toAdopterDto(a)))
                      .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> createAdopter(@RequestBody Adopter adopter) {
+    public ResponseEntity<?> createAdopter(@RequestBody AdopterDto adopterDto) {
         try {
+            Adopter adopter = EntityMapper.toAdopterEntity(adopterDto);
             Adopter savedAdopter = adopterService.save(adopter);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedAdopter);
+            return ResponseEntity.status(HttpStatus.CREATED).body(EntityMapper.toAdopterDto(savedAdopter));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
@@ -82,14 +86,12 @@ public class AdopterController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAdopter(@PathVariable UUID id, @RequestBody Adopter adopter) {
+    public ResponseEntity<?> updateAdopter(@PathVariable UUID id, @RequestBody AdopterDto adopterDto) {
         try {
+            Adopter adopter = EntityMapper.toAdopterEntity(adopterDto);
             Adopter updatedAdopter = adopterService.update(id, adopter);
-            return ResponseEntity.ok(updatedAdopter);
+            return ResponseEntity.ok(EntityMapper.toAdopterDto(updatedAdopter));
         } catch (RuntimeException e) {
-            if (e.getMessage().contains("not found")) {
-                return ResponseEntity.notFound().build();
-            }
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -104,23 +106,5 @@ public class AdopterController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @GetMapping("/search/name")
-    public ResponseEntity<Page<Adopter>> searchAdoptersByName(
-            @RequestParam String name,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "firstName") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Adopter> adopters = adopterService.findByName(name, pageable);
-
-        return ResponseEntity.ok(adopters);
     }
 }

@@ -1,8 +1,10 @@
 package br.com.udesc.turma_do_gatil_back.controllers;
 
+import br.com.udesc.turma_do_gatil_back.dto.CatDto;
 import br.com.udesc.turma_do_gatil_back.entities.Cat;
 import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
+import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.CatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,7 +27,7 @@ public class CatController {
     private CatService catService;
 
     @GetMapping
-    public ResponseEntity<Page<Cat>> getAllCats(
+    public ResponseEntity<Page<CatDto>> getAllCats(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -48,31 +50,34 @@ public class CatController {
             cats = catService.findAll(pageable);
         }
 
-        return ResponseEntity.ok(cats);
+        Page<CatDto> catsDto = EntityMapper.toPage(cats, EntityMapper::toCatDto);
+        return ResponseEntity.ok(catsDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cat> getCatById(@PathVariable UUID id) {
+    public ResponseEntity<CatDto> getCatById(@PathVariable UUID id) {
         Optional<Cat> cat = catService.findById(id);
-        return cat.map(ResponseEntity::ok)
+        return cat.map(c -> ResponseEntity.ok(EntityMapper.toCatDto(c)))
                   .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Cat> createCat(@RequestBody Cat cat) {
+    public ResponseEntity<CatDto> createCat(@RequestBody CatDto catDto) {
         try {
+            Cat cat = EntityMapper.toCatEntity(catDto);
             Cat savedCat = catService.save(cat);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedCat);
+            return ResponseEntity.status(HttpStatus.CREATED).body(EntityMapper.toCatDto(savedCat));
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cat> updateCat(@PathVariable UUID id, @RequestBody Cat cat) {
+    public ResponseEntity<CatDto> updateCat(@PathVariable UUID id, @RequestBody CatDto catDto) {
         try {
+            Cat cat = EntityMapper.toCatEntity(catDto);
             Cat updatedCat = catService.update(id, cat);
-            return ResponseEntity.ok(updatedCat);
+            return ResponseEntity.ok(EntityMapper.toCatDto(updatedCat));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
@@ -91,7 +96,7 @@ public class CatController {
     }
 
     @GetMapping("/adopted/{adopted}")
-    public ResponseEntity<Page<Cat>> getCatsByAdoptionStatus(
+    public ResponseEntity<Page<CatDto>> getCatsByAdoptionStatus(
             @PathVariable Boolean adopted,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -103,44 +108,9 @@ public class CatController {
             : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
+
         Page<Cat> cats = catService.findByAdopted(adopted, pageable);
-
-        return ResponseEntity.ok(cats);
-    }
-
-    @GetMapping("/color/{color}")
-    public ResponseEntity<Page<Cat>> getCatsByColor(
-            @PathVariable Color color,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Cat> cats = catService.findByColor(color, pageable);
-
-        return ResponseEntity.ok(cats);
-    }
-
-    @GetMapping("/sex/{sex}")
-    public ResponseEntity<Page<Cat>> getCatsBySex(
-            @PathVariable Sex sex,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Cat> cats = catService.findBySex(sex, pageable);
-
-        return ResponseEntity.ok(cats);
+        Page<CatDto> catsDto = EntityMapper.toPage(cats, EntityMapper::toCatDto);
+        return ResponseEntity.ok(catsDto);
     }
 }
