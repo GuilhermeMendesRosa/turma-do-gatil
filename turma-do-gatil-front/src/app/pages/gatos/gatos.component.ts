@@ -10,9 +10,9 @@ import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
 import { ImageModule } from 'primeng/image';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { CatService } from '../../services/cat.service';
 import { Cat, Color, Sex, CatFilters, Page } from '../../models/cat.model';
 import { CatDetailsModalComponent } from './cat-details-modal/cat-details-modal.component';
@@ -33,12 +33,12 @@ import { CatCreateModalComponent } from './cat-create-modal/cat-create-modal.com
     SkeletonModule,
     TooltipModule,
     ImageModule,
-    ConfirmDialogModule,
+    DialogModule,
     ToastModule,
     CatDetailsModalComponent,
     CatCreateModalComponent
   ],
-  providers: [ConfirmationService, MessageService],
+  providers: [MessageService],
   templateUrl: './gatos.component.html',
   styleUrl: './gatos.component.css'
 })
@@ -55,6 +55,10 @@ export class GatosComponent implements OnInit {
 
   // Dialog de criação de gato
   catCreateDialog = false;
+
+  // Dialog de confirmação de delete
+  deleteConfirmDialog = false;
+  catToDelete: Cat | null = null;
 
   // Filtros
   filters: CatFilters = {
@@ -112,7 +116,6 @@ export class GatosComponent implements OnInit {
 
   constructor(
     private catService: CatService,
-    private confirmationService: ConfirmationService,
     private messageService: MessageService
   ) { }
 
@@ -239,36 +242,42 @@ export class GatosComponent implements OnInit {
   }
 
   deleteCat(cat: Cat): void {
-    this.confirmationService.confirm({
-      message: `Tem certeza de que deseja excluir o gato "${cat.name}"? Esta ação não pode ser desfeita.`,
-      header: 'Confirmar Exclusão',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sim, excluir',
-      rejectLabel: 'Cancelar',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.catService.deleteCat(cat.id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: `O gato "${cat.name}" foi excluído com sucesso.`
-            });
-            this.catDetailsDialog = false;
-            this.selectedCat = null;
-            this.loadCats(); // Recarrega a lista
-          },
-          error: (error) => {
-            console.error('Erro ao deletar gato:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: 'Ocorreu um erro ao tentar excluir o gato. Tente novamente.'
-            });
-          }
-        });
-      }
-    });
+    this.catToDelete = cat;
+    this.deleteConfirmDialog = true;
+  }
+
+  cancelDelete(): void {
+    this.deleteConfirmDialog = false;
+    this.catToDelete = null;
+  }
+
+  confirmDelete(): void {
+    if (this.catToDelete) {
+      this.catService.deleteCat(this.catToDelete.id).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: `O gato "${this.catToDelete!.name}" foi excluído com sucesso.`
+          });
+          this.catDetailsDialog = false;
+          this.selectedCat = null;
+          this.deleteConfirmDialog = false;
+          this.catToDelete = null;
+          this.loadCats(); // Recarrega a lista
+        },
+        error: (error) => {
+          console.error('Erro ao deletar gato:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Ocorreu um erro ao tentar excluir o gato. Tente novamente.'
+          });
+          this.deleteConfirmDialog = false;
+          this.catToDelete = null;
+        }
+      });
+    }
   }
 
   hasActiveFilters(): boolean {

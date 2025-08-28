@@ -328,6 +328,45 @@
   (catCreated)="onCatCreated()">
 </app-cat-create-modal>
 
-<!-- Componentes de confirmação e toast -->
-<p-confirmDialog></p-confirmDialog>
+<!-- Dialog de Confirmação de Delete -->
+<p-dialog 
+  [(visible)]="deleteConfirmDialog" 
+  [modal]="true" 
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="delete-confirm-dialog"
+  [style]="{width: '450px'}"
+  header="Confirmar Exclusão">
+  
+  <div class="delete-confirm-content">
+    <div class="delete-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="delete-message">
+      <p>Tem certeza de que deseja excluir o gato <strong>"{{ catToDelete?.name }}"</strong>?</p>
+      <p class="delete-warning">Esta ação não pode ser desfeita.</p>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="delete-dialog-footer">
+      <p-button 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="cancelDelete()">
+      </p-button>
+      <p-button 
+        label="Sim, excluir" 
+        icon="pi pi-trash" 
+        severity="danger"
+        (onClick)="confirmDelete()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Toast para mensagens -->
 <p-toast></p-toast>

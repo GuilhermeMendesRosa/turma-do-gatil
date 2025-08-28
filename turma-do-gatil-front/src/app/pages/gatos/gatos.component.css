@@ -1157,3 +1157,115 @@
     width: 100%;
   }
 }
+
+/* ===== DELETE CONFIRMATION DIALOG ===== */
+.delete-confirm-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.delete-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 12px rgba(238, 90, 82, 0.3);
+}
+
+.delete-message {
+  flex: 1;
+}
+
+.delete-message p {
+  margin: 0 0 0.5rem 0;
+  color: var(--p-text-color);
+  line-height: 1.5;
+}
+
+.delete-message p:last-child {
+  margin-bottom: 0;
+}
+
+.delete-warning {
+  color: var(--p-text-color-secondary);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.delete-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0;
+}
+
+.delete-dialog-footer p-button {
+  min-width: 120px;
+}
+
+::ng-deep .delete-confirm-dialog {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+::ng-deep .delete-confirm-dialog .p-dialog-header {
+  background: var(--p-surface-card);
+  border-bottom: 1px solid var(--p-surface-border);
+  padding: 1.25rem 1.5rem;
+}
+
+::ng-deep .delete-confirm-dialog .p-dialog-content {
+  background: var(--p-surface-card);
+  padding: 1.5rem;
+}
+
+::ng-deep .delete-confirm-dialog .p-dialog-footer {
+  background: var(--p-surface-card);
+  border-top: 1px solid var(--p-surface-border);
+  padding: 1.25rem 1.5rem;
+}
+
+::ng-deep .delete-confirm-dialog .p-dialog-header .p-dialog-title {
+  font-weight: 600;
+  color: var(--p-text-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Responsividade para o dialog de delete */
+@media (max-width: 768px) {
+  .delete-confirm-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .delete-icon {
+    align-self: center;
+  }
+  
+  .delete-dialog-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .delete-dialog-footer p-button {
+    width: 100%;
+  }
+  
+  ::ng-deep .delete-confirm-dialog {
+    margin: 1rem;
+    width: calc(100vw - 2rem) !important;
+    max-width: 450px;
+  }
+}
