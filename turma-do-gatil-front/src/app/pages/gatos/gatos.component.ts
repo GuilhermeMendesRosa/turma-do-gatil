@@ -244,11 +244,16 @@ export class GatosComponent implements OnInit {
   }
 
   adoptCat(cat: Cat): void {
-    // TODO: Implementar processo de adoção
-    console.log('Adotar gato:', cat);
-    // Após implementar, fechar o diálogo e recarregar os dados
-    // this.closeCatDetailsDialog();
-    // this.loadCats();
+    // A adoção foi processada no modal, recarregar os dados
+    this.catDetailsDialog = false;
+    this.selectedCat = null;
+    this.loadCats(); // Recarrega a lista para atualizar o status de adoção
+    
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `A adoção do gato "${cat.name}" foi registrada com sucesso!`
+    });
   }
 
   deleteCat(cat: Cat): void {

@@ -145,3 +145,10 @@
     </div>
   </ng-template>
 </p-dialog>
+
+<!-- Modal de Adoção -->
+<app-adoption-modal
+  [(visible)]="showAdoptionModal"
+  [cat]="cat"
+  (adoptionCreated)="onAdoptionCreated()">
+</app-adoption-modal>

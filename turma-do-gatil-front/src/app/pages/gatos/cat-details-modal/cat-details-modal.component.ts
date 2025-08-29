@@ -6,6 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { Cat, Color, Sex } from '../../../models/cat.model';
+import { AdoptionModalComponent } from '../adoption-modal/adoption-modal.component';
 
 @Component({
   selector: 'app-cat-details-modal',
@@ -16,7 +17,8 @@ import { Cat, Color, Sex } from '../../../models/cat.model';
     DividerModule,
     ButtonModule,
     TagModule,
-    TooltipModule
+    TooltipModule,
+    AdoptionModalComponent
   ],
   templateUrl: './cat-details-modal.component.html',
   styleUrl: './cat-details-modal.component.css'
@@ -30,15 +32,20 @@ export class CatDetailsModalComponent {
   @Output() editCat = new EventEmitter<Cat>();
   @Output() deleteCat = new EventEmitter<Cat>();
 
+  showAdoptionModal = false;
+
   onHide(): void {
     this.visible = false;
     this.visibleChange.emit(this.visible);
   }
 
   onAdoptCat(): void {
-    if (this.cat) {
-      this.adoptCat.emit(this.cat);
-    }
+    this.showAdoptionModal = true;
+  }
+
+  onAdoptionCreated(): void {
+    this.showAdoptionModal = false;
+    this.adoptCat.emit(this.cat!);
   }
 
   onEditCat(): void {

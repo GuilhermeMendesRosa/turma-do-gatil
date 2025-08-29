@@ -1,0 +1,176 @@
+<!-- Modal de Adoção -->
+<p-dialog 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="adoption-modal-dialog"
+  maskStyleClass="blur-backdrop"
+  [style]="{width: '90vw', maxWidth: '600px'}"
+  header="Registrar Adoção"
+  (onHide)="onHide()">
+  
+  <div class="adoption-form-container" *ngIf="cat">
+    <!-- Informações do Gato -->
+    <div class="cat-info-section">
+      <h3>
+        <i class="fas fa-cat"></i>
+        Gato para Adoção
+      </h3>
+      
+      <div class="cat-info-card">
+        <div class="cat-image">
+          <img 
+            [src]="cat.photoUrl || 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'" 
+            [alt]="cat.name"
+            class="cat-thumbnail">
+        </div>
+        
+        <div class="cat-details">
+          <h4>{{ cat.name }}</h4>
+          <div class="cat-meta">
+            <span class="meta-item">
+              <i class="fas fa-palette"></i>
+              {{ getColorLabel(cat.color) }}
+            </span>
+            <span class="meta-item">
+              <i class="fas" [class.fa-mars]="cat.sex === 'MALE'" [class.fa-venus]="cat.sex === 'FEMALE'"></i>
+              {{ cat.sex === 'MALE' ? 'Macho' : 'Fêmea' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Formulário de Adoção -->
+    <form [formGroup]="adoptionForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Seleção do Adotante -->
+      <div class="form-group">
+        <label for="adopter" class="form-label">
+          <i class="fas fa-user"></i>
+          Adotante *
+        </label>
+        
+        <div class="adopter-selection">
+          <div class="adopter-search-container">
+            <input
+              type="text"
+              placeholder="Digite o nome, email ou CPF do adotante..."
+              class="form-control"
+              [(ngModel)]="adopterSearchQuery"
+              (input)="onAdopterSearch($event)"
+              [class.is-invalid]="isFieldInvalid('adopter')">
+            
+            <!-- Lista de resultados -->
+            <div class="search-results" *ngIf="filteredAdopters.length > 0 && adopterSearchQuery && !selectedAdopter">
+              <div 
+                *ngFor="let adopter of filteredAdopters; let i = index" 
+                class="search-result-item"
+                (click)="selectAdopter(adopter)">
+                <div class="adopter-name">{{ adopter.firstName }} {{ adopter.lastName }}</div>
+                <div class="adopter-contact">{{ adopter.email }} • {{ formatCpf(adopter.cpf) }}</div>
+              </div>
+            </div>
+            
+            <!-- Adotante selecionado -->
+            <div *ngIf="selectedAdopter" class="selected-adopter">
+              <div class="selected-adopter-info">
+                <div class="adopter-name">{{ selectedAdopter.firstName }} {{ selectedAdopter.lastName }}</div>
+                <div class="adopter-contact">{{ selectedAdopter.email }} • {{ formatCpf(selectedAdopter.cpf) }}</div>
+              </div>
+              <button type="button" class="clear-selection" (click)="clearSelection()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          
+          <p-button 
+            type="button"
+            icon="pi pi-plus" 
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="openCreateAdopterModal()"
+            pTooltip="Criar novo adotante"
+            tooltipPosition="top">
+          </p-button>
+        </div>
+        
+        <small class="field-error" *ngIf="getFieldError('adopter')">
+          {{ getFieldError('adopter') }}
+        </small>
+      </div>
+
+      <!-- Data da Adoção -->
+      <div class="form-group">
+        <label for="adoptionDate" class="form-label">
+          <i class="fas fa-calendar"></i>
+          Data da Adoção *
+        </label>
+        
+        <input
+          type="date"
+          formControlName="adoptionDate"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('adoptionDate')">
+        
+        <small class="field-error" *ngIf="getFieldError('adoptionDate')">
+          {{ getFieldError('adoptionDate') }}
+        </small>
+      </div>
+
+      <!-- Status da Adoção -->
+      <div class="form-group">
+        <label for="status" class="form-label">
+          <i class="fas fa-tag"></i>
+          Status da Adoção *
+        </label>
+        
+        <select
+          formControlName="status"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('status')">
+          <option value="">Selecione o status</option>
+          <option value="PENDING">Pendente</option>
+          <option value="COMPLETED">Concluída</option>
+          <option value="CANCELED">Cancelada</option>
+        </select>
+        
+        <small class="field-error" *ngIf="getFieldError('status')">
+          {{ getFieldError('status') }}
+        </small>
+      </div>
+    </form>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <div class="action-buttons">
+        <p-button 
+          label="Cancelar" 
+          icon="pi pi-times" 
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="onHide()">
+        </p-button>
+        
+        <p-button 
+          label="Registrar Adoção" 
+          icon="pi pi-heart" 
+          severity="success"
+          [loading]="loading"
+          (onClick)="onSubmit()">
+        </p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Modal de Criação de Adotante -->
+<app-adopter-create-modal
+  [(visible)]="showCreateAdopterModal"
+  (adopterCreated)="onAdopterCreated()">
+</app-adopter-create-modal>
