@@ -155,7 +155,6 @@
         <p-button 
           [label]="isEditMode ? 'Salvar Alterações' : 'Salvar Gato'" 
           icon="pi pi-check" 
-          severity="success"
           [loading]="loading"
           [disabled]="!catForm.valid"
           (onClick)="onSubmit()">

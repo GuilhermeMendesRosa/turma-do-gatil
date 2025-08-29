@@ -463,11 +463,6 @@
   transform: translateY(-2px) !important;
 }
 
-::ng-deep .p-button-success {
-  background: var(--p-primary-color) !important;
-  border-color: var(--p-primary-color) !important;
-}
-
 /* ===== CORES E TEMAS ===== */
 :host {
   --primary-color: var(--p-primary-color, #F2BBAE);

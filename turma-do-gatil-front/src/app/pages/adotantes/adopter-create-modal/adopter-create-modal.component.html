@@ -171,7 +171,6 @@
         <p-button 
           [label]="isEditMode ? 'Salvar Alterações' : 'Salvar Adotante'" 
           icon="pi pi-check" 
-          severity="success"
           [loading]="loading"
           [disabled]="!adopterForm.valid"
           (onClick)="onSubmit()">
