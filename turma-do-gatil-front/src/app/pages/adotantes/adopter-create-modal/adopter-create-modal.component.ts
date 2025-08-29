@@ -61,10 +61,10 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       birthDate: ['', Validators.required],
-      cpf: ['', [Validators.required, Validators.pattern(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)]],
-      phone: ['', [Validators.required, Validators.pattern(/^\(\d{2}\)\s\d{4,5}-\d{4}$/)]],
+      cpf: ['', [Validators.required]],
+      phone: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      address: ['', [Validators.required, Validators.minLength(10)]],
+      address: ['', [Validators.required, Validators.minLength(5)]],
       registrationDate: [todayString, Validators.required]
     });
 
@@ -185,14 +185,6 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       }
       if (field.errors['email']) {
         return 'Email inválido';
-      }
-      if (field.errors['pattern']) {
-        if (fieldName === 'cpf') {
-          return 'CPF deve estar no formato 000.000.000-00';
-        }
-        if (fieldName === 'phone') {
-          return 'Telefone deve estar no formato (00) 00000-0000';
-        }
       }
     }
     return null;
