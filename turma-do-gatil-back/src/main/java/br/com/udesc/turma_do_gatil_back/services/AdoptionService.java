@@ -1,12 +1,15 @@
 package br.com.udesc.turma_do_gatil_back.services;
 
 import br.com.udesc.turma_do_gatil_back.entities.Adoption;
+import br.com.udesc.turma_do_gatil_back.entities.Cat;
 import br.com.udesc.turma_do_gatil_back.enums.AdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.repositories.AdoptionRepository;
+import br.com.udesc.turma_do_gatil_back.repositories.CatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +22,9 @@ public class AdoptionService {
     @Autowired
     private AdoptionRepository adoptionRepository;
 
+    @Autowired
+    private CatRepository catRepository;
+
     public Page<Adoption> findAll(Pageable pageable) {
         return adoptionRepository.findAll(pageable);
     }
@@ -27,23 +33,36 @@ public class AdoptionService {
         return adoptionRepository.findById(id);
     }
 
+    @Transactional
     public Adoption save(Adoption adoption) {
-        return adoptionRepository.save(adoption);
+        Adoption savedAdoption = adoptionRepository.save(adoption);
+        updateCatAdoptedStatus(adoption.getCatId());
+        return savedAdoption;
     }
 
+    @Transactional
     public Adoption update(UUID id, Adoption adoption) {
         if (!adoptionRepository.existsById(id)) {
             throw new RuntimeException("Adoption not found with id: " + id);
         }
         adoption.setId(id);
-        return adoptionRepository.save(adoption);
+        Adoption updatedAdoption = adoptionRepository.save(adoption);
+        updateCatAdoptedStatus(adoption.getCatId());
+        return updatedAdoption;
     }
 
+    @Transactional
     public void deleteById(UUID id) {
-        if (!adoptionRepository.existsById(id)) {
+        Optional<Adoption> adoption = adoptionRepository.findById(id);
+        if (adoption.isEmpty()) {
             throw new RuntimeException("Adoption not found with id: " + id);
         }
+
+        UUID catId = adoption.get().getCatId();
         adoptionRepository.deleteById(id);
+
+        // Recalcular o status do gato após deletar a adoção
+        updateCatAdoptedStatus(catId);
     }
 
     public Page<Adoption> findByStatus(AdoptionStatus status, Pageable pageable) {
@@ -69,5 +88,28 @@ public class AdoptionService {
     public Page<Adoption> findWithFilters(AdoptionStatus status, UUID catId, UUID adopterId,
                                          LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         return adoptionRepository.findWithFilters(status, catId, adopterId, startDate, endDate, pageable);
+    }
+
+    /**
+     * Atualiza o status adopted do gato baseado em todas as adoções existentes
+     * @param catId ID do gato
+     */
+    private void updateCatAdoptedStatus(UUID catId) {
+        Optional<Cat> catOptional = catRepository.findById(catId);
+        if (catOptional.isPresent()) {
+            Cat cat = catOptional.get();
+
+            // Buscar todas as adoções ativas (COMPLETED) para este gato
+            List<Adoption> completedAdoptions = adoptionRepository.findByCatIdAndStatus(catId, AdoptionStatus.COMPLETED);
+
+            // O gato está adotado se há pelo menos uma adoção com status COMPLETED
+            boolean shouldBeAdopted = !completedAdoptions.isEmpty();
+
+            // Só atualiza se o status for diferente do atual
+            if (!cat.getAdopted().equals(shouldBeAdopted)) {
+                cat.setAdopted(shouldBeAdopted);
+                catRepository.save(cat);
+            }
+        }
     }
 }
