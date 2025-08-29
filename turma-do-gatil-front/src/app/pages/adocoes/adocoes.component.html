@@ -21,6 +21,7 @@
             <th>Adotante</th>
             <th>Data da Adoção</th>
             <th>Status</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -33,11 +34,22 @@
                 {{ getStatusLabel(adoption.status) }}
               </span>
             </td>
+            <td>
+              <div class="action-buttons">
+                <p-button 
+                  icon="pi pi-pencil" 
+                  severity="secondary"
+                  size="small"
+                  (onClick)="openStatusModal(adoption)"
+                  title="Alterar Status">
+                </p-button>
+              </div>
+            </td>
           </tr>
 
           <!-- Loading skeleton -->
           <tr *ngIf="loading">
-            <td colspan="4">
+            <td colspan="5">
               <div class="loading-message">
                 <i class="pi pi-spin pi-spinner"></i>
                 Carregando adoções...
@@ -47,7 +59,7 @@
 
           <!-- Empty message -->
           <tr *ngIf="!loading && adoptions.length === 0">
-            <td colspan="4">
+            <td colspan="5">
               <div class="empty-message">
                 <i class="pi pi-info-circle"></i>
                 <p>Nenhuma adoção encontrada.</p>
@@ -68,14 +80,14 @@
             [disabled]="first === 0"
             (click)="onPageChange({first: 0, rows: rows, page: 0})"
             title="Primeira página">
-            <i class="pi pi-angle-double-left"></i>
+            &laquo;&laquo;
           </button>
           <button 
             class="p-button-icon p-button-secondary" 
             [disabled]="first === 0"
             (click)="onPageChange({first: first - rows, rows: rows, page: (first / rows) - 1})"
             title="Página anterior">
-            <i class="pi pi-angle-left"></i>
+            &laquo;
           </button>
           <select 
             class="page-select" 
@@ -91,17 +103,24 @@
             [disabled]="first + rows >= totalRecords"
             (click)="onPageChange({first: first + rows, rows: rows, page: (first / rows) + 1})"
             title="Próxima página">
-            <i class="pi pi-angle-right"></i>
+            &raquo;
           </button>
           <button 
             class="p-button-icon p-button-secondary" 
             [disabled]="first + rows >= totalRecords"
             (click)="onPageChange({first: getLastPageFirst(), rows: rows, page: getLastPage()})"
             title="Última página">
-            <i class="pi pi-angle-double-right"></i>
+            &raquo;&raquo;
           </button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Modal de Alteração de Status -->
+<app-adoption-status-modal
+  [(visible)]="showStatusModal"
+  [adoption]="selectedAdoption"
+  (adoptionUpdated)="onAdoptionUpdated()">
+</app-adoption-status-modal>

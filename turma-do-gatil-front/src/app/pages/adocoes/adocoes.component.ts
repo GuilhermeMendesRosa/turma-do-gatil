@@ -8,11 +8,12 @@ import { AdopterService } from '../../services/adopter.service';
 import { CatService } from '../../services/cat.service';
 import { Adopter } from '../../models/adopter.model';
 import { Cat } from '../../models/cat.model';
+import { AdoptionStatusModalComponent } from './adoption-status-modal/adoption-status-modal.component';
 
 @Component({
   selector: 'app-adocoes',
   standalone: true,
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, ButtonModule, AdoptionStatusModalComponent],
   templateUrl: './adocoes.component.html',
   styleUrls: ['./adocoes.component.css']
 })
@@ -31,6 +32,10 @@ export class AdocoesComponent implements OnInit {
 
   adoptersMap: { [id: string]: Adopter } = {};
   catsMap: { [id: string]: Cat } = {};
+
+  // Modal properties
+  showStatusModal = false;
+  selectedAdoption: Adoption | null = null;
 
   constructor(
     private adoptionService: AdoptionService,
@@ -132,5 +137,14 @@ export class AdocoesComponent implements OnInit {
       case AdoptionStatus.CANCELED: return 'canceled';
       default: return '';
     }
+  }
+
+  openStatusModal(adoption: Adoption): void {
+    this.selectedAdoption = adoption;
+    this.showStatusModal = true;
+  }
+
+  onAdoptionUpdated(): void {
+    this.loadAdoptions();
   }
 }

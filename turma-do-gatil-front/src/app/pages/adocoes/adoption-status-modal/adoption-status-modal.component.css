@@ -1,0 +1,215 @@
+/* Estilos globais do modal */
+::ng-deep .blur-backdrop {
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Estilos do Modal de Status da Adoção */
+::ng-deep .adoption-status-dialog {
+  .p-dialog {
+    background: white !important;
+    border-radius: 24px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden !important;
+    border: 1px solid #e5e7eb;
+  }
+  
+    .p-dialog-header {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    color: white !important;
+    border-radius: 24px 24px 0 0 !important;
+    padding: 1.5rem !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    .p-dialog-title {
+      font-weight: 600 !important;
+      font-size: 1.25rem !important;
+      color: white !important;
+      margin: 0 !important;
+      text-align: center !important;
+    }
+  }
+  
+  .p-dialog-content {
+    padding: 0 !important;
+    background: white !important;
+    border-radius: 0 0 24px 24px !important;
+  }
+}
+
+/* Força o arredondamento no container principal */
+::ng-deep .p-dialog.adoption-status-dialog {
+  border-radius: 24px !important;
+  overflow: hidden !important;
+}
+
+::ng-deep .p-dialog.adoption-status-dialog .p-dialog-header {
+  border-radius: 24px 24px 0 0 !important;
+}
+
+::ng-deep .p-dialog.adoption-status-dialog .p-dialog-content {
+  border-radius: 0 0 24px 24px !important;
+}
+
+.status-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: white !important;
+  border-radius: 0 0 24px 24px !important;
+  min-height: 200px;
+}
+
+.form-section {
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    color: #374151;
+    font-size: 1.1rem;
+    font-weight: 600;
+    
+    i {
+      color: #4f46e5;
+      font-size: 1rem;
+    }
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  
+  label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.875rem;
+  }
+  
+  .form-select {
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 16px !important;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    background-color: white;
+    
+    &:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+    
+    &.ng-invalid {
+      border-color: #ef4444;
+      
+      &:focus {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
+  
+  .error-message {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+}
+
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 1rem;
+  background: white;
+}
+
+/* Estilização dos botões do modal */
+::ng-deep .adoption-status-dialog .form-footer {
+  .p-button {
+    border-radius: 16px !important;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* Força arredondamento nos botões globalmente para este modal */
+::ng-deep .adoption-status-dialog .p-button {
+  border-radius: 16px !important;
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  .status-form {
+    padding: 1.5rem;
+  }
+  
+  .form-footer {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+    
+    p-button {
+      width: 100%;
+    }
+  }
+}
+
+/* Força arredondamento em TODOS os elementos do modal */
+::ng-deep .p-component-overlay .adoption-status-dialog,
+::ng-deep .p-dialog-mask .adoption-status-dialog,
+::ng-deep .adoption-status-dialog {
+  .p-dialog,
+  .p-dialog-content,
+  .p-dialog-header {
+    border-radius: 24px !important;
+  }
+  
+  .p-dialog {
+    overflow: hidden !important;
+  }
+  
+  .p-dialog-header {
+    border-radius: 24px 24px 0 0 !important;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    
+    * {
+      color: white !important;
+    }
+  }
+  
+  .p-dialog-content {
+    border-radius: 0 0 24px 24px !important;
+  }
+}
+
+/* Estilos específicos para o título */
+::ng-deep .adoption-status-dialog .p-dialog-header .p-dialog-title,
+::ng-deep .adoption-status-dialog .p-dialog-title {
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 1.25rem !important;
+  margin: 0 !important;
+  text-shadow: none !important;
+  text-align: center !important;
+}
+
+/* Último recurso - aplica em qualquer dialog com a classe */
+::ng-deep .p-dialog.adoption-status-dialog,
+::ng-deep [class*="adoption-status-dialog"] .p-dialog {
+  border-radius: 24px !important;
+  overflow: hidden !important;
+}

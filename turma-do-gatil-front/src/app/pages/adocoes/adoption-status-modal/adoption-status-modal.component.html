@@ -1,0 +1,60 @@
+<!-- Diálogo de Alteração de Status -->
+<p-dialog 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [closable]="false"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="adoption-status-dialog"
+  maskStyleClass="blur-backdrop"
+  [style]="{width: '90vw', maxWidth: '500px', background: 'white', borderRadius: '24px', overflow: 'hidden'}"
+  header="Alterar Status da Adoção"
+  (onHide)="onHide()">
+  
+  <form [formGroup]="statusForm" (ngSubmit)="onSubmit()" class="status-form">
+
+    <!-- Status Section -->
+    <div class="form-section">
+      <h3>
+        <i class="fas fa-tag"></i>
+        Status da Adoção
+      </h3>
+      
+      <div class="form-field">
+        <label for="status">Novo Status *</label>
+        <select 
+          id="status" 
+          formControlName="status"
+          [class.ng-invalid]="isFieldInvalid('status')"
+          class="form-select">
+          <option value="" disabled>Selecione um status</option>
+          <option *ngFor="let option of statusOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+        <small class="error-message" *ngIf="getFieldError('status')">
+          {{ getFieldError('status') }}
+        </small>
+      </div>
+    </div>
+
+    <!-- Footer com botões -->
+    <div class="form-footer">
+      <p-button 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        severity="secondary"
+        (onClick)="onHide()"
+        [disabled]="loading">
+      </p-button>
+      
+      <p-button 
+        label="Atualizar Status" 
+        icon="pi pi-check" 
+        type="submit"
+        [loading]="loading"
+        [disabled]="!statusForm.valid || loading">
+      </p-button>
+    </div>
+  </form>
+</p-dialog>

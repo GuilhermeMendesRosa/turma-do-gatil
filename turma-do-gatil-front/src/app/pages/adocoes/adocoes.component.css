@@ -178,6 +178,20 @@
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 1rem;
+  background: var(--p-surface-card);
+  border: 1px solid var(--p-surface-border);
+  
+  &:hover:not(:disabled) {
+    background: var(--p-surface-hover);
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
 }
 
 .p-button-info {
@@ -392,4 +406,31 @@
   --surface-card: var(--p-surface-card, #ffffff);
   --surface-border: var(--p-surface-border, #e5e7eb);
   --surface-ground: var(--p-surface-ground, #f9fafb);
+}
+
+/* ===== BOTÕES DE AÇÃO ===== */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-buttons p-button {
+  flex-shrink: 0;
+}
+
+/* Ajuste para botões pequenos */
+::ng-deep .action-buttons .p-button {
+  padding: 0.5rem;
+  min-width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+::ng-deep .action-buttons .p-button i {
+  font-size: 0.875rem;
 }
