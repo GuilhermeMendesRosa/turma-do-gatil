@@ -1,9 +1,107 @@
+
 <div class="page-container">
-  <h1><i class="pi pi-home"></i> Adoções</h1>
-  <p>Página para gerenciar o processo de adoções.</p>
-  
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-paw"></i>
+      Gestão de Adoções
+    </h1>
+    <p class="page-subtitle">Acompanhe e gerencie os processos de adoção registrados no sistema</p>
+  </div>
+
   <div class="content-card">
-    <h3>Processos de Adoção</h3>
-    <p>Aqui você poderá acompanhar e gerenciar os processos de adoção em andamento.</p>
+    <div class="card-header">
+      <h3>Lista de Adoções</h3>
+    </div>
+
+    <div class="table-container">
+      <table class="adopters-table" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th>Gato</th>
+            <th>Adotante</th>
+            <th>Data da Adoção</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let adoption of adoptions">
+            <td>{{ getCatName(adoption.catId) }}</td>
+            <td>{{ getAdopterName(adoption.adopterId) }}</td>
+            <td>{{ formatDate(adoption.adoptionDate) }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(adoption.status)">
+                {{ getStatusLabel(adoption.status) }}
+              </span>
+            </td>
+          </tr>
+
+          <!-- Loading skeleton -->
+          <tr *ngIf="loading">
+            <td colspan="4">
+              <div class="loading-message">
+                <i class="pi pi-spin pi-spinner"></i>
+                Carregando adoções...
+              </div>
+            </td>
+          </tr>
+
+          <!-- Empty message -->
+          <tr *ngIf="!loading && adoptions.length === 0">
+            <td colspan="4">
+              <div class="empty-message">
+                <i class="pi pi-info-circle"></i>
+                <p>Nenhuma adoção encontrada.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="!loading && totalRecords > 0">
+        <div class="pagination-info">
+          Mostrando {{ (first + 1) }} - {{ getMinRecord() }} de {{ totalRecords }} registros
+        </div>
+        <div class="pagination-controls">
+          <button 
+            class="p-button-icon p-button-secondary" 
+            [disabled]="first === 0"
+            (click)="onPageChange({first: 0, rows: rows, page: 0})"
+            title="Primeira página">
+            <i class="pi pi-angle-double-left"></i>
+          </button>
+          <button 
+            class="p-button-icon p-button-secondary" 
+            [disabled]="first === 0"
+            (click)="onPageChange({first: first - rows, rows: rows, page: (first / rows) - 1})"
+            title="Página anterior">
+            <i class="pi pi-angle-left"></i>
+          </button>
+          <select 
+            class="page-select" 
+            [value]="rows" 
+            (change)="onRowsChange($event)">
+            <option value="5">5 por página</option>
+            <option value="10">10 por página</option>
+            <option value="20">20 por página</option>
+            <option value="50">50 por página</option>
+          </select>
+          <button 
+            class="p-button-icon p-button-secondary" 
+            [disabled]="first + rows >= totalRecords"
+            (click)="onPageChange({first: first + rows, rows: rows, page: (first / rows) + 1})"
+            title="Próxima página">
+            <i class="pi pi-angle-right"></i>
+          </button>
+          <button 
+            class="p-button-icon p-button-secondary" 
+            [disabled]="first + rows >= totalRecords"
+            (click)="onPageChange({first: getLastPageFirst(), rows: rows, page: getLastPage()})"
+            title="Última página">
+            <i class="pi pi-angle-double-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
