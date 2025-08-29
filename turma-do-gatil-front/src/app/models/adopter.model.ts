@@ -34,8 +34,6 @@ export interface Page<T> {
 
 export interface AdopterFilters {
   name?: string;
-  email?: string;
-  cpf?: string;
   page?: number;
   size?: number;
   sortBy?: string;

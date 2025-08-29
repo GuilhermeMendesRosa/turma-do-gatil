@@ -30,12 +30,6 @@ export class AdopterService {
     if (filters.name) {
       params = params.set('name', filters.name);
     }
-    if (filters.email) {
-      params = params.set('email', filters.email);
-    }
-    if (filters.cpf) {
-      params = params.set('cpf', filters.cpf);
-    }
 
     return this.http.get<Page<Adopter>>(this.apiUrl, { params });
   }

@@ -39,36 +39,6 @@
             placeholder="Digite o nome..."
             class="filter-input">
         </div>
-
-        <div class="filter-group">
-          <label for="emailFilter">
-            <i class="pi pi-envelope"></i>
-            Email
-          </label>
-          <input 
-            id="emailFilter"
-            type="email" 
-            pInputText 
-            [(ngModel)]="filters.email" 
-            (ngModelChange)="onFilterChange()"
-            placeholder="Digite o email..."
-            class="filter-input">
-        </div>
-
-        <div class="filter-group">
-          <label for="cpfFilter">
-            <i class="pi pi-id-card"></i>
-            CPF
-          </label>
-          <input 
-            id="cpfFilter"
-            type="text" 
-            pInputText 
-            [(ngModel)]="filters.cpf" 
-            (ngModelChange)="onFilterChange()"
-            placeholder="000.000.000-00"
-            class="filter-input">
-        </div>
       </div>
     </div>
   </div>
