@@ -44,11 +44,15 @@ public class OpenAPIConfig {
                            "- **Adoções**: Processo completo de adoção com diferentes status (PENDING, COMPLETED, CANCELED)\n" +
                            "- **Esterilizações**: Controle do processo de esterilização dos gatos\n" +
                            "- **Anotações**: Sistema de notas e observações sobre gatos e processos\n\n" +
-                           "**Principais funcionalidades da API de Adoção:**\n" +
+                           "**Principais funcionalidades da API:**\n" +
                            "- Criar novo processo de adoção vinculando gato e adotante\n" +
                            "- Acompanhar status da adoção (pendente, concluída, cancelada)\n" +
                            "- Filtrar adoções por diversos critérios\n" +
-                           "- Histórico completo de adoções por gato ou adotante")
+                           "- Histórico completo de adoções por gato ou adotante\n" +
+                           "- **Controle de Castração**: Identificar gatos que precisam ser castrados baseado na idade e status\n" +
+                           "  - Gatos com >= 90 dias são elegíveis para castração\n" +
+                           "  - Gatos com >= 180 dias sem castração são marcados como atrasados\n" +
+                           "  - Excluídos gatos já castrados ou com castração agendada")
                 .termsOfService("https://turmadogatil.com/terms")
                 .license(license);
 

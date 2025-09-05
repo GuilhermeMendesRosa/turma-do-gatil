@@ -188,6 +188,83 @@ paths:
         '404':
           description: Gato não encontrado
 
+  /api/cats/needing-sterilization:
+    get:
+      tags:
+        - Cats
+      summary: Busca gatos que precisam de castração
+      description: |
+        Retorna uma lista de gatos que estão aptos para castração baseado nas seguintes regras:
+        
+        **Critérios de Elegibilidade:**
+        - Gato deve ter pelo menos **90 dias de vida**
+        - Gato **não deve ter sido castrado** (status COMPLETED)
+        - Gato **não deve ter castração agendada** (status SCHEDULED)
+        - Apenas gatos **não adotados** são considerados
+        
+        **Status Retornados:**
+        - `ELIGIBLE`: Gato com 90-179 dias, apto para castração
+        - `OVERDUE`: Gato com 180+ dias, castração atrasada
+        
+        **Informações Retornadas:**
+        - Dados básicos do gato (nome, cor, sexo, foto)
+        - Idade exata em dias
+        - Status de prioridade para castração
+      responses:
+        '200':
+          description: Lista de gatos que precisam de castração retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatSterilizationStatus'
+        '500':
+          description: Erro interno do servidor ao processar a solicitação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+
+  /api/cats/sterilization-stats:
+    get:
+      tags:
+        - Cats
+      summary: Obter estatísticas de castração
+      description: |
+        Retorna as estatísticas resumidas sobre gatos que precisam de castração:
+        
+        **Informações Retornadas:**
+        - `eligibleCount`: Quantidade de gatos elegíveis para castração (90-179 dias)
+        - `overdueCount`: Quantidade de gatos com castração atrasada (180+ dias)
+        - `totalNeedingSterilization`: Total de gatos que precisam de castração
+        
+        **Critérios Aplicados:**
+        - Apenas gatos não adotados
+        - Gatos com pelo menos 90 dias de vida
+        - Excluídos gatos já castrados ou com castração agendada
+      responses:
+        '200':
+          description: Estatísticas de castração retornadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SterilizationStats'
+        '500':
+          description: Erro interno do servidor ao processar a solicitação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+
   /api/adopters:
     get:
       tags:
@@ -599,6 +676,71 @@ components:
         - COMPLETED
         - CANCELED
       description: Status da esterilização
+
+    CatSterilizationStatus:
+      type: object
+      description: DTO que representa um gato com informações sobre seu status de castração
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único do gato
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          description: Nome do gato
+          example: "Mimi"
+        color:
+          $ref: '#/components/schemas/Color'
+        sex:
+          $ref: '#/components/schemas/Sex'
+        birthDate:
+          type: string
+          format: date-time
+          description: Data de nascimento do gato
+          example: "2024-03-15T10:30:00"
+        shelterEntryDate:
+          type: string
+          format: date-time
+          description: Data de entrada no abrigo
+          example: "2024-04-01T09:00:00"
+        photoUrl:
+          type: string
+          description: URL da foto do gato
+          example: "https://example.com/photos/mimi.jpg"
+        ageInDays:
+          type: integer
+          description: Idade do gato em dias
+          example: 120
+        sterilizationStatus:
+          $ref: '#/components/schemas/SterilizationEligibilityStatus'
+
+    SterilizationEligibilityStatus:
+      type: string
+      enum:
+        - ELIGIBLE
+        - OVERDUE
+      description: Status de elegibilidade para castração
+
+    SterilizationStats:
+      type: object
+      description: DTO que representa as estatísticas de castração dos gatos
+      properties:
+        eligibleCount:
+          type: integer
+          format: int64
+          description: Quantidade de gatos elegíveis para castração (90-179 dias)
+          example: 15
+        overdueCount:
+          type: integer
+          format: int64
+          description: Quantidade de gatos com castração atrasada (180+ dias)
+          example: 8
+        totalNeedingSterilization:
+          type: integer
+          format: int64
+          description: Total de gatos que precisam de castração
+          example: 23
 
     PageCat:
       type: object

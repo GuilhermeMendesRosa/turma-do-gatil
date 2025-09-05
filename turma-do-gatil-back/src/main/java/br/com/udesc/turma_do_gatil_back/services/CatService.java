@@ -1,16 +1,25 @@
 package br.com.udesc.turma_do_gatil_back.services;
 
+import br.com.udesc.turma_do_gatil_back.dto.CatSterilizationStatusDto;
+import br.com.udesc.turma_do_gatil_back.dto.SterilizationStatsDto;
 import br.com.udesc.turma_do_gatil_back.entities.Cat;
+import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
 import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
+import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
+import br.com.udesc.turma_do_gatil_back.enums.SterilizationEligibilityStatus;
 import br.com.udesc.turma_do_gatil_back.repositories.CatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CatService {
@@ -65,5 +74,76 @@ public class CatService {
         String colorStr = color != null ? color.name() : null;
         String sexStr = sex != null ? sex.name() : null;
         return catRepository.findWithFilters(name, colorStr, sexStr, adopted, pageable);
+    }
+
+    public List<CatSterilizationStatusDto> findCatsNeedingSterilization() {
+        List<Cat> allCats = catRepository.findByAdopted(false);
+        LocalDateTime now = LocalDateTime.now();
+
+        return allCats.stream()
+                .filter(this::needsSterilization)
+                .map(cat -> {
+                    int ageInDays = (int) ChronoUnit.DAYS.between(cat.getBirthDate(), now);
+                    SterilizationEligibilityStatus status = ageInDays >= 180 ?
+                        SterilizationEligibilityStatus.OVERDUE :
+                        SterilizationEligibilityStatus.ELIGIBLE;
+
+                    return new CatSterilizationStatusDto(
+                            cat.getId(),
+                            cat.getName(),
+                            cat.getColor(),
+                            cat.getSex(),
+                            cat.getBirthDate(),
+                            cat.getShelterEntryDate(),
+                            cat.getPhotoUrl(),
+                            ageInDays,
+                            status
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    public SterilizationStatsDto getSterilizationStats() {
+        List<Cat> allCats = catRepository.findByAdopted(false);
+        LocalDateTime now = LocalDateTime.now();
+
+        long eligibleCount = 0;
+        long overdueCount = 0;
+
+        for (Cat cat : allCats) {
+            if (needsSterilization(cat)) {
+                int ageInDays = (int) ChronoUnit.DAYS.between(cat.getBirthDate(), now);
+                if (ageInDays >= 180) {
+                    overdueCount++;
+                } else {
+                    eligibleCount++;
+                }
+            }
+        }
+
+        return new SterilizationStatsDto(eligibleCount, overdueCount);
+    }
+
+    private boolean needsSterilization(Cat cat) {
+        LocalDateTime now = LocalDateTime.now();
+        int ageInDays = (int) ChronoUnit.DAYS.between(cat.getBirthDate(), now);
+
+        // Deve ter pelo menos 90 dias
+        if (ageInDays < 90) {
+            return false;
+        }
+
+        // Verifica se já foi castrado ou tem castração agendada
+        if (cat.getSterilizations() != null && !cat.getSterilizations().isEmpty()) {
+            for (Sterilization sterilization : cat.getSterilizations()) {
+                // Se já foi castrado (COMPLETED) ou tem castração agendada (SCHEDULED), não precisa
+                if (sterilization.getStatus() == SterilizationStatus.COMPLETED ||
+                    sterilization.getStatus() == SterilizationStatus.SCHEDULED) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

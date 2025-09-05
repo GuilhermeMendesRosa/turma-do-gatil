@@ -10,12 +10,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface CatRepository extends JpaRepository<Cat, UUID> {
 
     Page<Cat> findByAdopted(Boolean adopted, Pageable pageable);
+
+    List<Cat> findByAdopted(Boolean adopted);
 
     Page<Cat> findByColor(Color color, Pageable pageable);
 
