@@ -179,7 +179,7 @@ export class CastracoesComponent implements OnInit {
   }
 
   completeSterilization(sterilization: SterilizationDto): void {
-    if (confirm(`Confirma que a castração de ${sterilization.cat?.name} foi realizada?`)) {
+    if (confirm(`Confirma que a castração de ${sterilization.cat} foi realizada?`)) {
       const updatedSterilization = {
         catId: sterilization.catId,
         sterilizationDate: sterilization.sterilizationDate,
@@ -201,7 +201,7 @@ export class CastracoesComponent implements OnInit {
   }
 
   cancelSterilization(sterilization: SterilizationDto): void {
-    if (confirm(`Confirma o cancelamento da castração de ${sterilization.cat?.name}?`)) {
+    if (confirm(`Confirma o cancelamento da castração de ${sterilization.cat}?`)) {
       const updatedSterilization = {
         catId: sterilization.catId,
         sterilizationDate: sterilization.sterilizationDate,

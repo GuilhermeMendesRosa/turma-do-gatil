@@ -127,9 +127,21 @@ public class EntityMapper {
     // Sterilization mappings
     public static SterilizationDto toSterilizationDto(Sterilization sterilization) {
         if (sterilization == null) return null;
+
+        String catName = null;
+        String photoUrl = null;
+
+        // Verificar se o relacionamento com Cat está carregado
+        if (sterilization.getCat() != null) {
+            catName = sterilization.getCat().getName();
+            photoUrl = sterilization.getCat().getPhotoUrl();
+        }
+
         return new SterilizationDto(
             sterilization.getId(),
             sterilization.getCatId(),
+            catName,
+            photoUrl,
             sterilization.getSterilizationDate(),
             sterilization.getStatus(),
             sterilization.getNotes()

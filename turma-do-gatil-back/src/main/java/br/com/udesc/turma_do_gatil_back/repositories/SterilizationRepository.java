@@ -10,18 +10,32 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface SterilizationRepository extends JpaRepository<Sterilization, UUID> {
 
-    Page<Sterilization> findByCatId(UUID catId, Pageable pageable);
+    @Override
+    @Query("SELECT s FROM Sterilization s JOIN FETCH s.cat")
+    Page<Sterilization> findAll(Pageable pageable);
 
-    Page<Sterilization> findByStatus(SterilizationStatus status, Pageable pageable);
+    @Override
+    @Query("SELECT s FROM Sterilization s JOIN FETCH s.cat WHERE s.id = :id")
+    Optional<Sterilization> findById(@Param("id") UUID id);
 
-    Page<Sterilization> findBySterilizationDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    @Query("SELECT s FROM Sterilization s JOIN FETCH s.cat WHERE s.catId = :catId")
+    Page<Sterilization> findByCatId(@Param("catId") UUID catId, Pageable pageable);
 
-    @Query("SELECT s FROM Sterilization s WHERE " +
+    @Query("SELECT s FROM Sterilization s JOIN FETCH s.cat WHERE s.status = :status")
+    Page<Sterilization> findByStatus(@Param("status") SterilizationStatus status, Pageable pageable);
+
+    @Query("SELECT s FROM Sterilization s JOIN FETCH s.cat WHERE s.sterilizationDate BETWEEN :startDate AND :endDate")
+    Page<Sterilization> findBySterilizationDateBetween(@Param("startDate") LocalDateTime startDate,
+                                                       @Param("endDate") LocalDateTime endDate,
+                                                       Pageable pageable);
+
+    @Query("SELECT s FROM Sterilization s JOIN FETCH s.cat WHERE " +
            "(:catId IS NULL OR s.catId = :catId) AND " +
            "(:status IS NULL OR s.status = :status) AND " +
            "(:startDate IS NULL OR s.sterilizationDate >= :startDate) AND " +

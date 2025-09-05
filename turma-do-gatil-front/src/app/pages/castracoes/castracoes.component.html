@@ -137,9 +137,9 @@
           <tr *ngFor="let sterilization of scheduledSterilizations">
             <td>
               <div class="cat-info">
-                <img *ngIf="sterilization.cat?.photoUrl; else catMiniPlaceholder" 
-                     [src]="sterilization.cat?.photoUrl" 
-                     [alt]="sterilization.cat?.name" 
+                <img *ngIf="sterilization.photoUrl; else catMiniPlaceholder" 
+                     [src]="sterilization.photoUrl" 
+                     [alt]="sterilization.cat" 
                      class="cat-mini-photo"
                      (error)="$event.target.style.display='none'">
                 <ng-template #catMiniPlaceholder>
@@ -148,8 +148,7 @@
                   </div>
                 </ng-template>
                 <div class="cat-details">
-                  <strong>{{ sterilization.cat?.name || 'Nome não disponível' }}</strong>
-                  <small>{{ sterilization.cat?.sex }} - {{ sterilization.cat?.color }}</small>
+                  <strong>{{ sterilization.cat || 'Nome não disponível' }}</strong>
                 </div>
               </div>
             </td>

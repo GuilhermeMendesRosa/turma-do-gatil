@@ -19,16 +19,11 @@ export interface CatSterilizationStatusDto {
 export interface SterilizationDto {
   id?: string;
   catId: string;
+  cat: string; // Cat name as string
+  photoUrl?: string; // Photo URL directly on sterilization object
   sterilizationDate: string;
   status: 'SCHEDULED' | 'COMPLETED' | 'CANCELED';
   notes?: string;
-  cat?: {
-    id: string;
-    name: string;
-    color: string;
-    sex: string;
-    photoUrl?: string;
-  };
 }
 
 export interface SterilizationRequest {

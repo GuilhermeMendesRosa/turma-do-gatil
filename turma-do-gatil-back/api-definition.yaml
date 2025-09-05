@@ -265,6 +265,230 @@ paths:
                     type: string
                     example: "Internal server error"
 
+  /api/sterilizations:
+    get:
+      tags:
+        - Sterilizations
+      summary: Lista todas as esterilizações
+      description: Retorna uma lista paginada de esterilizações com filtros opcionais
+      parameters:
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Quantidade de itens por página
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          description: Campo para ordenação
+          required: false
+          schema:
+            type: string
+            default: sterilizationDate
+        - name: sortDir
+          in: query
+          description: Direção da ordenação
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - name: catId
+          in: query
+          description: Filtro por ID do gato
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          description: Filtro por status da esterilização
+          required: false
+          schema:
+            $ref: '#/components/schemas/SterilizationStatus'
+        - name: startDate
+          in: query
+          description: Data inicial para filtro por período
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: Data final para filtro por período
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Lista de esterilizações retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageSterilization'
+    post:
+      tags:
+        - Sterilizations
+      summary: Cria uma nova esterilização
+      description: Registra uma nova esterilização no sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SterilizationRequest'
+      responses:
+        '201':
+          description: Esterilização criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sterilization'
+        '400':
+          description: Dados inválidos
+
+  /api/sterilizations/{id}:
+    get:
+      tags:
+        - Sterilizations
+      summary: Busca esterilização por ID
+      description: Retorna uma esterilização específica pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único da esterilização
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Esterilização encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sterilization'
+        '404':
+          description: Esterilização não encontrada
+    put:
+      tags:
+        - Sterilizations
+      summary: Atualiza uma esterilização
+      description: Atualiza os dados de uma esterilização existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único da esterilização
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SterilizationRequest'
+      responses:
+        '200':
+          description: Esterilização atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sterilization'
+        '404':
+          description: Esterilização não encontrada
+        '400':
+          description: Dados inválidos
+    delete:
+      tags:
+        - Sterilizations
+      summary: Remove uma esterilização
+      description: Remove uma esterilização do sistema
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único da esterilização
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Esterilização removida com sucesso
+        '404':
+          description: Esterilização não encontrada
+
+  /api/sterilizations/cat/{catId}:
+    get:
+      tags:
+        - Sterilizations
+      summary: Busca esterilizações por gato
+      description: Retorna todas as esterilizações de um gato específico
+      parameters:
+        - name: catId
+          in: path
+          required: true
+          description: ID único do gato
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lista de esterilizações do gato
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Sterilization'
+        '404':
+          description: Gato não encontrado
+
+  /api/sterilizations/status/{status}:
+    get:
+      tags:
+        - Sterilizations
+      summary: Busca esterilizações por status
+      description: Retorna esterilizações filtradas por status específico
+      parameters:
+        - name: status
+          in: path
+          required: true
+          description: Status da esterilização
+          schema:
+            $ref: '#/components/schemas/SterilizationStatus'
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Quantidade de itens por página
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Lista de esterilizações por status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageSterilization'
+
   /api/adopters:
     get:
       tags:
@@ -629,6 +853,13 @@ components:
           type: string
           format: uuid
           description: ID do gato
+        cat:
+          type: string
+          description: Nome do gato
+        photoUrl:
+          type: string
+          format: uri
+          description: URL da foto do gato
         sterilizationDate:
           type: string
           format: date-time
@@ -742,6 +973,27 @@ components:
           description: Total de gatos que precisam de castração
           example: 23
 
+    SterilizationRequest:
+      type: object
+      required:
+        - catId
+        - sterilizationDate
+        - status
+      properties:
+        catId:
+          type: string
+          format: uuid
+          description: ID do gato a ser esterilizado
+        sterilizationDate:
+          type: string
+          format: date-time
+          description: Data da esterilização
+        status:
+          $ref: '#/components/schemas/SterilizationStatus'
+        notes:
+          type: string
+          description: Observações sobre a esterilização
+
     PageCat:
       type: object
       properties:
@@ -799,6 +1051,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Adoption'
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+        last:
+          type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+
+    PageSterilization:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sterilization'
         pageable:
           $ref: '#/components/schemas/Pageable'
         totalElements:
