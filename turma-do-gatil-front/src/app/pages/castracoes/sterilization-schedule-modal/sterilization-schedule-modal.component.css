@@ -1,0 +1,410 @@
+/* ===== DIÁLOGO DE AGENDAMENTO DE CASTRAÇÃO ===== */
+/* Máscara de fundo com desfoque */
+::ng-deep .p-dialog-mask.sterilization-schedule-dialog,
+::ng-deep .sterilization-schedule-dialog .p-dialog-mask,
+::ng-deep .p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  -moz-backdrop-filter: blur(8px) !important;
+  -ms-backdrop-filter: blur(8px) !important;
+}
+
+/* Regra específica para garantir o desfoque */
+:host ::ng-deep .p-dialog-mask {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Fallback caso backdrop-filter não seja suportado */
+@supports not (backdrop-filter: blur(8px)) {
+  ::ng-deep .p-dialog-mask {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+}
+
+/* Classe específica para o backdrop desfocado */
+::ng-deep .blur-backdrop {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  -moz-backdrop-filter: blur(8px) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+::ng-deep .sterilization-schedule-dialog .p-dialog {
+  background: var(--p-surface-card) !important;
+  border: 1px solid var(--p-surface-border);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+::ng-deep .sterilization-schedule-dialog .p-dialog-header {
+  background: var(--gradient-primary);
+  color: white;
+  border-radius: 12px 12px 0 0;
+  padding: 1.5rem 2rem;
+}
+
+::ng-deep .sterilization-schedule-dialog .p-dialog-header .p-dialog-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: white;
+}
+
+::ng-deep .sterilization-schedule-dialog .p-dialog-header .p-dialog-header-icon {
+  color: white;
+}
+
+::ng-deep .sterilization-schedule-dialog .p-dialog-content {
+  padding: 2rem;
+  border-radius: 0;
+  background: var(--p-surface-card) !important;
+  margin-bottom: 0;
+}
+
+::ng-deep .sterilization-schedule-dialog .p-dialog-footer {
+  background: var(--p-surface-card) !important;
+  border-radius: 0 0 12px 12px;
+  border-top: 1px solid var(--p-surface-border);
+  margin-top: 0;
+  padding: 0.75rem 2rem;
+}
+
+.sterilization-schedule-form {
+  padding: 0;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 1.5rem;
+}
+
+.form-section h3 {
+  color: #374151;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-section h3 i {
+  color: #6366f1;
+  font-size: 1rem;
+}
+
+/* Cat Info Display */
+.cat-info-display {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--p-surface-50);
+  border: 1px solid var(--p-surface-border);
+  border-radius: 8px;
+}
+
+.cat-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--p-surface-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cat-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cat-details h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--p-text-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.cat-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.cat-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--p-text-color-secondary);
+}
+
+.cat-info-item i {
+  color: var(--p-primary-color);
+  font-size: 0.75rem;
+}
+
+/* Form Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-field-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-field-full {
+    grid-column: 1;
+  }
+  
+  .cat-info-display {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .cat-meta {
+    justify-content: center;
+  }
+}
+
+/* Form Fields */
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-field label {
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-input {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.form-input.ng-invalid.ng-touched {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.datetime-input {
+  color-scheme: light;
+}
+
+.form-textarea {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: white;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Custom PrimeNG Select Styles */
+::ng-deep .form-select.p-select {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+::ng-deep .form-select.p-select:not(.p-disabled):hover {
+  border-color: #9ca3af;
+}
+
+::ng-deep .form-select.p-select:not(.p-disabled).p-focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+::ng-deep .form-select.p-select.ng-invalid.ng-touched {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+::ng-deep .form-select .p-select-label {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* Error Messages */
+.error-message {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Field Help */
+.field-help {
+  color: var(--p-text-color-secondary);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Dialog Footer */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Button Customizations */
+::ng-deep .p-button {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .p-button.p-button-secondary {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+::ng-deep .p-button.p-button-secondary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+::ng-deep .p-button.p-button-success {
+  background: #059669;
+  border: 1px solid #059669;
+}
+
+::ng-deep .p-button.p-button-success:hover {
+  background: #047857;
+  border-color: #047857;
+}
+
+::ng-deep .p-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  ::ng-deep .sterilization-schedule-dialog .p-dialog {
+    margin: 1rem;
+    width: calc(100vw - 2rem) !important;
+    max-width: none !important;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  ::ng-deep .p-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Loading State */
+::ng-deep .p-button .p-button-loading-icon {
+  margin-right: 0.5rem;
+}
+
+/* Divider Customization */
+::ng-deep .p-divider {
+  margin: 1.5rem 0;
+}
+
+::ng-deep .p-divider .p-divider-content {
+  background: var(--p-surface-card);
+}
+
+/* Form validation states */
+.form-field.ng-touched .form-input.ng-invalid,
+.form-field.ng-touched .form-textarea.ng-invalid {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+/* Focus styles for accessibility */
+.form-input:focus-visible,
+.form-textarea:focus-visible,
+::ng-deep .p-select:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Blur Backdrop */
+:host ::ng-deep .blur-backdrop {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .form-input,
+  .form-textarea,
+  ::ng-deep .p-select {
+    border-width: 2px;
+  }
+  
+  .error-message {
+    font-weight: 600;
+  }
+}
+
+/* ===== CORES E TEMAS ===== */
+:host {
+  --primary-color: var(--p-primary-color, #F2BBAE);
+  --text-color: var(--p-text-color, #1f2937);
+  --text-color-secondary: var(--p-text-color-secondary, #6b7280);
+  --surface-card: var(--p-surface-card, #ffffff);
+  --surface-border: var(--p-surface-border, #e5e7eb);
+  --surface-ground: var(--p-surface-ground, #f9fafb);
+  --surface-50: var(--p-surface-50, #f8fafc);
+  --surface-200: var(--p-surface-200, #e2e8f0);
+  --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
+}

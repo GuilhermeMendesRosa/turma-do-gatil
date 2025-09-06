@@ -1,0 +1,133 @@
+<!-- Diálogo de Agendamento/Edição de Castração -->
+<p-dialog 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="sterilization-schedule-dialog"
+  maskStyleClass="blur-backdrop"
+  [style]="{width: '90vw', maxWidth: '600px'}"
+  [header]="modalTitle"
+  (onHide)="onHide()">
+  
+  <form [formGroup]="sterilizationForm" (ngSubmit)="onSubmit()" class="sterilization-schedule-form">
+
+    <!-- Informações do Gato -->
+    <div class="form-section">
+      <h3>
+        <i class="fas fa-cat"></i>
+        Informações do Gato
+      </h3>
+      
+      <div class="cat-info-display">
+        <div class="cat-photo" *ngIf="cat?.photoUrl || sterilization?.photoUrl">
+          <img [src]="cat?.photoUrl || sterilization?.photoUrl" 
+               [alt]="catName" 
+               (error)="$event.target.style.display='none'">
+        </div>
+        <div class="cat-details">
+          <h4>{{ catName }}</h4>
+          <div class="cat-meta" *ngIf="cat">
+            <span class="cat-info-item">
+              <i class="pi pi-venus-mars"></i>
+              {{ getSexLabel(cat.sex) }}
+            </span>
+            <span class="cat-info-item">
+              <i class="pi pi-palette"></i>
+              {{ getColorLabel(cat.color) }}
+            </span>
+            <span class="cat-info-item">
+              <i class="pi pi-clock"></i>
+              {{ cat.ageInDays }} dias
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p-divider></p-divider>
+
+    <!-- Agendamento -->
+    <div class="form-section">
+      <h3>
+        <i class="fas fa-calendar-alt"></i>
+        Dados do Agendamento
+      </h3>
+      
+      <div class="form-grid">
+        <!-- Data e Hora da Castração -->
+        <div class="form-field form-field-full">
+          <label for="sterilizationDate">Data e Hora da Castração *</label>
+          <input 
+            type="datetime-local" 
+            id="sterilizationDate" 
+            formControlName="sterilizationDate"
+            [class.ng-invalid]="isFieldInvalid('sterilizationDate')"
+            class="form-input datetime-input"
+            [min]="minDate.toISOString().slice(0, 16)">
+          <small class="error-message" *ngIf="getFieldError('sterilizationDate')">
+            {{ getFieldError('sterilizationDate') }}
+          </small>
+          <small class="error-message" *ngIf="sterilizationForm.get('sterilizationDate')?.value && !isDateValid()">
+            A data não pode ser no passado
+          </small>
+        </div>
+
+        <!-- Status -->
+        <div class="form-field">
+          <label for="status">Status *</label>
+          <p-select 
+            [options]="statusOptions"
+            formControlName="status"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Selecione o status"
+            [class.ng-invalid]="isFieldInvalid('status')"
+            class="form-select">
+          </p-select>
+          <small class="error-message" *ngIf="getFieldError('status')">
+            {{ getFieldError('status') }}
+          </small>
+        </div>
+
+        <!-- Observações -->
+        <div class="form-field form-field-full">
+          <label for="notes">Observações</label>
+          <textarea 
+            id="notes" 
+            formControlName="notes"
+            placeholder="Observações sobre o agendamento (opcional)"
+            class="form-textarea"
+            rows="3">
+          </textarea>
+          <small class="field-help">
+            Informações adicionais sobre o agendamento, preparos necessários, etc.
+          </small>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <div class="action-buttons">
+        <p-button 
+          label="Cancelar" 
+          icon="pi pi-times" 
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="onHide()">
+        </p-button>
+        
+        <p-button 
+          [label]="isEditMode ? 'Salvar Alterações' : 'Agendar Castração'" 
+          icon="pi pi-check" 
+          [loading]="loading"
+          [disabled]="!sterilizationForm.valid || !isDateValid()"
+          (onClick)="onSubmit()">
+        </p-button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>

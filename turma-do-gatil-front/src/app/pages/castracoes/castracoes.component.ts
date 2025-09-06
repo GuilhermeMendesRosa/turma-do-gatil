@@ -7,11 +7,12 @@ import {
   SterilizationDto,
   Page
 } from '../../models/sterilization.model';
+import { SterilizationScheduleModalComponent } from './sterilization-schedule-modal/sterilization-schedule-modal.component';
 
 @Component({
   selector: 'app-castracoes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SterilizationScheduleModalComponent],
   templateUrl: './castracoes.component.html',
   styleUrls: ['./castracoes.component.css']
 })
@@ -23,6 +24,11 @@ export class CastracoesComponent implements OnInit {
   // Estados de carregamento
   loadingCats = false;
   loadingSterilizations = false;
+  
+  // Modal de agendamento
+  scheduleModalVisible = false;
+  selectedCatForSchedule: CatSterilizationStatusDto | null = null;
+  selectedSterilizationForEdit: SterilizationDto | null = null;
   
   // Paginação
   currentPage = 0;
@@ -161,9 +167,9 @@ export class CastracoesComponent implements OnInit {
 
   // Métodos de ação
   scheduleSterilization(cat: CatSterilizationStatusDto): void {
-    // TODO: Implementar modal de agendamento
-    console.log('Agendar castração para:', cat.name);
-    // Aqui você pode abrir um modal ou navegar para uma página de agendamento
+    this.selectedCatForSchedule = cat;
+    this.selectedSterilizationForEdit = null;
+    this.scheduleModalVisible = true;
   }
 
   viewCatDetails(cat: CatSterilizationStatusDto): void {
@@ -173,9 +179,9 @@ export class CastracoesComponent implements OnInit {
   }
 
   editSterilization(sterilization: SterilizationDto): void {
-    // TODO: Implementar edição de agendamento
-    console.log('Editar agendamento:', sterilization.id);
-    // Aqui você pode abrir um modal de edição
+    this.selectedSterilizationForEdit = sterilization;
+    this.selectedCatForSchedule = null;
+    this.scheduleModalVisible = true;
   }
 
   completeSterilization(sterilization: SterilizationDto): void {
@@ -244,5 +250,22 @@ export class CastracoesComponent implements OnInit {
   getPageNumbers(): number[] {
     const totalPages = this.sterilizationsPagination.totalPages;
     return Array.from({ length: totalPages }, (_, i) => i);
+  }
+
+  // Métodos do modal de agendamento
+  onSterilizationScheduled(): void {
+    this.loadAllData(); // Recarrega todos os dados
+    this.scheduleModalVisible = false;
+  }
+
+  onSterilizationUpdated(): void {
+    this.loadAllData(); // Recarrega todos os dados
+    this.scheduleModalVisible = false;
+  }
+
+  onScheduleModalHide(): void {
+    this.scheduleModalVisible = false;
+    this.selectedCatForSchedule = null;
+    this.selectedSterilizationForEdit = null;
   }
 }

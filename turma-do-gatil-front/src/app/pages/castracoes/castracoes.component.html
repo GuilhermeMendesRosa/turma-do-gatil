@@ -231,3 +231,13 @@
     </div>
   </ng-template>
 </div>
+
+<!-- Modal de Agendamento/Edição de Castração -->
+<app-sterilization-schedule-modal
+  [(visible)]="scheduleModalVisible"
+  [cat]="selectedCatForSchedule"
+  [sterilization]="selectedSterilizationForEdit"
+  (sterilizationScheduled)="onSterilizationScheduled()"
+  (sterilizationUpdated)="onSterilizationUpdated()"
+  (visibleChange)="onScheduleModalHide()">
+</app-sterilization-schedule-modal>
