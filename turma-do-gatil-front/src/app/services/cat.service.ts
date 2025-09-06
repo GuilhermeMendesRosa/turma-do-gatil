@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cat, CatRequest, CatFilters, Page } from '../models/cat.model';
+import { DashboardSummary } from '../models/dashboard.model';
 
 @Injectable({
   providedIn: 'root'
@@ -65,5 +66,9 @@ export class CatService {
       .set('size', size.toString());
 
     return this.http.get<Page<Cat>>(`${this.apiUrl}/adopted/${adopted}`, { params });
+  }
+
+  getDashboardSummary(): Observable<DashboardSummary> {
+    return this.http.get<DashboardSummary>(`${this.apiUrl}/dashboard-summary`);
   }
 }
