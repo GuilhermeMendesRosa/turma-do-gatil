@@ -5,7 +5,7 @@ import { DividerModule } from 'primeng/divider';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
-import { Cat, Color, Sex } from '../../../models/cat.model';
+import { Cat, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
 import { AdoptionModalComponent } from '../adoption-modal/adoption-modal.component';
 
 @Component({
@@ -115,5 +115,57 @@ export class CatDetailsModalComponent {
 
   onImageError(event: any): void {
     event.target.src = this.getDefaultImage();
+  }
+
+  getAdoptionStatusText(status: CatAdoptionStatus): string {
+    switch(status) {
+      case CatAdoptionStatus.NAO_ADOTADO:
+        return 'Disponível para Adoção';
+      case CatAdoptionStatus.EM_PROCESSO:
+        return 'Em Processo de Adoção';
+      case CatAdoptionStatus.ADOTADO:
+        return 'Adotado';
+      default:
+        return 'Disponível para Adoção';
+    }
+  }
+
+  getAdoptionStatusIcon(status: CatAdoptionStatus): string {
+    switch(status) {
+      case CatAdoptionStatus.NAO_ADOTADO:
+        return 'fa-heart';
+      case CatAdoptionStatus.EM_PROCESSO:
+        return 'fa-clock';
+      case CatAdoptionStatus.ADOTADO:
+        return 'fa-home';
+      default:
+        return 'fa-heart';
+    }
+  }
+
+  getAdoptionTagText(status: CatAdoptionStatus): string {
+    switch(status) {
+      case CatAdoptionStatus.NAO_ADOTADO:
+        return 'Disponível';
+      case CatAdoptionStatus.EM_PROCESSO:
+        return 'Em Processo';
+      case CatAdoptionStatus.ADOTADO:
+        return 'Adotado';
+      default:
+        return 'Disponível';
+    }
+  }
+
+  getAdoptionTagSeverity(status: CatAdoptionStatus): string {
+    switch(status) {
+      case CatAdoptionStatus.NAO_ADOTADO:
+        return 'info';
+      case CatAdoptionStatus.EM_PROCESSO:
+        return 'warn';
+      case CatAdoptionStatus.ADOTADO:
+        return 'success';
+      default:
+        return 'info';
+    }
   }
 }

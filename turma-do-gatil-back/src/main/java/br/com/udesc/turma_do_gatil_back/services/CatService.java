@@ -4,6 +4,7 @@ import br.com.udesc.turma_do_gatil_back.dto.CatSterilizationStatusDto;
 import br.com.udesc.turma_do_gatil_back.dto.SterilizationStatsDto;
 import br.com.udesc.turma_do_gatil_back.entities.Cat;
 import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
+import br.com.udesc.turma_do_gatil_back.enums.CatAdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
 import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
@@ -54,8 +55,8 @@ public class CatService {
         catRepository.deleteById(id);
     }
 
-    public Page<Cat> findByAdopted(Boolean adopted, Pageable pageable) {
-        return catRepository.findByAdopted(adopted, pageable);
+    public Page<Cat> findByAdoptionStatus(CatAdoptionStatus adoptionStatus, Pageable pageable) {
+        return catRepository.findByAdoptionStatus(adoptionStatus, pageable);
     }
 
     public Page<Cat> findByColor(Color color, Pageable pageable) {
@@ -70,14 +71,12 @@ public class CatService {
         return catRepository.findByNameContainingIgnoreCase(name, pageable);
     }
 
-    public Page<Cat> findWithFilters(String name, Color color, Sex sex, Boolean adopted, Pageable pageable) {
-        String colorStr = color != null ? color.name() : null;
-        String sexStr = sex != null ? sex.name() : null;
-        return catRepository.findWithFilters(name, colorStr, sexStr, adopted, pageable);
+    public Page<Cat> findWithFilters(String name, Color color, Sex sex, CatAdoptionStatus adoptionStatus, Pageable pageable) {
+        return catRepository.findWithFiltersJPQL(name, color, sex, adoptionStatus, pageable);
     }
 
     public List<CatSterilizationStatusDto> findCatsNeedingSterilization() {
-        List<Cat> allCats = catRepository.findByAdopted(false);
+        List<Cat> allCats = catRepository.findByAdoptionStatusList(CatAdoptionStatus.NAO_ADOTADO);
         LocalDateTime now = LocalDateTime.now();
 
         return allCats.stream()
@@ -104,7 +103,7 @@ public class CatService {
     }
 
     public SterilizationStatsDto getSterilizationStats() {
-        List<Cat> allCats = catRepository.findByAdopted(false);
+        List<Cat> allCats = catRepository.findByAdoptionStatusList(CatAdoptionStatus.NAO_ADOTADO);
         LocalDateTime now = LocalDateTime.now();
 
         long eligibleCount = 0;

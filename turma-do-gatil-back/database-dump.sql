@@ -14,20 +14,20 @@ TRUNCATE TABLE adopters CASCADE;
 -- INSERIR DADOS DE GATOS
 -- ========================================
 
-INSERT INTO cats (id, name, color, sex, birth_date, shelter_entry_date, photo_url, adopted) VALUES
+INSERT INTO cats (id, name, color, sex, birth_date, shelter_entry_date, photo_url, adoption_status) VALUES
 -- Gatos disponíveis para adoção
-('550e8400-e29b-41d4-a716-446655440001', 'Whiskers', 'WHITE', 'FEMALE', '2023-03-15 10:00:00', '2023-05-01 09:30:00', 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', false),
-('550e8400-e29b-41d4-a716-446655440002', 'Shadow', 'BLACK', 'MALE', '2022-11-20 14:30:00', '2023-02-10 11:15:00', 'https://images.unsplash.com/photo-1506755855567-92ff770e8d00?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', false),
-('550e8400-e29b-41d4-a716-446655440003', 'Mimi', 'CALICO', 'FEMALE', '2023-07-08 08:45:00', '2023-08-15 16:20:00', 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', false),
-('550e8400-e29b-41d4-a716-446655440004', 'Tiger', 'ORANGE', 'MALE', '2022-12-03 12:00:00', '2023-03-20 10:45:00', 'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', false),
-('550e8400-e29b-41d4-a716-446655440005', 'Luna', 'GRAY', 'FEMALE', '2023-01-25 16:30:00', '2023-04-05 14:00:00', 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', false),
-('550e8400-e29b-41d4-a716-446655440006', 'Simba', 'BROWN', 'MALE', '2022-10-12 09:15:00', '2023-01-18 13:30:00', 'https://images.unsplash.com/photo-1611267254323-4db7b39c732c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', false),
-('550e8400-e29b-41d4-a716-446655440007', 'Nala', 'MIXED', 'FEMALE', '2023-04-02 11:20:00', '2023-06-12 08:45:00', 'https://images.unsplash.com/photo-1571566882372-1598d88abd90?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', false),
-('550e8400-e29b-41d4-a716-446655440008', 'Felix', 'TABBY', 'MALE', '2022-09-18 13:40:00', '2023-01-05 15:10:00', 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', false),
+('550e8400-e29b-41d4-a716-446655440001', 'Whiskers', 'WHITE', 'FEMALE', '2023-03-15 10:00:00', '2023-05-01 09:30:00', 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'EM_PROCESSO'),
+('550e8400-e29b-41d4-a716-446655440002', 'Shadow', 'BLACK', 'MALE', '2022-11-20 14:30:00', '2023-02-10 11:15:00', 'https://images.unsplash.com/photo-1506755855567-92ff770e8d00?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'NAO_ADOTADO'),
+('550e8400-e29b-41d4-a716-446655440003', 'Mimi', 'CALICO', 'FEMALE', '2023-07-08 08:45:00', '2023-08-15 16:20:00', 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'EM_PROCESSO'),
+('550e8400-e29b-41d4-a716-446655440004', 'Tiger', 'ORANGE', 'MALE', '2022-12-03 12:00:00', '2023-03-20 10:45:00', 'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'NAO_ADOTADO'),
+('550e8400-e29b-41d4-a716-446655440005', 'Luna', 'GRAY', 'FEMALE', '2023-01-25 16:30:00', '2023-04-05 14:00:00', 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'NAO_ADOTADO'),
+('550e8400-e29b-41d4-a716-446655440006', 'Simba', 'BROWN', 'MALE', '2022-10-12 09:15:00', '2023-01-18 13:30:00', 'https://images.unsplash.com/photo-1611267254323-4db7b39c732c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'NAO_ADOTADO'),
+('550e8400-e29b-41d4-a716-446655440007', 'Nala', 'MIXED', 'FEMALE', '2023-04-02 11:20:00', '2023-06-12 08:45:00', 'https://images.unsplash.com/photo-1571566882372-1598d88abd90?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'NAO_ADOTADO'),
+('550e8400-e29b-41d4-a716-446655440008', 'Felix', 'TABBY', 'MALE', '2022-09-18 13:40:00', '2023-01-05 15:10:00', 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'NAO_ADOTADO'),
 
 -- Gatos já adotados
-('550e8400-e29b-41d4-a716-446655440009', 'Bella', 'WHITE', 'FEMALE', '2022-08-14 10:30:00', '2022-12-20 09:00:00', 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', true),
-('550e8400-e29b-41d4-a716-446655440010', 'Max', 'BLACK', 'MALE', '2022-06-30 14:15:00', '2022-11-15 11:30:00', 'https://images.unsplash.com/photo-1551717743-49959800b1f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', true);
+('550e8400-e29b-41d4-a716-446655440009', 'Bella', 'WHITE', 'FEMALE', '2022-08-14 10:30:00', '2022-12-20 09:00:00', 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'ADOTADO'),
+('550e8400-e29b-41d4-a716-446655440010', 'Max', 'BLACK', 'MALE', '2022-06-30 14:15:00', '2022-11-15 11:30:00', 'https://images.unsplash.com/photo-1551717743-49959800b1f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80', 'ADOTADO');
 
 -- ========================================
 -- INSERIR DADOS DE ADOTANTES

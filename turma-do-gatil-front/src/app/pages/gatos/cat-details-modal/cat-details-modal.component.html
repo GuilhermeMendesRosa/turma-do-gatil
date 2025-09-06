@@ -23,9 +23,9 @@
         
         <!-- Status de adoção -->
         <div class="profile-status">
-          <div class="status-badge" [class.adopted]="cat.adopted">
-            <i class="fas" [class.fa-heart]="!cat.adopted" [class.fa-home]="cat.adopted"></i>
-            <span>{{ cat.adopted ? 'Adotado' : 'Disponível para Adoção' }}</span>
+          <div class="status-badge" [class]="cat.adoptionStatus.toLowerCase().replace('_', '-')">
+            <i class="fas" [class]="getAdoptionStatusIcon(cat.adoptionStatus)"></i>
+            <span>{{ getAdoptionStatusText(cat.adoptionStatus) }}</span>
           </div>
         </div>
       </div>
@@ -104,8 +104,8 @@
           </div>
           <div class="detail-value">
             <p-tag 
-              [value]="cat.adopted ? 'Adotado' : 'Disponível'" 
-              [severity]="cat.adopted ? 'success' : 'info'">
+              [value]="getAdoptionTagText(cat.adoptionStatus)" 
+              [severity]="getAdoptionTagSeverity(cat.adoptionStatus)">
             </p-tag>
           </div>
         </div>
@@ -117,7 +117,7 @@
     <div class="dialog-footer">
       <div class="action-buttons">
         <p-button 
-          *ngIf="!cat?.adopted"
+          *ngIf="cat?.adoptionStatus === 'NAO_ADOTADO'"
           label="Adotar" 
           icon="pi pi-heart" 
           (onClick)="onAdoptCat()"

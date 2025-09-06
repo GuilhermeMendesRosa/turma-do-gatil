@@ -9,6 +9,7 @@ import br.com.udesc.turma_do_gatil_back.dto.SterilizationStatsDto;
 import br.com.udesc.turma_do_gatil_back.entities.Adopter;
 import br.com.udesc.turma_do_gatil_back.entities.Cat;
 import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
+import br.com.udesc.turma_do_gatil_back.enums.CatAdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
 import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
@@ -61,7 +62,7 @@ public class CatController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Color color,
             @RequestParam(required = false) Sex sex,
-            @RequestParam(required = false) Boolean adopted) {
+            @RequestParam(required = false) CatAdoptionStatus adoptionStatus) {
 
         Sort sort = sortDir.equalsIgnoreCase("desc")
             ? Sort.by(sortBy).descending()
@@ -70,8 +71,8 @@ public class CatController {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Cat> cats;
-        if (name != null || color != null || sex != null || adopted != null) {
-            cats = catService.findWithFilters(name, color, sex, adopted, pageable);
+        if (name != null || color != null || sex != null || adoptionStatus != null) {
+            cats = catService.findWithFilters(name, color, sex, adoptionStatus, pageable);
         } else {
             cats = catService.findAll(pageable);
         }
@@ -121,9 +122,9 @@ public class CatController {
         }
     }
 
-    @GetMapping("/adopted/{adopted}")
-    public ResponseEntity<Page<CatDto>> getCatsByAdoptionStatus(
-            @PathVariable Boolean adopted,
+    @GetMapping("/adoption-status/{status}")
+    public ResponseEntity<Page<CatDto>> getCatsByAdoptionStatusEnum(
+            @PathVariable CatAdoptionStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -135,7 +136,7 @@ public class CatController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Cat> cats = catService.findByAdopted(adopted, pageable);
+        Page<Cat> cats = catService.findByAdoptionStatus(status, pageable);
         Page<CatDto> catsDto = EntityMapper.toPage(cats, EntityMapper::toCatDto);
         return ResponseEntity.ok(catsDto);
     }
@@ -262,7 +263,7 @@ public class CatController {
         try {
             // Buscar gatos disponíveis para adoção (não adotados)
             Pageable catsPageable = PageRequest.of(0, 10, Sort.by("name").ascending());
-            Page<Cat> availableCatsPage = catService.findByAdopted(false, catsPageable);
+            Page<Cat> availableCatsPage = catService.findByAdoptionStatus(CatAdoptionStatus.NAO_ADOTADO, catsPageable);
             List<CatDto> availableCats = EntityMapper.toList(availableCatsPage.getContent(), EntityMapper::toCatDto);
 
             // Buscar castrações pendentes (agendadas)

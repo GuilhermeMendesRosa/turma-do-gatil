@@ -1,6 +1,7 @@
 package br.com.udesc.turma_do_gatil_back.repositories;
 
 import br.com.udesc.turma_do_gatil_back.entities.Cat;
+import br.com.udesc.turma_do_gatil_back.enums.CatAdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
 import org.springframework.data.domain.Page;
@@ -16,9 +17,10 @@ import java.util.UUID;
 @Repository
 public interface CatRepository extends JpaRepository<Cat, UUID> {
 
-    Page<Cat> findByAdopted(Boolean adopted, Pageable pageable);
+    // Métodos para o status de adoção
+    Page<Cat> findByAdoptionStatus(CatAdoptionStatus adoptionStatus, Pageable pageable);
 
-    List<Cat> findByAdopted(Boolean adopted);
+    List<Cat> findByAdoptionStatus(CatAdoptionStatus adoptionStatus);
 
     Page<Cat> findByColor(Color color, Pageable pageable);
 
@@ -26,16 +28,30 @@ public interface CatRepository extends JpaRepository<Cat, UUID> {
 
     Page<Cat> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
-    @Query(value = "SELECT * FROM cats c WHERE " +
-           "(:name IS NULL OR LOWER(c.name::text) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+    // Query JPQL para filtros
+    @Query("SELECT c FROM Cat c WHERE " +
+           "(:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
            "(:color IS NULL OR c.color = :color) AND " +
            "(:sex IS NULL OR c.sex = :sex) AND " +
-           "(:adopted IS NULL OR c.adopted = :adopted) " +
-           "ORDER BY c.name",
-           nativeQuery = true)
+           "(:adoptionStatus IS NULL OR c.adoptionStatus = :adoptionStatus) " +
+           "ORDER BY c.name")
     Page<Cat> findWithFilters(@Param("name") String name,
-                             @Param("color") String color,
-                             @Param("sex") String sex,
-                             @Param("adopted") Boolean adopted,
+                             @Param("color") Color color,
+                             @Param("sex") Sex sex,
+                             @Param("adoptionStatus") CatAdoptionStatus adoptionStatus,
                              Pageable pageable);
+
+    @Query("SELECT c FROM Cat c WHERE " +
+           "(:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+           "(:color IS NULL OR c.color = :color) AND " +
+           "(:sex IS NULL OR c.sex = :sex) AND " +
+           "(:adoptionStatus IS NULL OR c.adoptionStatus = :adoptionStatus)")
+    Page<Cat> findWithFiltersJPQL(@Param("name") String name,
+                                  @Param("color") Color color,
+                                  @Param("sex") Sex sex,
+                                  @Param("adoptionStatus") CatAdoptionStatus adoptionStatus,
+                                  Pageable pageable);
+
+    @Query("SELECT c FROM Cat c WHERE c.adoptionStatus = :adoptionStatus")
+    List<Cat> findByAdoptionStatusList(@Param("adoptionStatus") CatAdoptionStatus adoptionStatus);
 }

@@ -3,6 +3,7 @@ package br.com.udesc.turma_do_gatil_back.services;
 import br.com.udesc.turma_do_gatil_back.entities.Adoption;
 import br.com.udesc.turma_do_gatil_back.entities.Cat;
 import br.com.udesc.turma_do_gatil_back.enums.AdoptionStatus;
+import br.com.udesc.turma_do_gatil_back.enums.CatAdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.repositories.AdoptionRepository;
 import br.com.udesc.turma_do_gatil_back.repositories.CatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ public class AdoptionService {
     }
 
     /**
-     * Atualiza o status adopted do gato baseado em todas as adoções existentes
+     * Atualiza o status de adoção do gato baseado em todas as adoções existentes
      * @param catId ID do gato
      */
     private void updateCatAdoptedStatus(UUID catId) {
@@ -99,15 +100,23 @@ public class AdoptionService {
         if (catOptional.isPresent()) {
             Cat cat = catOptional.get();
 
-            // Buscar todas as adoções ativas (COMPLETED) para este gato
+            // Buscar adoções por status para este gato
             List<Adoption> completedAdoptions = adoptionRepository.findByCatIdAndStatus(catId, AdoptionStatus.COMPLETED);
+            List<Adoption> pendingAdoptions = adoptionRepository.findByCatIdAndStatus(catId, AdoptionStatus.PENDING);
 
-            // O gato está adotado se há pelo menos uma adoção com status COMPLETED
-            boolean shouldBeAdopted = !completedAdoptions.isEmpty();
+            // Determinar o novo status baseado nas adoções
+            CatAdoptionStatus newStatus;
+            if (!completedAdoptions.isEmpty()) {
+                newStatus = CatAdoptionStatus.ADOTADO;
+            } else if (!pendingAdoptions.isEmpty()) {
+                newStatus = CatAdoptionStatus.EM_PROCESSO;
+            } else {
+                newStatus = CatAdoptionStatus.NAO_ADOTADO;
+            }
 
             // Só atualiza se o status for diferente do atual
-            if (!cat.getAdopted().equals(shouldBeAdopted)) {
-                cat.setAdopted(shouldBeAdopted);
+            if (!cat.getAdoptionStatus().equals(newStatus)) {
+                cat.setAdoptionStatus(newStatus);
                 catRepository.save(cat);
             }
         }

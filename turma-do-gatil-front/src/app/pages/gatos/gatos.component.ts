@@ -14,7 +14,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CatService } from '../../services/cat.service';
-import { Cat, Color, Sex, CatFilters, Page } from '../../models/cat.model';
+import { Cat, Color, Sex, CatFilters, Page, CatAdoptionStatus } from '../../models/cat.model';
 import { CatDetailsModalComponent } from './cat-details-modal/cat-details-modal.component';
 import { CatCreateModalComponent } from './cat-create-modal/cat-create-modal.component';
 
@@ -190,7 +190,7 @@ export class GatosComponent implements OnInit {
       return this.totalRecords;
     }
     // Caso contrário, conta os não adotados na lista atual
-    return this.cats.filter(cat => !cat.adopted).length;
+    return this.cats.filter(cat => cat.adoptionStatus === CatAdoptionStatus.NAO_ADOTADO).length;
   }
 
   getAdoptedCatsCount(): number {
@@ -199,7 +199,7 @@ export class GatosComponent implements OnInit {
       return this.totalRecords;
     }
     // Caso contrário, conta os adotados na lista atual
-    return this.cats.filter(cat => cat.adopted).length;
+    return this.cats.filter(cat => cat.adoptionStatus === CatAdoptionStatus.ADOTADO).length;
   }
 
   openAddCatDialog(): void {
@@ -347,5 +347,44 @@ export class GatosComponent implements OnInit {
 
   onImageError(event: any): void {
     event.target.src = this.getDefaultImage();
+  }
+
+  getAdoptionStatusText(status: CatAdoptionStatus): string {
+    switch(status) {
+      case CatAdoptionStatus.NAO_ADOTADO:
+        return 'Disponível';
+      case CatAdoptionStatus.EM_PROCESSO:
+        return 'Em Processo';
+      case CatAdoptionStatus.ADOTADO:
+        return 'Adotado';
+      default:
+        return 'Disponível';
+    }
+  }
+
+  getAdoptionStatusIcon(status: CatAdoptionStatus): string {
+    switch(status) {
+      case CatAdoptionStatus.NAO_ADOTADO:
+        return 'fa-heart';
+      case CatAdoptionStatus.EM_PROCESSO:
+        return 'fa-clock';
+      case CatAdoptionStatus.ADOTADO:
+        return 'fa-home';
+      default:
+        return 'fa-heart';
+    }
+  }
+
+  getAdoptionStatusClass(status: CatAdoptionStatus): string {
+    switch(status) {
+      case CatAdoptionStatus.NAO_ADOTADO:
+        return '';
+      case CatAdoptionStatus.EM_PROCESSO:
+        return 'in-process';
+      case CatAdoptionStatus.ADOTADO:
+        return 'adopted';
+      default:
+        return '';
+    }
   }
 }

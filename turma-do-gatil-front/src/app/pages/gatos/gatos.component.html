@@ -187,9 +187,9 @@
           
           <!-- Status de adoção -->
           <div class="adoption-status-overlay">
-            <div class="adoption-badge" [class.adopted]="cat.adopted">
-              <i class="fas" [class.fa-heart]="!cat.adopted" [class.fa-home]="cat.adopted"></i>
-              <span>{{ cat.adopted ? 'Adotado' : 'Disponível' }}</span>
+            <div class="adoption-badge" [class]="getAdoptionStatusClass(cat.adoptionStatus)">
+              <i class="fas" [class]="getAdoptionStatusIcon(cat.adoptionStatus)"></i>
+              <span>{{ getAdoptionStatusText(cat.adoptionStatus) }}</span>
             </div>
           </div>
         </div>

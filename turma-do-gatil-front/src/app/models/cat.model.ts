@@ -1,22 +1,7 @@
-export interface Cat {
-  id: string;
-  name: string;
-  color: Color;
-  sex: Sex;
-  birthDate: string;
-  shelterEntryDate: string;
-  photoUrl?: string;
-  adopted: boolean;
-}
-
-export interface CatRequest {
-  name: string;
-  color: Color;
-  sex: Sex;
-  birthDate: string;
-  shelterEntryDate: string;
-  photoUrl?: string;
-  adopted?: boolean;
+export enum CatAdoptionStatus {
+  NAO_ADOTADO = 'NAO_ADOTADO',
+  EM_PROCESSO = 'EM_PROCESSO', 
+  ADOTADO = 'ADOTADO'
 }
 
 export enum Color {
@@ -37,6 +22,29 @@ export enum Sex {
   FEMALE = 'FEMALE'
 }
 
+export interface Cat {
+  id: string;
+  name: string;
+  color: Color;
+  sex: Sex;
+  birthDate: string;
+  shelterEntryDate: string;
+  photoUrl?: string;
+  adopted: boolean;
+  adoptionStatus: CatAdoptionStatus;
+}
+
+export interface CatRequest {
+  name: string;
+  color: Color;
+  sex: Sex;
+  birthDate: string;
+  shelterEntryDate: string;
+  photoUrl?: string;
+  adopted?: boolean;
+  adoptionStatus?: CatAdoptionStatus;
+}
+
 export interface Page<T> {
   content: T[];
   totalElements: number;
@@ -53,6 +61,7 @@ export interface CatFilters {
   color?: Color;
   sex?: Sex;
   adopted?: boolean;
+  adoptionStatus?: CatAdoptionStatus;
   page?: number;
   size?: number;
   sortBy?: string;

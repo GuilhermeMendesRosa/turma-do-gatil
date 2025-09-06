@@ -21,7 +21,7 @@ public class EntityMapper {
             cat.getBirthDate(),
             cat.getShelterEntryDate(),
             cat.getPhotoUrl(),
-            cat.getAdopted()
+            cat.getAdoptionStatus()
         );
     }
 
@@ -35,7 +35,7 @@ public class EntityMapper {
         cat.setBirthDate(catDto.getBirthDate());
         cat.setShelterEntryDate(catDto.getShelterEntryDate());
         cat.setPhotoUrl(catDto.getPhotoUrl());
-        cat.setAdopted(catDto.getAdopted());
+        cat.setAdoptionStatus(catDto.getAdoptionStatus());
         return cat;
     }
 

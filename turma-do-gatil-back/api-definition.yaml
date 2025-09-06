@@ -748,7 +748,9 @@ components:
           description: URL da foto do gato
         adopted:
           type: boolean
-          description: Status de adoção do gato
+          description: Status de adoção do gato (compatibilidade)
+        adoptionStatus:
+          $ref: '#/components/schemas/CatAdoptionStatus'
 
     CatRequest:
       type: object
@@ -780,7 +782,10 @@ components:
         adopted:
           type: boolean
           default: false
-          description: Status de adoção do gato
+          description: Status de adoção do gato (compatibilidade)
+        adoptionStatus:
+          $ref: '#/components/schemas/CatAdoptionStatus'
+          default: NAO_ADOTADO
 
     Adopter:
       type: object
@@ -978,6 +983,14 @@ components:
         - CANCELED
         - PENDING
       description: Status da adoção
+
+    CatAdoptionStatus:
+      type: string
+      enum:
+        - NAO_ADOTADO
+        - EM_PROCESSO
+        - ADOTADO
+      description: Status de adoção do gato
 
     SterilizationStatus:
       type: string

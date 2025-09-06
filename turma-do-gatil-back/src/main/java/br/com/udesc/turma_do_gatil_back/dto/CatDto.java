@@ -1,5 +1,6 @@
 package br.com.udesc.turma_do_gatil_back.dto;
 
+import br.com.udesc.turma_do_gatil_back.enums.CatAdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
 
@@ -14,13 +15,13 @@ public class CatDto {
     private LocalDateTime birthDate;
     private LocalDateTime shelterEntryDate;
     private String photoUrl;
-    private Boolean adopted;
+    private CatAdoptionStatus adoptionStatus;
 
     // Constructors
     public CatDto() {}
 
     public CatDto(UUID id, String name, Color color, Sex sex, LocalDateTime birthDate,
-                  LocalDateTime shelterEntryDate, String photoUrl, Boolean adopted) {
+                  LocalDateTime shelterEntryDate, String photoUrl, CatAdoptionStatus adoptionStatus) {
         this.id = id;
         this.name = name;
         this.color = color;
@@ -28,7 +29,7 @@ public class CatDto {
         this.birthDate = birthDate;
         this.shelterEntryDate = shelterEntryDate;
         this.photoUrl = photoUrl;
-        this.adopted = adopted;
+        this.adoptionStatus = adoptionStatus;
     }
 
     // Getters and Setters
@@ -88,11 +89,11 @@ public class CatDto {
         this.photoUrl = photoUrl;
     }
 
-    public Boolean getAdopted() {
-        return adopted;
+    public CatAdoptionStatus getAdoptionStatus() {
+        return adoptionStatus;
     }
 
-    public void setAdopted(Boolean adopted) {
-        this.adopted = adopted;
+    public void setAdoptionStatus(CatAdoptionStatus adoptionStatus) {
+        this.adoptionStatus = adoptionStatus;
     }
 }

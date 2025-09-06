@@ -297,7 +297,7 @@
 }
 
 .adoption-badge {
-  background: rgba(76, 175, 80, 0.95);
+  background: rgba(76, 175, 80, 0.95); /* Verde para disponível */
   color: white;
   padding: 0.5rem 0.75rem;
   border-radius: 20px;
@@ -311,7 +311,11 @@
 }
 
 .adoption-badge.adopted {
-  background: rgba(156, 39, 176, 0.95);
+  background: rgba(156, 39, 176, 0.95); /* Roxo para adotado */
+}
+
+.adoption-badge.in-process {
+  background: rgba(255, 193, 7, 0.95); /* Amarelo para em processo */
 }
 
 .favorite-icon {

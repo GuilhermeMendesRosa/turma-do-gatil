@@ -1,5 +1,6 @@
 package br.com.udesc.turma_do_gatil_back.entities;
 
+import br.com.udesc.turma_do_gatil_back.enums.CatAdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
 import jakarta.persistence.*;
@@ -36,8 +37,9 @@ public class Cat {
     @Column(name = "photo_url", columnDefinition = "VARCHAR(500)")
     private String photoUrl;
 
-    @Column(nullable = false)
-    private Boolean adopted = false;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "adoption_status", nullable = false)
+    private CatAdoptionStatus adoptionStatus = CatAdoptionStatus.NAO_ADOTADO;
 
     @OneToMany(mappedBy = "cat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Note> notes;
@@ -58,7 +60,7 @@ public class Cat {
         this.birthDate = birthDate;
         this.shelterEntryDate = shelterEntryDate;
         this.photoUrl = photoUrl;
-        this.adopted = false;
+        this.adoptionStatus = CatAdoptionStatus.NAO_ADOTADO;
     }
 
     // Getters and Setters
@@ -118,12 +120,12 @@ public class Cat {
         this.photoUrl = photoUrl;
     }
 
-    public Boolean getAdopted() {
-        return adopted;
+    public CatAdoptionStatus getAdoptionStatus() {
+        return adoptionStatus;
     }
 
-    public void setAdopted(Boolean adopted) {
-        this.adopted = adopted;
+    public void setAdoptionStatus(CatAdoptionStatus adoptionStatus) {
+        this.adoptionStatus = adoptionStatus;
     }
 
     public List<Note> getNotes() {

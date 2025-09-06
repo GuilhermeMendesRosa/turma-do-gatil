@@ -103,7 +103,7 @@
 }
 
 .status-badge {
-  background: var(--p-primary-color);
+  background: var(--p-primary-color); /* Verde para disponível */
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -116,8 +116,17 @@
   animation: pulse 2s infinite;
 }
 
-.status-badge.adopted {
-  background: var(--p-green-500);
+.status-badge.adotado {
+  background: var(--p-green-500); /* Verde para adotado */
+}
+
+.status-badge.em-processo {
+  background: var(--p-yellow-500); /* Amarelo para em processo */
+  color: #333;
+}
+
+.status-badge.nao-adotado {
+  background: var(--p-primary-color); /* Azul para disponível */
 }
 
 .cat-profile-info {
