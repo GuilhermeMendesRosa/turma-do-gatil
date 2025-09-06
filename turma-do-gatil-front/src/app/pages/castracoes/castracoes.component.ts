@@ -172,12 +172,6 @@ export class CastracoesComponent implements OnInit {
     this.scheduleModalVisible = true;
   }
 
-  viewCatDetails(cat: CatSterilizationStatusDto): void {
-    // TODO: Implementar visualização de detalhes do gato
-    console.log('Ver detalhes do gato:', cat.name);
-    // Aqui você pode abrir um modal ou navegar para os detalhes do gato
-  }
-
   editSterilization(sterilization: SterilizationDto): void {
     this.selectedSterilizationForEdit = sterilization;
     this.selectedCatForSchedule = null;
