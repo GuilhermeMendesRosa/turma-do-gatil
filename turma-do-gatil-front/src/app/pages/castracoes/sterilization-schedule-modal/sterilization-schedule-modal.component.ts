@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
 import { SterilizationDto, SterilizationRequest, CatSterilizationStatusDto } from '../../../models/sterilization.model';
@@ -20,7 +19,6 @@ import { SterilizationService } from '../../../services/sterilization.service';
     DialogModule,
     ButtonModule,
     InputTextModule,
-    Select,
     MessageModule,
     DividerModule
   ],
@@ -38,12 +36,6 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
   sterilizationForm!: FormGroup;
   loading = false;
   isEditMode = false;
-
-  statusOptions = [
-    { label: 'Agendada', value: 'SCHEDULED' },
-    { label: 'Realizada', value: 'COMPLETED' },
-    { label: 'Cancelada', value: 'CANCELED' }
-  ];
 
   constructor(
     private fb: FormBuilder,
@@ -68,7 +60,6 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
     
     this.sterilizationForm = this.fb.group({
       sterilizationDate: [tomorrow, Validators.required],
-      status: ['SCHEDULED', Validators.required],
       notes: ['']
     });
 
@@ -85,7 +76,6 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
       
       this.sterilizationForm.patchValue({
         sterilizationDate: sterilizationDate,
-        status: this.sterilization.status,
         notes: this.sterilization.notes || ''
       });
     } else {
@@ -108,8 +98,7 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
     tomorrow.setHours(9, 0, 0, 0);
     
     this.sterilizationForm.patchValue({
-      sterilizationDate: tomorrow,
-      status: 'SCHEDULED'
+      sterilizationDate: tomorrow
     });
     
     this.loading = false;
@@ -126,7 +115,7 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
       const sterilizationData: SterilizationRequest = {
         catId: this.isEditMode ? this.sterilization!.catId : this.cat!.id,
         sterilizationDate: formValue.sterilizationDate.toISOString(),
-        status: formValue.status,
+        status: this.isEditMode ? this.sterilization!.status : 'SCHEDULED', // Manter status original na edição ou 'SCHEDULED' para novo
         notes: formValue.notes || undefined
       };
 

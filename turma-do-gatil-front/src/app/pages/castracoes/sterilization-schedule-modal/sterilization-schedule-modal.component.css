@@ -233,33 +233,7 @@
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-/* Custom PrimeNG Select Styles */
-::ng-deep .form-select.p-select {
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  transition: all 0.2s ease;
-  width: 100%;
-}
-
-::ng-deep .form-select.p-select:not(.p-disabled):hover {
-  border-color: #9ca3af;
-}
-
-::ng-deep .form-select.p-select:not(.p-disabled).p-focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-::ng-deep .form-select.p-select.ng-invalid.ng-touched {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-}
-
-::ng-deep .form-select .p-select-label {
-  padding: 0.75rem;
-  font-size: 0.875rem;
-}
+/* Custom PrimeNG Select Styles - Removido pois não usamos mais select */
 
 /* Error Messages */
 .error-message {
@@ -371,8 +345,7 @@
 
 /* Focus styles for accessibility */
 .form-input:focus-visible,
-.form-textarea:focus-visible,
-::ng-deep .p-select:focus-visible {
+.form-textarea:focus-visible {
   outline: 2px solid #6366f1;
   outline-offset: 2px;
 }
@@ -386,8 +359,7 @@
 /* High contrast support */
 @media (prefers-contrast: high) {
   .form-input,
-  .form-textarea,
-  ::ng-deep .p-select {
+  .form-textarea {
     border-width: 2px;
   }
   

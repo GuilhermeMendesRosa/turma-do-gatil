@@ -74,23 +74,6 @@
           </small>
         </div>
 
-        <!-- Status -->
-        <div class="form-field">
-          <label for="status">Status *</label>
-          <p-select 
-            [options]="statusOptions"
-            formControlName="status"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Selecione o status"
-            [class.ng-invalid]="isFieldInvalid('status')"
-            class="form-select">
-          </p-select>
-          <small class="error-message" *ngIf="getFieldError('status')">
-            {{ getFieldError('status') }}
-          </small>
-        </div>
-
         <!-- Observações -->
         <div class="form-field form-field-full">
           <label for="notes">Observações</label>
