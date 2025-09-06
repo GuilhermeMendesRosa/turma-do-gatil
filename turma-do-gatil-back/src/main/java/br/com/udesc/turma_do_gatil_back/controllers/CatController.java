@@ -1,13 +1,21 @@
 package br.com.udesc.turma_do_gatil_back.controllers;
 
+import br.com.udesc.turma_do_gatil_back.dto.AdopterDto;
 import br.com.udesc.turma_do_gatil_back.dto.CatDto;
 import br.com.udesc.turma_do_gatil_back.dto.CatSterilizationStatusDto;
+import br.com.udesc.turma_do_gatil_back.dto.DashboardSummaryDto;
+import br.com.udesc.turma_do_gatil_back.dto.SterilizationDto;
 import br.com.udesc.turma_do_gatil_back.dto.SterilizationStatsDto;
+import br.com.udesc.turma_do_gatil_back.entities.Adopter;
 import br.com.udesc.turma_do_gatil_back.entities.Cat;
+import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
 import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
+import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
 import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
+import br.com.udesc.turma_do_gatil_back.services.AdopterService;
 import br.com.udesc.turma_do_gatil_back.services.CatService;
+import br.com.udesc.turma_do_gatil_back.services.SterilizationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -37,6 +45,12 @@ public class CatController {
 
     @Autowired
     private CatService catService;
+
+    @Autowired
+    private SterilizationService sterilizationService;
+
+    @Autowired
+    private AdopterService adopterService;
 
     @GetMapping
     public ResponseEntity<Page<CatDto>> getAllCats(
@@ -207,6 +221,62 @@ public class CatController {
         try {
             SterilizationStatsDto stats = catService.getSterilizationStats();
             return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Operation(
+        summary = "Obter resumo do dashboard",
+        description = "Retorna um resumo com:\n\n" +
+                     "**Informações Incluídas:**\n" +
+                     "- `availableCats`: Lista dos primeiros 10 gatos disponíveis para adoção (não adotados)\n" +
+                     "- `pendingSterilizations`: Lista das primeiras 10 castrações pendentes (status SCHEDULED)\n" +
+                     "- `registeredAdopters`: Lista dos primeiros 10 adotantes cadastrados mais recentes\n\n" +
+                     "**Utilidade:**\n" +
+                     "- Ideal para dashboards e telas de resumo\n" +
+                     "- Fornece uma visão geral rápida do sistema\n" +
+                     "- Dados limitados para performance otimizada",
+        tags = {"Gatos"}
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Resumo do dashboard retornado com sucesso",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = DashboardSummaryDto.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Erro interno do servidor ao processar a solicitação",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(example = "{ \"error\": \"Internal server error\" }")
+            )
+        )
+    })
+    @GetMapping("/dashboard-summary")
+    public ResponseEntity<DashboardSummaryDto> getDashboardSummary() {
+        try {
+            // Buscar gatos disponíveis para adoção (não adotados)
+            Pageable catsPageable = PageRequest.of(0, 10, Sort.by("name").ascending());
+            Page<Cat> availableCatsPage = catService.findByAdopted(false, catsPageable);
+            List<CatDto> availableCats = EntityMapper.toList(availableCatsPage.getContent(), EntityMapper::toCatDto);
+
+            // Buscar castrações pendentes (agendadas)
+            Pageable sterilizationsPageable = PageRequest.of(0, 10, Sort.by("sterilizationDate").ascending());
+            Page<Sterilization> pendingSterilizationsPage = sterilizationService.findByStatus(SterilizationStatus.SCHEDULED, sterilizationsPageable);
+            List<SterilizationDto> pendingSterilizations = EntityMapper.toList(pendingSterilizationsPage.getContent(), EntityMapper::toSterilizationDto);
+
+            // Buscar adotantes cadastrados (mais recentes primeiro)
+            Pageable adoptersPageable = PageRequest.of(0, 10, Sort.by("registrationDate").descending());
+            Page<Adopter> registeredAdoptersPage = adopterService.findAll(adoptersPageable);
+            List<AdopterDto> registeredAdopters = EntityMapper.toList(registeredAdoptersPage.getContent(), EntityMapper::toAdopterDto);
+
+            DashboardSummaryDto summary = new DashboardSummaryDto(availableCats, pendingSterilizations, registeredAdopters);
+            return ResponseEntity.ok(summary);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
