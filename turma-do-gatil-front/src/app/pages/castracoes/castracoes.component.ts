@@ -20,10 +20,12 @@ export class CastracoesComponent implements OnInit {
   stats: SterilizationStatsDto | null = null;
   catsNeedingSterilization: CatSterilizationStatusDto[] = [];
   scheduledSterilizations: SterilizationDto[] = [];
+  completedSterilizations: SterilizationDto[] = [];
   
   // Estados de carregamento
   loadingCats = false;
   loadingSterilizations = false;
+  loadingCompletedSterilizations = false;
   
   // Modal de agendamento
   scheduleModalVisible = false;
@@ -54,6 +56,29 @@ export class CastracoesComponent implements OnInit {
     empty: true
   };
 
+  // Paginação para castrações realizadas
+  currentCompletedPage = 0;
+  completedSterilizationsPagination: Page<SterilizationDto> = {
+    content: [],
+    pageable: {
+      sort: { empty: true, sorted: false, unsorted: true },
+      offset: 0,
+      pageSize: 10,
+      pageNumber: 0,
+      paged: true,
+      unpaged: false
+    },
+    last: true,
+    totalPages: 0,
+    totalElements: 0,
+    size: 10,
+    number: 0,
+    sort: { empty: true, sorted: false, unsorted: true },
+    first: true,
+    numberOfElements: 0,
+    empty: true
+  };
+
   constructor(private sterilizationService: SterilizationService) { }
 
   ngOnInit(): void {
@@ -64,6 +89,7 @@ export class CastracoesComponent implements OnInit {
     this.loadStats();
     this.loadCatsNeedingSterilization();
     this.loadScheduledSterilizations();
+    this.loadCompletedSterilizations();
   }
 
   loadStats(): void {
@@ -107,6 +133,26 @@ export class CastracoesComponent implements OnInit {
       error: (error) => {
         console.error('Erro ao carregar castrações agendadas:', error);
         this.loadingSterilizations = false;
+      }
+    });
+  }
+
+  loadCompletedSterilizations(): void {
+    this.loadingCompletedSterilizations = true;
+    this.sterilizationService.getSterilizationsByStatus('COMPLETED', {
+      page: this.currentCompletedPage,
+      size: this.pageSize,
+      sortBy: 'sterilizationDate',
+      sortDir: 'desc'
+    }).subscribe({
+      next: (response) => {
+        this.completedSterilizationsPagination = response;
+        this.completedSterilizations = response.content;
+        this.loadingCompletedSterilizations = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar castrações realizadas:', error);
+        this.loadingCompletedSterilizations = false;
       }
     });
   }
@@ -191,6 +237,7 @@ export class CastracoesComponent implements OnInit {
         next: () => {
           console.log('Castração marcada como realizada');
           this.loadScheduledSterilizations();
+          this.loadCompletedSterilizations(); // Atualiza também as castrações realizadas
           this.loadStats(); // Atualiza as estatísticas
         },
         error: (error) => {
@@ -221,7 +268,7 @@ export class CastracoesComponent implements OnInit {
     }
   }
 
-  // Métodos de paginação
+  // Métodos de paginação para castrações agendadas
   previousPage(): void {
     if (!this.sterilizationsPagination.first) {
       this.currentPage--;
@@ -243,6 +290,31 @@ export class CastracoesComponent implements OnInit {
 
   getPageNumbers(): number[] {
     const totalPages = this.sterilizationsPagination.totalPages;
+    return Array.from({ length: totalPages }, (_, i) => i);
+  }
+
+  // Métodos de paginação para castrações realizadas
+  previousCompletedPage(): void {
+    if (!this.completedSterilizationsPagination.first) {
+      this.currentCompletedPage--;
+      this.loadCompletedSterilizations();
+    }
+  }
+
+  nextCompletedPage(): void {
+    if (!this.completedSterilizationsPagination.last) {
+      this.currentCompletedPage++;
+      this.loadCompletedSterilizations();
+    }
+  }
+
+  goToCompletedPage(event: any): void {
+    this.currentCompletedPage = parseInt(event.target.value);
+    this.loadCompletedSterilizations();
+  }
+
+  getCompletedPageNumbers(): number[] {
+    const totalPages = this.completedSterilizationsPagination.totalPages;
     return Array.from({ length: totalPages }, (_, i) => i);
   }
 

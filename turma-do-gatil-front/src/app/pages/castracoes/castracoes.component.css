@@ -289,6 +289,13 @@
   background-color: #d1fae5;
   color: #065f46;
   border-color: #a7f3d0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.status-badge.completed i {
+  font-size: 0.75rem;
 }
 
 .status-badge.canceled {
