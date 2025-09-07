@@ -30,7 +30,7 @@ public interface CatRepository extends JpaRepository<Cat, UUID> {
 
     // Query JPQL para filtros
     @Query("SELECT c FROM Cat c WHERE " +
-           "(:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+           "(:name IS NULL OR :name = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
            "(:color IS NULL OR c.color = :color) AND " +
            "(:sex IS NULL OR c.sex = :sex) AND " +
            "(:adoptionStatus IS NULL OR c.adoptionStatus = :adoptionStatus) " +
@@ -41,15 +41,22 @@ public interface CatRepository extends JpaRepository<Cat, UUID> {
                              @Param("adoptionStatus") CatAdoptionStatus adoptionStatus,
                              Pageable pageable);
 
-    @Query("SELECT c FROM Cat c WHERE " +
-           "(:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+    @Query(value = "SELECT * FROM cats c WHERE " +
+           "(:name IS NULL OR :name = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
            "(:color IS NULL OR c.color = :color) AND " +
            "(:sex IS NULL OR c.sex = :sex) AND " +
-           "(:adoptionStatus IS NULL OR c.adoptionStatus = :adoptionStatus)")
+           "(:adoptionStatus IS NULL OR c.adoption_status = :adoptionStatus)" +
+           " ORDER BY c.name", 
+           countQuery = "SELECT COUNT(*) FROM cats c WHERE " +
+           "(:name IS NULL OR :name = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+           "(:color IS NULL OR c.color = :color) AND " +
+           "(:sex IS NULL OR c.sex = :sex) AND " +
+           "(:adoptionStatus IS NULL OR c.adoption_status = :adoptionStatus)",
+           nativeQuery = true)
     Page<Cat> findWithFiltersJPQL(@Param("name") String name,
-                                  @Param("color") Color color,
-                                  @Param("sex") Sex sex,
-                                  @Param("adoptionStatus") CatAdoptionStatus adoptionStatus,
+                                  @Param("color") String color,
+                                  @Param("sex") String sex,
+                                  @Param("adoptionStatus") String adoptionStatus,
                                   Pageable pageable);
 
     @Query("SELECT c FROM Cat c WHERE c.adoptionStatus = :adoptionStatus")

@@ -25,9 +25,9 @@ public interface AdopterRepository extends JpaRepository<Adopter, UUID> {
 
     @Query("SELECT a FROM Adopter a WHERE " +
            "(:name IS NULL OR :name = '' OR " +
-           "UPPER(CONCAT(a.firstName, ' ', a.lastName)) LIKE UPPER(CONCAT('%', :name, '%'))) AND " +
+           "LOWER(CONCAT(a.firstName, ' ', a.lastName)) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
            "(:email IS NULL OR :email = '' OR " +
-           "UPPER(a.email) LIKE UPPER(CONCAT('%', :email, '%'))) AND " +
+           "LOWER(a.email) LIKE LOWER(CONCAT('%', :email, '%'))) AND " +
            "(:cpf IS NULL OR :cpf = '' OR " +
            "a.cpf LIKE CONCAT('%', :cpf, '%')) " +
            "ORDER BY a.firstName")

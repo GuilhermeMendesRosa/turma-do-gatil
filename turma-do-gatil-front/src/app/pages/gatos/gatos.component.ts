@@ -63,7 +63,7 @@ export class GatosComponent implements OnInit {
 
   // Filtros
   filters: CatFilters = {
-    adopted: false, // Por padrão, mostra apenas gatos não adotados
+    adoptionStatus: CatAdoptionStatus.NAO_ADOTADO, // Por padrão, mostra apenas gatos não adotados
     page: 0,
     size: 12,
     sortBy: 'name',
@@ -92,8 +92,9 @@ export class GatosComponent implements OnInit {
   ];
 
   adoptionStatusOptions = [
-    { label: 'Disponíveis para adoção', value: false },
-    { label: 'Já adotados', value: true },
+    { label: 'Disponíveis para adoção', value: CatAdoptionStatus.NAO_ADOTADO },
+    { label: 'Em processo de adoção', value: CatAdoptionStatus.EM_PROCESSO },
+    { label: 'Já adotados', value: CatAdoptionStatus.ADOTADO },
     { label: 'Todos os gatos', value: null }
   ];
 
@@ -175,7 +176,7 @@ export class GatosComponent implements OnInit {
 
   clearFilters(): void {
     this.filters = {
-      adopted: false, // Manter filtro padrão para não adotados
+      adoptionStatus: CatAdoptionStatus.NAO_ADOTADO, // Manter filtro padrão para não adotados
       page: 0,
       size: 12,
       sortBy: 'name',
@@ -185,17 +186,24 @@ export class GatosComponent implements OnInit {
   }
 
   getAvailableCatsCount(): number {
-    // Se não há filtro de adoção ou está filtrando por não adotados, retorna o total
-    if (this.filters.adopted === false) {
+    // Se está filtrando por não adotados, retorna o total
+    if (this.filters.adoptionStatus === CatAdoptionStatus.NAO_ADOTADO) {
       return this.totalRecords;
     }
-    // Caso contrário, conta os não adotados na lista atual
-    return this.cats.filter(cat => cat.adoptionStatus === CatAdoptionStatus.NAO_ADOTADO).length;
+    // Se está filtrando por em processo, retorna o total
+    if (this.filters.adoptionStatus === CatAdoptionStatus.EM_PROCESSO) {
+      return this.totalRecords;
+    }
+    // Caso contrário, conta os não adotados e em processo na lista atual
+    return this.cats.filter(cat => 
+      cat.adoptionStatus === CatAdoptionStatus.NAO_ADOTADO || 
+      cat.adoptionStatus === CatAdoptionStatus.EM_PROCESSO
+    ).length;
   }
 
   getAdoptedCatsCount(): number {
     // Se está filtrando por adotados, retorna o total
-    if (this.filters.adopted === true) {
+    if (this.filters.adoptionStatus === CatAdoptionStatus.ADOTADO) {
       return this.totalRecords;
     }
     // Caso contrário, conta os adotados na lista atual
@@ -299,7 +307,7 @@ export class GatosComponent implements OnInit {
     return !!(this.filters.name || 
              this.filters.color || 
              this.filters.sex || 
-             (this.filters.adopted !== false && this.filters.adopted !== undefined));
+             (this.filters.adoptionStatus !== CatAdoptionStatus.NAO_ADOTADO && this.filters.adoptionStatus !== undefined));
   }
 
   onPageSizeChange(): void {

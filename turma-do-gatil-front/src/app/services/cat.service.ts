@@ -37,8 +37,8 @@ export class CatService {
     if (filters.sex) {
       params = params.set('sex', filters.sex);
     }
-    if (filters.adopted !== undefined) {
-      params = params.set('adopted', filters.adopted.toString());
+    if (filters.adoptionStatus) {
+      params = params.set('adoptionStatus', filters.adoptionStatus);
     }
 
     return this.http.get<Page<Cat>>(this.apiUrl, { params });
@@ -58,14 +58,6 @@ export class CatService {
 
   deleteCat(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-
-  getCatsByAdoptionStatus(adopted: boolean, page: number = 0, size: number = 12): Observable<Page<Cat>> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
-
-    return this.http.get<Page<Cat>>(`${this.apiUrl}/adopted/${adopted}`, { params });
   }
 
   getDashboardSummary(): Observable<DashboardSummary> {

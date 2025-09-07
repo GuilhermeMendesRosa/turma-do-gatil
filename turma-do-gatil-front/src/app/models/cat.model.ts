@@ -60,7 +60,6 @@ export interface CatFilters {
   name?: string;
   color?: Color;
   sex?: Sex;
-  adopted?: boolean;
   adoptionStatus?: CatAdoptionStatus;
   page?: number;
   size?: number;

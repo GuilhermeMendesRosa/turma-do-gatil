@@ -82,12 +82,12 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/Sex'
-        - name: adopted
+        - name: adoptionStatus
           in: query
           description: Filtro por status de adoção
           required: false
           schema:
-            type: boolean
+            $ref: '#/components/schemas/CatAdoptionStatus'
       responses:
         '200':
           description: Lista de gatos retornada com sucesso
