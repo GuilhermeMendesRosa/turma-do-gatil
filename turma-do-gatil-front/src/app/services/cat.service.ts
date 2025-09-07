@@ -8,7 +8,7 @@ import { DashboardSummary } from '../models/dashboard.model';
   providedIn: 'root'
 })
 export class CatService {
-  private readonly apiUrl = 'http://localhost:8080/api/cats';
+  private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api/cats/api/cats';
 
   constructor(private http: HttpClient) { }
 

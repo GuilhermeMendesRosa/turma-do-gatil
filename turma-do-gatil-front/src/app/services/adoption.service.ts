@@ -7,7 +7,7 @@ import { Adoption, AdoptionRequest, AdoptionFilters, Page } from '../models/adop
   providedIn: 'root'
 })
 export class AdoptionService {
-  private readonly apiUrl = 'http://localhost:8080/api/adoptions';
+  private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api/cats/api/adoptions';
 
   constructor(private http: HttpClient) { }
 

@@ -12,7 +12,7 @@ info:
   termsOfService: https://turmadogatil.com/terms
 
 servers:
-  - url: http://localhost:8080
+  - url: https://turma-do-gatil-production.up.railway.app/api/cats
     description: Servidor de Desenvolvimento
 
 tags:

@@ -28,7 +28,7 @@ public class OpenAPIConfig {
                                 .url("https://choosealicense.com/licenses/mit/")))
                 .servers(List.of(
                         new Server()
-                                .url("http://localhost:8080")
+                                .url("https://turma-do-gatil-production.up.railway.app/api/cats")
                                 .description("Servidor de Desenvolvimento")
                 ));
     }
