@@ -7,7 +7,7 @@ import { Adopter, AdopterRequest, AdopterFilters, Page } from '../models/adopter
   providedIn: 'root'
 })
 export class AdopterService {
-  private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api/cats/api/adopters';
+  private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api/adopters';
 
   constructor(private http: HttpClient) { }
 

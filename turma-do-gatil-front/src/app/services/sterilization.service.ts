@@ -14,7 +14,7 @@ import {
   providedIn: 'root'
 })
 export class SterilizationService {
-  private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api/cats/api';
+  private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api';
 
   constructor(private http: HttpClient) { }
 

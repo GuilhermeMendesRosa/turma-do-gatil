@@ -66,7 +66,7 @@ cd turma-do-gatil-back
 ./mvnw spring-boot:run
 ```
 
-A API estará disponível em: `https://turma-do-gatil-production.up.railway.app/api/cats`
+A API estará disponível em: `https://turma-do-gatil-production.up.railway.app`
 
 ### 3. Configuração do Frontend
 
@@ -122,7 +122,7 @@ psql -U seu_usuario -d turma_do_gatil < turma-do-gatil-back/database-dump.sql
 ## 📚 Documentação da API
 
 A documentação completa da API está disponível via Swagger UI:
-- **Desenvolvimento**: `https://turma-do-gatil-production.up.railway.app/api/cats/swagger-ui.html`
+- **Desenvolvimento**: `https://turma-do-gatil-production.up.railway.app/swagger-ui.html`
 - **Especificação OpenAPI**: Disponível em `turma-do-gatil-back/api-definition.yaml`
 
 ## 🧪 Testes
