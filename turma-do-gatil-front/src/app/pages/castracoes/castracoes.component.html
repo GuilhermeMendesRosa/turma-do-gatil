@@ -1,24 +1,47 @@
 <div class="page-container">
-  <app-page-header
-    title="Castrações"
-    subtitle="Gerencie e acompanhe o programa de castrações dos gatos."
-    icon="pi-briefcase">
-  </app-page-header>
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="pi pi-briefcase"></i>
+      Castrações
+    </h1>
+    <p class="page-subtitle">Gerencie e acompanhe o programa de castrações dos gatos.</p>
+  </div>
   
   <!-- Cards de Estatísticas -->
-  <app-stats-grid [stats]="getStatsData()"></app-stats-grid>
+  <div class="stats-grid">
+    <div class="stat-card eligible">
+      <div class="stat-icon">
+        <i class="pi pi-calendar-plus"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats?.eligibleCount || 0 }}</div>
+        <div class="stat-label">Gatos Elegíveis</div>
+        <div class="stat-description">90-179 dias de vida</div>
+      </div>
+    </div>
+    
+    <div class="stat-card overdue">
+      <div class="stat-icon">
+        <i class="pi pi-exclamation-triangle"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats?.overdueCount || 0 }}</div>
+        <div class="stat-label">Castrações Atrasadas</div>
+        <div class="stat-description">180+ dias de vida</div>
+      </div>
+    </div>
+  </div>
 
   <!-- Tabela de Gatos que Precisam de Castração -->
-  <app-content-card
-    title="Gatos que Precisam de Castração"
-    icon="pi-heart"
-    [hasActions]="true">
-    
-    <div slot="actions">
-      <app-refresh-button 
-        [loading]="loadingCats"
-        (refresh)="refreshData()">
-      </app-refresh-button>
+  <div class="content-card">
+    <div class="card-header">
+      <h3><i class="pi pi-heart"></i> Gatos que Precisam de Castração</h3>
+      <div class="actions">
+        <app-refresh-button 
+          [loading]="loadingCats"
+          (refresh)="refreshData()">
+        </app-refresh-button>
+      </div>
     </div>
     
     <div class="table-container" *ngIf="!loadingCats; else loadingTemplate">
@@ -78,20 +101,18 @@
         </div>
       </ng-template>
     </div>
-  </app-content-card>
+  </div>
 
   <!-- Tabela de Castrações Agendadas -->
-  <app-content-card
-    title="Castrações Agendadas"
-    icon="pi-calendar"
-    [hasActions]="true"
-    [hasFooter]="true">
-    
-    <div slot="actions">
-      <app-refresh-button 
-        [loading]="loadingSterilizations"
-        (refresh)="loadScheduledSterilizations()">
-      </app-refresh-button>
+  <div class="content-card">
+    <div class="card-header">
+      <h3><i class="pi pi-calendar"></i> Castrações Agendadas</h3>
+      <div class="actions">
+        <app-refresh-button 
+          [loading]="loadingSterilizations"
+          (refresh)="loadScheduledSterilizations()">
+        </app-refresh-button>
+      </div>
     </div>
     
     <div class="table-container" *ngIf="!loadingSterilizations; else loadingTemplate">
@@ -156,28 +177,24 @@
     </div>
 
     <!-- Paginação para castrações agendadas -->
-    <div slot="footer">
-      <app-pagination
-        [pagination]="getScheduledPaginationInfo()"
-        (pageChange)="goToPage({target: {value: $event}})"
-        (previousPage)="previousPage()"
-        (nextPage)="nextPage()">
-      </app-pagination>
-    </div>
-  </app-content-card>
+    <app-pagination
+      [pagination]="getScheduledPaginationInfo()"
+      (pageChange)="goToPage({target: {value: $event}})"
+      (previousPage)="previousPage()"
+      (nextPage)="nextPage()">
+    </app-pagination>
+  </div>
 
   <!-- Tabela de Castrações Realizadas -->
-  <app-content-card
-    title="Castrações Realizadas"
-    icon="pi-check-circle"
-    [hasActions]="true"
-    [hasFooter]="true">
-    
-    <div slot="actions">
-      <app-refresh-button 
-        [loading]="loadingCompletedSterilizations"
-        (refresh)="loadCompletedSterilizations()">
-      </app-refresh-button>
+  <div class="content-card">
+    <div class="card-header">
+      <h3><i class="pi pi-check-circle"></i> Castrações Realizadas</h3>
+      <div class="actions">
+        <app-refresh-button 
+          [loading]="loadingCompletedSterilizations"
+          (refresh)="loadCompletedSterilizations()">
+        </app-refresh-button>
+      </div>
     </div>
     
     <div class="table-container" *ngIf="!loadingCompletedSterilizations; else loadingTemplate">
@@ -235,15 +252,13 @@
     </div>
 
     <!-- Paginação para castrações realizadas -->
-    <div slot="footer">
-      <app-pagination
-        [pagination]="getCompletedPaginationInfo()"
-        (pageChange)="goToCompletedPage({target: {value: $event}})"
-        (previousPage)="previousCompletedPage()"
-        (nextPage)="nextCompletedPage()">
-      </app-pagination>
-    </div>
-  </app-content-card>
+    <app-pagination
+      [pagination]="getCompletedPaginationInfo()"
+      (pageChange)="goToCompletedPage({target: {value: $event}})"
+      (previousPage)="previousCompletedPage()"
+      (nextPage)="nextCompletedPage()">
+    </app-pagination>
+  </div>
 
   <ng-template #loadingTemplate>
     <div class="loading-message">

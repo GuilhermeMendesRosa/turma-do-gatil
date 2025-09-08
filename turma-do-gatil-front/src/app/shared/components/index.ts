@@ -4,11 +4,5 @@ export type { ActionButtonConfig, ActionButtonType } from './action-button.compo
 export { ActionButtonsGroupComponent } from './action-buttons-group.component';
 export { PaginationComponent } from './pagination.component';
 export type { PaginationInfo } from './pagination.component';
-export { StatCardComponent } from './stat-card.component';
-export type { StatCardData } from './stat-card.component';
-export { StatsGridComponent } from './stats-grid.component';
-export { ContentCardComponent } from './content-card.component';
-export { PageHeaderComponent } from './page-header.component';
 export { ExampleTableComponent } from './example-table.component';
 export { ButtonsShowcaseComponent } from './buttons-showcase.component';
-export { CardsExampleComponent } from './cards-example.component';
