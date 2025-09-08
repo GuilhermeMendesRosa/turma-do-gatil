@@ -1,0 +1,264 @@
+<div class="page-container">
+  <app-page-header
+    title="Castrações"
+    subtitle="Gerencie e acompanhe o programa de castrações dos gatos."
+    icon="pi-briefcase">
+  </app-page-header>
+  
+  <!-- Cards de Estatísticas -->
+  <app-stats-grid [stats]="getStatsData()"></app-stats-grid>
+
+  <!-- Tabela de Gatos que Precisam de Castração -->
+  <app-content-card
+    title="Gatos que Precisam de Castração"
+    icon="pi-heart"
+    [hasActions]="true">
+    
+    <div slot="actions">
+      <app-refresh-button 
+        [loading]="loadingCats"
+        (refresh)="refreshData()">
+      </app-refresh-button>
+    </div>
+    
+    <div class="table-container" *ngIf="!loadingCats; else loadingTemplate">
+      <table class="cats-table" *ngIf="catsNeedingSterilization.length > 0; else emptyCatsMessage">
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>Nome</th>
+            <th>Sexo</th>
+            <th>Cor</th>
+            <th>Idade</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cat of catsNeedingSterilization">
+            <td>
+              <div class="cat-photo">
+                <img *ngIf="cat.photoUrl; else catPlaceholder" 
+                     [src]="cat.photoUrl" 
+                     [alt]="cat.name" 
+                     (error)="$event.target.style.display='none'">
+                <ng-template #catPlaceholder>
+                  <i class="pi pi-image" style="font-size: 1.5rem; color: var(--p-text-color-secondary);"></i>
+                </ng-template>
+              </div>
+            </td>
+            <td>
+              <div class="cat-name">
+                <strong>{{ cat.name }}</strong>
+              </div>
+            </td>
+            <td>{{ getSexLabel(cat.sex) }}</td>
+            <td>{{ getColorLabel(cat.color) }}</td>
+            <td>{{ cat.ageInDays }} dias</td>
+            <td>
+              <span class="status-badge" [ngClass]="cat.sterilizationStatus.toLowerCase()">
+                {{ getStatusLabel(cat.sterilizationStatus) }}
+              </span>
+            </td>
+            <td>
+              <app-action-buttons-group
+                [buttons]="getScheduleActionButtons(cat)"
+                [data]="cat"
+                (buttonClick)="onActionButtonClick($event, 'schedule')">
+              </app-action-buttons-group>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptyCatsMessage>
+        <div class="empty-message">
+          <i class="pi pi-check-circle"></i>
+          <p>Não há gatos que precisam de castração no momento!</p>
+        </div>
+      </ng-template>
+    </div>
+  </app-content-card>
+
+  <!-- Tabela de Castrações Agendadas -->
+  <app-content-card
+    title="Castrações Agendadas"
+    icon="pi-calendar"
+    [hasActions]="true"
+    [hasFooter]="true">
+    
+    <div slot="actions">
+      <app-refresh-button 
+        [loading]="loadingSterilizations"
+        (refresh)="loadScheduledSterilizations()">
+      </app-refresh-button>
+    </div>
+    
+    <div class="table-container" *ngIf="!loadingSterilizations; else loadingTemplate">
+      <table class="sterilizations-table" *ngIf="scheduledSterilizations.length > 0; else emptySterilizationsMessage">
+        <thead>
+          <tr>
+            <th>Gato</th>
+            <th>Data Agendada</th>
+            <th>Status</th>
+            <th>Observações</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sterilization of scheduledSterilizations">
+            <td>
+              <div class="cat-info">
+                <img *ngIf="sterilization.photoUrl; else catMiniPlaceholder" 
+                     [src]="sterilization.photoUrl" 
+                     [alt]="sterilization.cat" 
+                     class="cat-mini-photo"
+                     (error)="$event.target.style.display='none'">
+                <ng-template #catMiniPlaceholder>
+                  <div class="cat-mini-photo" style="display: flex; align-items: center; justify-content: center;">
+                    <i class="pi pi-image" style="font-size: 1rem; color: var(--p-text-color-secondary);"></i>
+                  </div>
+                </ng-template>
+                <div class="cat-details">
+                  <strong>{{ sterilization.cat || 'Nome não disponível' }}</strong>
+                </div>
+              </div>
+            </td>
+            <td>{{ formatDate(sterilization.sterilizationDate) }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="sterilization.status.toLowerCase()">
+                {{ getSterilizationStatusLabel(sterilization.status) }}
+              </span>
+            </td>
+            <td>
+              <span [title]="sterilization.notes">
+                {{ sterilization.notes || '-' | slice:0:50 }}
+                <span *ngIf="sterilization.notes && sterilization.notes.length > 50">...</span>
+              </span>
+            </td>
+            <td>
+              <app-action-buttons-group
+                [buttons]="getSterilizationActionButtons(sterilization)"
+                [data]="sterilization"
+                (buttonClick)="onActionButtonClick($event, 'sterilization')">
+              </app-action-buttons-group>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptySterilizationsMessage>
+        <div class="empty-message">
+          <i class="pi pi-calendar-times"></i>
+          <p>Nenhuma castração agendada no momento.</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Paginação para castrações agendadas -->
+    <div slot="footer">
+      <app-pagination
+        [pagination]="getScheduledPaginationInfo()"
+        (pageChange)="goToPage({target: {value: $event}})"
+        (previousPage)="previousPage()"
+        (nextPage)="nextPage()">
+      </app-pagination>
+    </div>
+  </app-content-card>
+
+  <!-- Tabela de Castrações Realizadas -->
+  <app-content-card
+    title="Castrações Realizadas"
+    icon="pi-check-circle"
+    [hasActions]="true"
+    [hasFooter]="true">
+    
+    <div slot="actions">
+      <app-refresh-button 
+        [loading]="loadingCompletedSterilizations"
+        (refresh)="loadCompletedSterilizations()">
+      </app-refresh-button>
+    </div>
+    
+    <div class="table-container" *ngIf="!loadingCompletedSterilizations; else loadingTemplate">
+      <table class="sterilizations-table" *ngIf="completedSterilizations.length > 0; else emptyCompletedSterilizationsMessage">
+        <thead>
+          <tr>
+            <th>Gato</th>
+            <th>Data Realizada</th>
+            <th>Status</th>
+            <th>Observações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sterilization of completedSterilizations">
+            <td>
+              <div class="cat-info">
+                <img *ngIf="sterilization.photoUrl; else catMiniPlaceholder" 
+                     [src]="sterilization.photoUrl" 
+                     [alt]="sterilization.cat" 
+                     class="cat-mini-photo"
+                     (error)="$event.target.style.display='none'">
+                <ng-template #catMiniPlaceholder>
+                  <div class="cat-mini-photo" style="display: flex; align-items: center; justify-content: center;">
+                    <i class="pi pi-image" style="font-size: 1rem; color: var(--p-text-color-secondary);"></i>
+                  </div>
+                </ng-template>
+                <div class="cat-details">
+                  <strong>{{ sterilization.cat || 'Nome não disponível' }}</strong>
+                </div>
+              </div>
+            </td>
+            <td>{{ formatDate(sterilization.sterilizationDate) }}</td>
+            <td>
+              <span class="status-badge completed">
+                <i class="pi pi-check-circle"></i>
+                {{ getSterilizationStatusLabel(sterilization.status) }}
+              </span>
+            </td>
+            <td>
+              <span [title]="sterilization.notes">
+                {{ sterilization.notes || '-' | slice:0:50 }}
+                <span *ngIf="sterilization.notes && sterilization.notes.length > 50">...</span>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #emptyCompletedSterilizationsMessage>
+        <div class="empty-message">
+          <i class="pi pi-info-circle"></i>
+          <p>Nenhuma castração foi realizada ainda.</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Paginação para castrações realizadas -->
+    <div slot="footer">
+      <app-pagination
+        [pagination]="getCompletedPaginationInfo()"
+        (pageChange)="goToCompletedPage({target: {value: $event}})"
+        (previousPage)="previousCompletedPage()"
+        (nextPage)="nextCompletedPage()">
+      </app-pagination>
+    </div>
+  </app-content-card>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-message">
+      <i class="pi pi-spinner"></i>
+      Carregando...
+    </div>
+  </ng-template>
+</div>
+
+<!-- Modal de Agendamento/Edição de Castração -->
+<app-sterilization-schedule-modal
+  [(visible)]="scheduleModalVisible"
+  [cat]="selectedCatForSchedule"
+  [sterilization]="selectedSterilizationForEdit"
+  (sterilizationScheduled)="onSterilizationScheduled()"
+  (sterilizationUpdated)="onSterilizationUpdated()"
+  (visibleChange)="onScheduleModalHide()">
+</app-sterilization-schedule-modal>

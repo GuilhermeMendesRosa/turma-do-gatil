@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SterilizationService } from '../../services/sterilization.service';
 import { 
@@ -10,15 +10,16 @@ import {
 import { SterilizationScheduleModalComponent } from './sterilization-schedule-modal/sterilization-schedule-modal.component';
 import { 
   RefreshButtonComponent,
-  ActionButtonsGroupComponent,
   PaginationComponent,
   ActionButtonConfig,
   PaginationInfo,
-  StatCardComponent,
   StatsGridComponent,
   ContentCardComponent,
   PageHeaderComponent,
-  StatCardData
+  StatCardData,
+  DataTableComponent,
+  TableColumn,
+  TableEmptyState
 } from '../../shared/components';
 
 @Component({
@@ -28,12 +29,11 @@ import {
     CommonModule, 
     SterilizationScheduleModalComponent,
     RefreshButtonComponent,
-    ActionButtonsGroupComponent,
     PaginationComponent,
-    StatCardComponent,
     StatsGridComponent,
     ContentCardComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
+    DataTableComponent
   ],
   templateUrl: './castracoes.component.html',
   styleUrls: ['./castracoes.component.css']
@@ -53,6 +53,116 @@ export class CastracoesComponent implements OnInit {
   scheduleModalVisible = false;
   selectedCatForSchedule: CatSterilizationStatusDto | null = null;
   selectedSterilizationForEdit: SterilizationDto | null = null;
+  
+  // Configurações das tabelas
+  catsTableColumns: TableColumn[] = [
+    {
+      key: 'photoUrl',
+      header: 'Foto',
+      type: 'image',
+      width: '80px',
+      imageProperty: 'photoUrl',
+      imageAlt: 'name',
+      imagePlaceholder: 'pi pi-image'
+    },
+    {
+      key: 'name',
+      header: 'Nome',
+      type: 'text',
+      formatter: (value: string) => value || 'Sem nome'
+    },
+    {
+      key: 'sex',
+      header: 'Sexo',
+      type: 'text',
+      formatter: (value: string) => this.getSexLabel(value)
+    },
+    {
+      key: 'color',
+      header: 'Cor',
+      type: 'text',
+      formatter: (value: string) => this.getColorLabel(value)
+    },
+    {
+      key: 'ageInDays',
+      header: 'Idade',
+      type: 'text',
+      formatter: (value: number) => `${value} dias`
+    },
+    {
+      key: 'sterilizationStatus',
+      header: 'Status',
+      type: 'badge',
+      formatter: (value: string) => this.getStatusLabel(value),
+      badgeClass: (value: string) => value.toLowerCase()
+    }
+  ];
+
+  scheduledTableColumns: TableColumn[] = [
+    {
+      key: 'cat',
+      header: 'Gato',
+      type: 'cat-info'
+    },
+    {
+      key: 'sterilizationDate',
+      header: 'Data Agendada',
+      type: 'date'
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      type: 'badge',
+      formatter: (value: string) => this.getSterilizationStatusLabel(value),
+      badgeClass: (value: string) => value.toLowerCase()
+    },
+    {
+      key: 'notes',
+      header: 'Observações',
+      type: 'notes'
+    }
+  ];
+
+  completedTableColumns: TableColumn[] = [
+    {
+      key: 'cat',
+      header: 'Gato',
+      type: 'cat-info'
+    },
+    {
+      key: 'sterilizationDate',
+      header: 'Data Realizada',
+      type: 'date'
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      type: 'badge',
+      formatter: (value: string) => this.getSterilizationStatusLabel(value),
+      badgeClass: () => 'completed'
+    },
+    {
+      key: 'notes',
+      header: 'Observações',
+      type: 'notes'
+    }
+  ];
+
+  // Estados vazios das tabelas
+  catsEmptyState: TableEmptyState = {
+    icon: 'pi pi-check-circle',
+    message: 'Não há gatos que precisam de castração no momento!'
+  };
+
+  scheduledEmptyState: TableEmptyState = {
+    icon: 'pi pi-calendar-times',
+    message: 'Nenhuma castração agendada no momento.'
+  };
+
+  completedEmptyState: TableEmptyState = {
+    icon: 'pi pi-info-circle',
+    message: 'Nenhuma castração foi realizada ainda.'
+  };
   
   // Paginação
   currentPage = 0;
@@ -253,8 +363,8 @@ export class CastracoesComponent implements OnInit {
     });
   }
 
-  // Métodos de ação
-  getScheduleActionButtons(cat: CatSterilizationStatusDto): ActionButtonConfig[] {
+  // Métodos de ação das tabelas
+  getCatsTableActions = (cat: CatSterilizationStatusDto): ActionButtonConfig[] => {
     return [
       {
         type: 'schedule',
@@ -263,7 +373,7 @@ export class CastracoesComponent implements OnInit {
     ];
   }
 
-  getSterilizationActionButtons(sterilization: SterilizationDto): ActionButtonConfig[] {
+  getScheduledTableActions = (sterilization: SterilizationDto): ActionButtonConfig[] => {
     return [
       {
         type: 'edit',
@@ -280,21 +390,23 @@ export class CastracoesComponent implements OnInit {
     ];
   }
 
-  onActionButtonClick(event: {type: string, data: any}, context: 'schedule' | 'sterilization') {
-    if (context === 'schedule') {
+  onCatsTableAction(event: {type: string, data: any}): void {
+    if (event.type === 'schedule') {
       this.scheduleSterilization(event.data);
-    } else if (context === 'sterilization') {
-      switch (event.type) {
-        case 'edit':
-          this.editSterilization(event.data);
-          break;
-        case 'complete':
-          this.completeSterilization(event.data);
-          break;
-        case 'cancel':
-          this.cancelSterilization(event.data);
-          break;
-      }
+    }
+  }
+
+  onScheduledTableAction(event: {type: string, data: any}): void {
+    switch (event.type) {
+      case 'edit':
+        this.editSterilization(event.data);
+        break;
+      case 'complete':
+        this.completeSterilization(event.data);
+        break;
+      case 'cancel':
+        this.cancelSterilization(event.data);
+        break;
     }
   }
 
