@@ -13,7 +13,12 @@ import {
   ActionButtonsGroupComponent,
   PaginationComponent,
   ActionButtonConfig,
-  PaginationInfo
+  PaginationInfo,
+  StatCardComponent,
+  StatsGridComponent,
+  ContentCardComponent,
+  PageHeaderComponent,
+  StatCardData
 } from '../../shared/components';
 
 @Component({
@@ -24,7 +29,11 @@ import {
     SterilizationScheduleModalComponent,
     RefreshButtonComponent,
     ActionButtonsGroupComponent,
-    PaginationComponent
+    PaginationComponent,
+    StatCardComponent,
+    StatsGridComponent,
+    ContentCardComponent,
+    PageHeaderComponent
   ],
   templateUrl: './castracoes.component.html',
   styleUrls: ['./castracoes.component.css']
@@ -172,6 +181,26 @@ export class CastracoesComponent implements OnInit {
 
   refreshData(): void {
     this.loadAllData();
+  }
+
+  // Dados para os cards de estatísticas
+  getStatsData(): StatCardData[] {
+    return [
+      {
+        number: this.stats?.eligibleCount || 0,
+        label: 'Gatos Elegíveis',
+        description: '90-179 dias de vida',
+        icon: 'pi-calendar-plus',
+        type: 'eligible'
+      },
+      {
+        number: this.stats?.overdueCount || 0,
+        label: 'Castrações Atrasadas',
+        description: '180+ dias de vida',
+        icon: 'pi-exclamation-triangle',
+        type: 'overdue'
+      }
+    ];
   }
 
   // Métodos de formatação
