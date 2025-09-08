@@ -6,6 +6,17 @@ import { InputTextModule } from 'primeng/inputtext';
 import { AdopterService } from '../../services/adopter.service';
 import { Adopter, AdopterFilters } from '../../models/adopter.model';
 import { AdopterCreateModalComponent } from './adopter-create-modal/adopter-create-modal.component';
+import { 
+  DataTableComponent,
+  TableColumn,
+  TableEmptyState,
+  ActionButtonConfig,
+  ContentCardComponent,
+  PageHeaderComponent,
+  RefreshButtonComponent,
+  PaginationComponent,
+  PaginationInfo
+} from '../../shared/components';
 
 @Component({
   selector: 'app-adotantes',
@@ -15,7 +26,12 @@ import { AdopterCreateModalComponent } from './adopter-create-modal/adopter-crea
     FormsModule,
     ButtonModule,
     InputTextModule,
-    AdopterCreateModalComponent
+    AdopterCreateModalComponent,
+    DataTableComponent,
+    ContentCardComponent,
+    PageHeaderComponent,
+    RefreshButtonComponent,
+    PaginationComponent
   ],
   templateUrl: './adotantes.component.html',
   styleUrls: ['./adotantes.component.css']
@@ -36,6 +52,48 @@ export class AdotantesComponent implements OnInit {
     size: 10,
     sortBy: 'firstName',
     sortDir: 'asc'
+  };
+
+  // Configuração da tabela
+  adoptersTableColumns: TableColumn[] = [
+    {
+      key: 'firstName',
+      header: 'Nome',
+      type: 'text',
+      sortable: true,
+      formatter: (value: string, item: Adopter) => this.getFullName(item)
+    },
+    {
+      key: 'email',
+      header: 'Email',
+      type: 'text',
+      sortable: true
+    },
+    {
+      key: 'cpf',
+      header: 'CPF',
+      type: 'text',
+      sortable: true,
+      formatter: (value: string) => this.formatCpf(value)
+    },
+    {
+      key: 'phone',
+      header: 'Telefone',
+      type: 'text',
+      formatter: (value: string) => this.formatPhone(value)
+    },
+    {
+      key: 'registrationDate',
+      header: 'Data de Cadastro',
+      type: 'date',
+      sortable: true
+    }
+  ];
+
+  // Estado vazio da tabela
+  emptyState: TableEmptyState = {
+    icon: 'pi pi-users',
+    message: 'Nenhum adotante encontrado.'
   };
 
   constructor(private adopterService: AdopterService) { }
@@ -103,25 +161,71 @@ export class AdotantesComponent implements OnInit {
     return `${adopter.firstName} ${adopter.lastName}`;
   }
 
-  getMinRecord(): number {
-    return Math.min(this.first + this.rows, this.totalRecords);
+  // Métodos para ações da tabela
+  getAdopterActions = (adopter: Adopter): ActionButtonConfig[] => {
+    return [
+      {
+        type: 'edit',
+        tooltip: `Editar ${this.getFullName(adopter)}`
+      },
+      {
+        type: 'cancel', // Usando cancel para representar delete
+        tooltip: `Excluir ${this.getFullName(adopter)}`
+      }
+    ];
+  };
+
+  onAdopterTableAction(event: {type: string, data: Adopter}): void {
+    switch (event.type) {
+      case 'edit':
+        this.openEditModal(event.data);
+        break;
+      case 'cancel': // delete
+        this.deleteAdopter(event.data);
+        break;
+    }
   }
 
-  getLastPageFirst(): number {
-    return Math.floor(this.totalRecords / this.rows) * this.rows;
+  // Método para paginação info
+  getPaginationInfo(): PaginationInfo {
+    return {
+      totalElements: this.totalRecords,
+      numberOfElements: this.adopters.length,
+      first: this.first === 0,
+      last: this.first + this.rows >= this.totalRecords,
+      totalPages: Math.ceil(this.totalRecords / this.rows),
+      currentPage: Math.floor(this.first / this.rows)
+    };
   }
 
-  getLastPage(): number {
-    return Math.floor(this.totalRecords / this.rows);
+  // Métodos de paginação adaptados
+  previousPage(): void {
+    if (this.first > 0) {
+      this.onPageChange({
+        first: this.first - this.rows,
+        rows: this.rows,
+        page: Math.floor(this.first / this.rows) - 1
+      });
+    }
   }
 
-  // Métodos utilitários para o template
-  mathMin(a: number, b: number): number {
-    return Math.min(a, b);
+  nextPage(): void {
+    if (this.first + this.rows < this.totalRecords) {
+      this.onPageChange({
+        first: this.first + this.rows,
+        rows: this.rows,
+        page: Math.floor(this.first / this.rows) + 1
+      });
+    }
   }
 
-  mathFloor(value: number): number {
-    return Math.floor(value);
+  goToPage(event: any): void {
+    const page = parseInt(event.target.value);
+    this.onPageChange({
+      first: page * this.rows,
+      rows: this.rows,
+      page: page
+    });
   }
 
   // Métodos para o modal

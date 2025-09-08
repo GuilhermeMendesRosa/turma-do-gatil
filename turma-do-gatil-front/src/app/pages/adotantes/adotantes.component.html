@@ -1,180 +1,86 @@
 <div class="page-container">
-  <div class="page-header">
-    <h1 class="page-title">
-      <i class="fas fa-users"></i>
-      Gestão de Adotantes
-    </h1>
-    <p class="page-subtitle">Gerencie as informações dos adotantes cadastrados no sistema</p>
-  </div>
+  <app-page-header
+    title="Gestão de Adotantes"
+    subtitle="Gerencie as informações dos adotantes cadastrados no sistema"
+    icon="pi-users">
+  </app-page-header>
 
   <!-- Filtros -->
-  <div class="filters-section">
-    <div class="filters-card">
-      <div class="filters-header">
-        <h3>
-          <i class="fas fa-filter"></i>
-          Filtros de Busca
-        </h3>
-        <p-button 
-          label="Novo Adotante" 
-          icon="pi pi-plus" 
-          (onClick)="openCreateModal()"
-          size="small">
-        </p-button>
-      </div>
-      
-      <div class="filters-grid">
-        <div class="filter-group">
-          <label for="nameFilter">
-            <i class="pi pi-search"></i>
-            Nome do Adotante
-          </label>
-          <input 
-            id="nameFilter"
-            type="text" 
-            pInputText 
-            [(ngModel)]="filters.name" 
-            (ngModelChange)="onFilterChange()"
-            placeholder="Digite o nome..."
-            class="filter-input">
-        </div>
+  <app-content-card
+    title="Filtros de Busca"
+    icon="pi-filter"
+    [hasActions]="true">
+    
+    <div slot="actions">
+      <p-button 
+        label="Novo Adotante" 
+        icon="pi pi-plus" 
+        (onClick)="openCreateModal()"
+        size="small">
+      </p-button>
+    </div>
+    
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="nameFilter">
+          <i class="pi pi-search"></i>
+          Nome do Adotante
+        </label>
+        <input 
+          id="nameFilter"
+          type="text" 
+          pInputText 
+          [(ngModel)]="filters.name" 
+          (ngModelChange)="onFilterChange()"
+          placeholder="Digite o nome..."
+          class="filter-input">
       </div>
     </div>
-  </div>
+  </app-content-card>
   
-  <div class="content-card">
-    <div class="card-header">
-      <h3>Lista de Adotantes</h3>
+  <!-- Tabela de Adotantes -->
+  <app-content-card
+    title="Lista de Adotantes"
+    icon="pi-list"
+    [hasActions]="true"
+    [hasFooter]="true">
+    
+    <div slot="actions">
+      <app-refresh-button 
+        [loading]="loading"
+        (refresh)="loadAdopters()">
+      </app-refresh-button>
     </div>
 
-    <div class="table-container">
-      <table class="adopters-table" *ngIf="!loading">
-        <thead>
-          <tr>
-            <th (click)="onSort({field: 'firstName', order: 1})" class="sortable">
-              Nome 
-              <i class="pi pi-sort-alt"></i>
-            </th>
-            <th (click)="onSort({field: 'email', order: 1})" class="sortable">
-              Email 
-              <i class="pi pi-sort-alt"></i>
-            </th>
-            <th (click)="onSort({field: 'cpf', order: 1})" class="sortable">
-              CPF 
-              <i class="pi pi-sort-alt"></i>
-            </th>
-            <th>Telefone</th>
-            <th (click)="onSort({field: 'registrationDate', order: 1})" class="sortable">
-              Data de Cadastro 
-              <i class="pi pi-sort-alt"></i>
-            </th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let adopter of adopters">
-            <td>
-              <div class="adopter-name">
-                <strong>{{ getFullName(adopter) }}</strong>
-              </div>
-            </td>
-            <td>{{ adopter.email }}</td>
-            <td>{{ formatCpf(adopter.cpf) }}</td>
-            <td>{{ formatPhone(adopter.phone) }}</td>
-            <td>{{ formatDate(adopter.registrationDate) }}</td>
-            <td>
-              <div class="action-buttons">
-                <p-button 
-                  icon="pi pi-pencil" 
-                  severity="info"
-                  size="small"
-                  [outlined]="true"
-                  (onClick)="openEditModal(adopter)"
-                  title="Editar">
-                </p-button>
-                <p-button 
-                  icon="pi pi-trash" 
-                  severity="danger"
-                  size="small"
-                  [outlined]="true"
-                  (onClick)="deleteAdopter(adopter)"
-                  title="Excluir">
-                </p-button>
-              </div>
-            </td>
-          </tr>
-          
-          <!-- Loading skeleton -->
-          <tr *ngIf="loading">
-            <td colspan="6">
-              <div class="loading-message">
-                <i class="pi pi-spin pi-spinner"></i>
-                Carregando adotantes...
-              </div>
-            </td>
-          </tr>
-          
-          <!-- Empty message -->
-          <tr *ngIf="!loading && adopters.length === 0">
-            <td colspan="6">
-              <div class="empty-message">
-                <i class="pi pi-info-circle"></i>
-                <p>Nenhum adotante encontrado.</p>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Pagination -->
-      <div class="pagination-container" *ngIf="!loading && totalRecords > 0">
-        <div class="pagination-info">
-          Mostrando {{ (first + 1) }} - {{ getMinRecord() }} de {{ totalRecords }} registros
-        </div>
-        <div class="pagination-controls">
-          <button 
-            class="p-button-icon p-button-secondary" 
-            [disabled]="first === 0"
-            (click)="onPageChange({first: 0, rows: rows, page: 0})"
-            title="Primeira página">
-            <i class="pi pi-angle-double-left"></i>
-          </button>
-          <button 
-            class="p-button-icon p-button-secondary" 
-            [disabled]="first === 0"
-            (click)="onPageChange({first: first - rows, rows: rows, page: (first / rows) - 1})"
-            title="Página anterior">
-            <i class="pi pi-angle-left"></i>
-          </button>
-          
-          <select 
-            class="page-select" 
-            [value]="rows" 
-            (change)="onRowsChange($event)">
-            <option value="5">5 por página</option>
-            <option value="10">10 por página</option>
-            <option value="20">20 por página</option>
-            <option value="50">50 por página</option>
-          </select>
-          
-          <button 
-            class="p-button-icon p-button-secondary" 
-            [disabled]="first + rows >= totalRecords"
-            (click)="onPageChange({first: first + rows, rows: rows, page: (first / rows) + 1})"
-            title="Próxima página">
-            <i class="pi pi-angle-right"></i>
-          </button>
-          <button 
-            class="p-button-icon p-button-secondary" 
-            [disabled]="first + rows >= totalRecords"
-            (click)="onPageChange({first: getLastPageFirst(), rows: rows, page: getLastPage()})"
-            title="Última página">
-            <i class="pi pi-angle-double-right"></i>
-          </button>
-        </div>
-      </div>
+    <div *ngIf="!loading; else loadingTemplate">
+      <app-data-table
+        [columns]="adoptersTableColumns"
+        [data]="adopters"
+        [loading]="loading"
+        [emptyState]="emptyState"
+        [actionProvider]="getAdopterActions"
+        trackByProperty="id"
+        (actionClick)="onAdopterTableAction($event)">
+      </app-data-table>
     </div>
-  </div>
+
+    <!-- Paginação -->
+    <div slot="footer" *ngIf="totalRecords > 0">
+      <app-pagination
+        [pagination]="getPaginationInfo()"
+        (pageChange)="goToPage({target: {value: $event}})"
+        (previousPage)="previousPage()"
+        (nextPage)="nextPage()">
+      </app-pagination>
+    </div>
+  </app-content-card>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-message">
+      <i class="pi pi-spinner"></i>
+      Carregando adotantes...
+    </div>
+  </ng-template>
 </div>
 
 <!-- Modal de Criação/Edição de Adotante -->
@@ -184,5 +90,3 @@
   (adopterCreated)="onAdopterCreated()"
   (adopterUpdated)="onAdopterUpdated()">
 </app-adopter-create-modal>
-
-
