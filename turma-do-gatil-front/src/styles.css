@@ -42,3 +42,76 @@ body {
   background-color: var(--p-surface-ground);
   color: var(--p-text-color);
 }
+
+/* ===== MODAL GENÉRICO - ESTILOS GLOBAIS ===== */
+/* Máscara de fundo do modal genérico */
+.generic-modal .p-dialog-mask,
+.generic-modal-mask {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Container do diálogo */
+.generic-modal .p-dialog {
+  background: var(--p-surface-card) !important;
+  border: 1px solid var(--p-surface-border);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+}
+
+/* Header do modal */
+.generic-modal .p-dialog-header {
+  background: var(--gradient-primary) !important;
+  color: white !important;
+  border-radius: 12px 12px 0 0;
+  padding: 1.5rem 2rem;
+}
+
+.generic-modal .p-dialog-header .p-dialog-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: white !important;
+}
+
+.generic-modal .p-dialog-header .p-dialog-header-icon {
+  color: white !important;
+}
+
+/* Conteúdo do modal */
+.generic-modal .p-dialog-content {
+  padding: 2rem;
+  background: var(--p-surface-card) !important;
+}
+
+/* Footer do modal */
+.generic-modal .p-dialog-footer {
+  background: var(--p-surface-card) !important;
+  border-radius: 0 0 12px 12px;
+  border-top: 1px solid var(--p-surface-border);
+  padding: 0.75rem 2rem;
+}
+
+/* Espaçamento entre os botões do modal */
+.generic-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  align-items: center;
+}
+
+.generic-modal-footer app-modal-button {
+  margin-left: 0.5rem;
+}
+
+.generic-modal-footer app-modal-button:first-child {
+  margin-left: 0;
+}
+
+/* Fallback para navegadores sem suporte a backdrop-filter */
+@supports not (backdrop-filter: blur(8px)) {
+  .generic-modal .p-dialog-mask,
+  .generic-modal-mask {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+}

@@ -17,3 +17,8 @@ export { DataTableExampleComponent } from './data-table-example.component';
 export { ExampleTableComponent } from './example-table.component';
 export { ButtonsShowcaseComponent } from './buttons-showcase.component';
 export { CardsExampleComponent } from './cards-example.component';
+export { GenericModalComponent } from './generic-modal.component';
+export type { ModalAction } from './generic-modal.component';
+export { ExampleGenericModalComponent } from './example-generic-modal.component';
+export { ModalButtonComponent } from './modal-button.component';
+export type { ModalButtonConfig, ModalButtonSeverity } from './modal-button.component';

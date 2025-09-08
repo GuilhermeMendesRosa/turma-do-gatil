@@ -25,8 +25,7 @@ import { SterilizationService } from '../../../services/sterilization.service';
       [(visible)]="visible"
       [title]="modalTitle"
       [actions]="modalActions"
-      (hide)="onHide()"
-      ngSkipHydration>
+      (hide)="onHide()">
       
       <form [formGroup]="sterilizationForm" (ngSubmit)="onSubmit()" class="sterilization-schedule-form">
 
@@ -279,10 +278,6 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
   }
 
   get modalActions(): ModalAction[] {
-    // Garantir que o formulário esteja inicializado antes de verificar sua validade
-    const isFormValid = this.sterilizationForm ? this.sterilizationForm.valid : false;
-    const isDateValid = this.sterilizationForm ? this.isDateValid() : false;
-    
     return [
       {
         label: 'Cancelar',
@@ -295,7 +290,7 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
         label: this.isEditMode ? 'Salvar Alterações' : 'Agendar Castração',
         icon: 'pi pi-check',
         loading: this.loading,
-        disabled: !isFormValid || !isDateValid,
+        disabled: !this.sterilizationForm.valid || !this.isDateValid(),
         action: () => this.onSubmit()
       }
     ];
@@ -303,22 +298,16 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
 
   // Validação de data - não permite datas no passado
   isDateValid(): boolean {
-    if (!this.sterilizationForm) return false;
-    
     const selectedDate = this.sterilizationForm.get('sterilizationDate')?.value;
     if (!selectedDate) return false;
     
-    try {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      const selected = new Date(selectedDate);
-      selected.setHours(0, 0, 0, 0);
-      
-      return selected >= today;
-    } catch (error) {
-      return false;
-    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const selected = new Date(selectedDate);
+    selected.setHours(0, 0, 0, 0);
+    
+    return selected >= today;
   }
 
   // Obter data mínima (hoje)
