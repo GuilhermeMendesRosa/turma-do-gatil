@@ -13,6 +13,7 @@ export { DataTableComponent } from './data-table.component';
 export type { TableColumn, TableAction, TableEmptyState } from './data-table.component';
 export { CatInfoCellComponent } from './cat-info-cell.component';
 export { TruncatedTextCellComponent } from './truncated-text-cell.component';
+export { DataTableExampleComponent } from './data-table-example.component';
 export { ExampleTableComponent } from './example-table.component';
 export { ButtonsShowcaseComponent } from './buttons-showcase.component';
 export { CardsExampleComponent } from './cards-example.component';
