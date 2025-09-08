@@ -8,11 +8,24 @@ import {
   Page
 } from '../../models/sterilization.model';
 import { SterilizationScheduleModalComponent } from './sterilization-schedule-modal/sterilization-schedule-modal.component';
+import { 
+  RefreshButtonComponent,
+  ActionButtonsGroupComponent,
+  PaginationComponent,
+  ActionButtonConfig,
+  PaginationInfo
+} from '../../shared/components';
 
 @Component({
   selector: 'app-castracoes',
   standalone: true,
-  imports: [CommonModule, SterilizationScheduleModalComponent],
+  imports: [
+    CommonModule, 
+    SterilizationScheduleModalComponent,
+    RefreshButtonComponent,
+    ActionButtonsGroupComponent,
+    PaginationComponent
+  ],
   templateUrl: './castracoes.component.html',
   styleUrls: ['./castracoes.component.css']
 })
@@ -212,6 +225,72 @@ export class CastracoesComponent implements OnInit {
   }
 
   // Métodos de ação
+  getScheduleActionButtons(cat: CatSterilizationStatusDto): ActionButtonConfig[] {
+    return [
+      {
+        type: 'schedule',
+        tooltip: `Agendar castração para ${cat.name}`
+      }
+    ];
+  }
+
+  getSterilizationActionButtons(sterilization: SterilizationDto): ActionButtonConfig[] {
+    return [
+      {
+        type: 'edit',
+        tooltip: 'Editar agendamento'
+      },
+      {
+        type: 'complete',
+        tooltip: 'Marcar como realizada'
+      },
+      {
+        type: 'cancel',
+        tooltip: 'Cancelar agendamento'
+      }
+    ];
+  }
+
+  onActionButtonClick(event: {type: string, data: any}, context: 'schedule' | 'sterilization') {
+    if (context === 'schedule') {
+      this.scheduleSterilization(event.data);
+    } else if (context === 'sterilization') {
+      switch (event.type) {
+        case 'edit':
+          this.editSterilization(event.data);
+          break;
+        case 'complete':
+          this.completeSterilization(event.data);
+          break;
+        case 'cancel':
+          this.cancelSterilization(event.data);
+          break;
+      }
+    }
+  }
+
+  getScheduledPaginationInfo(): PaginationInfo {
+    return {
+      totalElements: this.sterilizationsPagination.totalElements,
+      numberOfElements: this.sterilizationsPagination.numberOfElements,
+      first: this.sterilizationsPagination.first,
+      last: this.sterilizationsPagination.last,
+      totalPages: this.sterilizationsPagination.totalPages,
+      currentPage: this.currentPage
+    };
+  }
+
+  getCompletedPaginationInfo(): PaginationInfo {
+    return {
+      totalElements: this.completedSterilizationsPagination.totalElements,
+      numberOfElements: this.completedSterilizationsPagination.numberOfElements,
+      first: this.completedSterilizationsPagination.first,
+      last: this.completedSterilizationsPagination.last,
+      totalPages: this.completedSterilizationsPagination.totalPages,
+      currentPage: this.currentCompletedPage
+    };
+  }
+
   scheduleSterilization(cat: CatSterilizationStatusDto): void {
     this.selectedCatForSchedule = cat;
     this.selectedSterilizationForEdit = null;

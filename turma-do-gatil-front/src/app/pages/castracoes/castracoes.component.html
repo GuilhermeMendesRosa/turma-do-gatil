@@ -37,10 +37,10 @@
     <div class="card-header">
       <h3><i class="pi pi-heart"></i> Gatos que Precisam de Castração</h3>
       <div class="actions">
-        <button class="p-button p-button-sm" (click)="refreshData()">
-          <i class="pi pi-refresh"></i>
-          Atualizar
-        </button>
+        <app-refresh-button 
+          [loading]="loadingCats"
+          (refresh)="refreshData()">
+        </app-refresh-button>
       </div>
     </div>
     
@@ -84,13 +84,11 @@
               </span>
             </td>
             <td>
-              <div class="action-buttons">
-                <button class="p-button-icon p-button-info" 
-                        [title]="'Agendar castração para ' + cat.name"
-                        (click)="scheduleSterilization(cat)">
-                  <i class="pi pi-calendar-plus"></i>
-                </button>
-              </div>
+              <app-action-buttons-group
+                [buttons]="getScheduleActionButtons(cat)"
+                [data]="cat"
+                (buttonClick)="onActionButtonClick($event, 'schedule')">
+              </app-action-buttons-group>
             </td>
           </tr>
         </tbody>
@@ -110,10 +108,10 @@
     <div class="card-header">
       <h3><i class="pi pi-calendar"></i> Castrações Agendadas</h3>
       <div class="actions">
-        <button class="p-button p-button-sm" (click)="loadScheduledSterilizations()">
-          <i class="pi pi-refresh"></i>
-          Atualizar
-        </button>
+        <app-refresh-button 
+          [loading]="loadingSterilizations"
+          (refresh)="loadScheduledSterilizations()">
+        </app-refresh-button>
       </div>
     </div>
     
@@ -160,23 +158,11 @@
               </span>
             </td>
             <td>
-              <div class="action-buttons">
-                <button class="p-button-icon p-button-warning" 
-                        [title]="'Editar agendamento'"
-                        (click)="editSterilization(sterilization)">
-                  <i class="pi pi-pencil"></i>
-                </button>
-                <button class="p-button-icon p-button-success" 
-                        [title]="'Marcar como realizada'"
-                        (click)="completeSterilization(sterilization)">
-                  <i class="pi pi-check"></i>
-                </button>
-                <button class="p-button-icon p-button-danger" 
-                        [title]="'Cancelar agendamento'"
-                        (click)="cancelSterilization(sterilization)">
-                  <i class="pi pi-times"></i>
-                </button>
-              </div>
+              <app-action-buttons-group
+                [buttons]="getSterilizationActionButtons(sterilization)"
+                [data]="sterilization"
+                (buttonClick)="onActionButtonClick($event, 'sterilization')">
+              </app-action-buttons-group>
             </td>
           </tr>
         </tbody>
@@ -191,32 +177,12 @@
     </div>
 
     <!-- Paginação para castrações agendadas -->
-    <div class="pagination-container" *ngIf="sterilizationsPagination.totalElements > 0">
-      <div class="pagination-info">
-        Mostrando {{ sterilizationsPagination.numberOfElements }} de {{ sterilizationsPagination.totalElements }} resultados
-      </div>
-      <div class="pagination-controls">
-        <button class="p-button p-button-sm p-button-secondary" 
-                [disabled]="sterilizationsPagination.first"
-                (click)="previousPage()">
-          <i class="pi pi-chevron-left"></i>
-          Anterior
-        </button>
-        <select class="page-select" 
-                [value]="currentPage" 
-                (change)="goToPage($event)">
-          <option *ngFor="let page of getPageNumbers()" [value]="page">
-            Página {{ page + 1 }}
-          </option>
-        </select>
-        <button class="p-button p-button-sm p-button-secondary" 
-                [disabled]="sterilizationsPagination.last"
-                (click)="nextPage()">
-          Próxima
-          <i class="pi pi-chevron-right"></i>
-        </button>
-      </div>
-    </div>
+    <app-pagination
+      [pagination]="getScheduledPaginationInfo()"
+      (pageChange)="goToPage({target: {value: $event}})"
+      (previousPage)="previousPage()"
+      (nextPage)="nextPage()">
+    </app-pagination>
   </div>
 
   <!-- Tabela de Castrações Realizadas -->
@@ -224,10 +190,10 @@
     <div class="card-header">
       <h3><i class="pi pi-check-circle"></i> Castrações Realizadas</h3>
       <div class="actions">
-        <button class="p-button p-button-sm" (click)="loadCompletedSterilizations()">
-          <i class="pi pi-refresh"></i>
-          Atualizar
-        </button>
+        <app-refresh-button 
+          [loading]="loadingCompletedSterilizations"
+          (refresh)="loadCompletedSterilizations()">
+        </app-refresh-button>
       </div>
     </div>
     
@@ -286,32 +252,12 @@
     </div>
 
     <!-- Paginação para castrações realizadas -->
-    <div class="pagination-container" *ngIf="completedSterilizationsPagination.totalElements > 0">
-      <div class="pagination-info">
-        Mostrando {{ completedSterilizationsPagination.numberOfElements }} de {{ completedSterilizationsPagination.totalElements }} resultados
-      </div>
-      <div class="pagination-controls">
-        <button class="p-button p-button-sm p-button-secondary" 
-                [disabled]="completedSterilizationsPagination.first"
-                (click)="previousCompletedPage()">
-          <i class="pi pi-chevron-left"></i>
-          Anterior
-        </button>
-        <select class="page-select" 
-                [value]="currentCompletedPage" 
-                (change)="goToCompletedPage($event)">
-          <option *ngFor="let page of getCompletedPageNumbers()" [value]="page">
-            Página {{ page + 1 }}
-          </option>
-        </select>
-        <button class="p-button p-button-sm p-button-secondary" 
-                [disabled]="completedSterilizationsPagination.last"
-                (click)="nextCompletedPage()">
-          Próxima
-          <i class="pi pi-chevron-right"></i>
-        </button>
-      </div>
-    </div>
+    <app-pagination
+      [pagination]="getCompletedPaginationInfo()"
+      (pageChange)="goToCompletedPage({target: {value: $event}})"
+      (previousPage)="previousCompletedPage()"
+      (nextPage)="nextCompletedPage()">
+    </app-pagination>
   </div>
 
   <ng-template #loadingTemplate>
