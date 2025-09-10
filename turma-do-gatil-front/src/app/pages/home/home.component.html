@@ -1,17 +1,13 @@
 <div class="page-container">
   <div class="header">
     <h1><i class="pi pi-chart-bar"></i> Dashboard</h1>
-    <button 
-      class="refresh-btn" 
-      (click)="refreshData()" 
-      [disabled]="loading"
-      title="Atualizar dados">
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="loading" title="Atualizar dados">
       <i class="pi" [class.pi-refresh]="!loading" [class.pi-spin]="loading" [class.pi-spinner]="loading"></i>
     </button>
   </div>
-  
+
   <p>Bem-vindo ao sistema de gerenciamento da Turma do Gatil!</p>
-  
+
   <!-- Loading State -->
   <div *ngIf="loading" class="loading-container">
     <i class="pi pi-spinner pi-spin"></i>
@@ -44,7 +40,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="dashboard-card">
         <div class="card-header">
           <i class="pi pi-briefcase"></i>
@@ -57,7 +53,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="dashboard-card">
         <div class="card-header">
           <i class="pi pi-users"></i>
@@ -70,7 +66,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="dashboard-card clickable" routerLink="/cats">
         <div class="card-header">
           <i class="pi pi-eye"></i>
@@ -158,48 +154,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Seção de Teste dos Toasts -->
-  <div class="dashboard-section">
-    <div class="section-header">
-      <h2><i class="pi pi-bell"></i> Teste de Notificações</h2>
-      <p>Use os botões abaixo para testar os diferentes tipos de toast</p>
-    </div>
-    
-    <div class="toast-test-buttons">
-      <p-button 
-        label="Sucesso" 
-        icon="pi pi-check" 
-        severity="success"
-        (onClick)="testSuccessToast()"
-        styleClass="test-button">
-      </p-button>
-      
-      <p-button 
-        label="Erro" 
-        icon="pi pi-times" 
-        severity="danger"
-        (onClick)="testErrorToast()"
-        styleClass="test-button">
-      </p-button>
-      
-      <p-button 
-        label="Aviso" 
-        icon="pi pi-exclamation-triangle" 
-        severity="warn"
-        (onClick)="testWarningToast()"
-        styleClass="test-button">
-      </p-button>
-      
-      <p-button 
-        label="Info" 
-        icon="pi pi-info-circle" 
-        severity="info"
-        (onClick)="testInfoToast()"
-        styleClass="test-button">
-      </p-button>
     </div>
   </div>
 </div>
