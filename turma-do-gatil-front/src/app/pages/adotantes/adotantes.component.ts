@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputMaskModule } from 'primeng/inputmask';
+import { DividerModule } from 'primeng/divider';
 import { AdopterService } from '../../services/adopter.service';
-import { Adopter, AdopterFilters } from '../../models/adopter.model';
-import { AdopterCreateModalComponent } from './adopter-create-modal/adopter-create-modal.component';
+import { Adopter, AdopterFilters, AdopterRequest } from '../../models/adopter.model';
 import { 
   DataTableComponent,
   TableColumn,
@@ -15,7 +16,9 @@ import {
   PageHeaderComponent,
   RefreshButtonComponent,
   PaginationComponent,
-  PaginationInfo
+  PaginationInfo,
+  GenericModalComponent,
+  ModalAction
 } from '../../shared/components';
 
 @Component({
@@ -24,9 +27,12 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     ButtonModule,
     InputTextModule,
-    AdopterCreateModalComponent,
+    InputMaskModule,
+    DividerModule,
+    GenericModalComponent,
     DataTableComponent,
     ContentCardComponent,
     PageHeaderComponent,
@@ -46,6 +52,11 @@ export class AdotantesComponent implements OnInit {
   // Modal states
   showCreateModal: boolean = false;
   selectedAdopter: Adopter | null = null;
+  isEditMode: boolean = false;
+  
+  // Form
+  adopterForm!: FormGroup;
+  modalActions: ModalAction[] = [];
   
   filters: AdopterFilters = {
     page: 0,
@@ -96,9 +107,13 @@ export class AdotantesComponent implements OnInit {
     message: 'Nenhum adotante encontrado.'
   };
 
-  constructor(private adopterService: AdopterService) { }
+  constructor(
+    private adopterService: AdopterService,
+    private fb: FormBuilder
+  ) { }
 
   ngOnInit(): void {
+    this.initForm();
     this.loadAdopters();
   }
 
@@ -231,11 +246,17 @@ export class AdotantesComponent implements OnInit {
   // Métodos para o modal
   openCreateModal(): void {
     this.selectedAdopter = null;
+    this.isEditMode = false;
+    this.resetForm();
+    this.setupModalActions();
     this.showCreateModal = true;
   }
 
   openEditModal(adopter: Adopter): void {
     this.selectedAdopter = adopter;
+    this.isEditMode = true;
+    this.updateFormForEditing();
+    this.setupModalActions();
     this.showCreateModal = true;
   }
 
@@ -259,5 +280,166 @@ export class AdotantesComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Form methods
+  initForm(): void {
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    
+    this.adopterForm = this.fb.group({
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      birthDate: ['', Validators.required],
+      cpf: ['', [Validators.required]],
+      phone: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      address: ['', [Validators.required, Validators.minLength(5)]],
+      registrationDate: [todayString, Validators.required]
+    });
+  }
+
+  updateFormForEditing(): void {
+    if (this.selectedAdopter) {
+      this.isEditMode = true;
+      
+      // Formatar datas para input type="date"
+      const birthDate = new Date(this.selectedAdopter.birthDate).toISOString().split('T')[0];
+      const registrationDate = new Date(this.selectedAdopter.registrationDate).toISOString().split('T')[0];
+      
+      this.adopterForm.patchValue({
+        firstName: this.selectedAdopter.firstName,
+        lastName: this.selectedAdopter.lastName,
+        birthDate: birthDate,
+        cpf: this.selectedAdopter.cpf,
+        phone: this.selectedAdopter.phone,
+        email: this.selectedAdopter.email,
+        address: this.selectedAdopter.address,
+        registrationDate: registrationDate
+      });
+    } else {
+      this.isEditMode = false;
+    }
+  }
+
+  resetForm(): void {
+    this.adopterForm.reset();
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    
+    this.adopterForm.patchValue({
+      registrationDate: todayString
+    });
+    this.isEditMode = false;
+  }
+
+  setupModalActions(): void {
+    this.modalActions = [
+      {
+        label: 'Cancelar',
+        icon: 'pi pi-times',
+        severity: 'secondary',
+        outlined: true,
+        action: () => this.onModalCancel()
+      },
+      {
+        label: this.isEditMode ? 'Salvar Alterações' : 'Salvar Adotante',
+        icon: 'pi pi-check',
+        severity: 'primary',
+        loading: this.loading,
+        disabled: !this.adopterForm?.valid,
+        action: () => this.onSubmit()
+      }
+    ];
+  }
+
+  onModalCancel(): void {
+    this.showCreateModal = false;
+    this.resetForm();
+  }
+
+  onSubmit(): void {
+    if (this.adopterForm.valid) {
+      this.loading = true;
+      this.setupModalActions(); // Update loading state
+      
+      const formValue = this.adopterForm.value;
+      
+      // Converter datas para string ISO
+      const adopterData: AdopterRequest = {
+        firstName: formValue.firstName,
+        lastName: formValue.lastName,
+        birthDate: new Date(formValue.birthDate).toISOString(),
+        cpf: formValue.cpf,
+        phone: formValue.phone,
+        email: formValue.email,
+        address: formValue.address,
+        registrationDate: new Date(formValue.registrationDate).toISOString()
+      };
+
+      if (this.isEditMode && this.selectedAdopter) {
+        // Atualizar adotante existente
+        this.adopterService.updateAdopter(this.selectedAdopter.id, adopterData).subscribe({
+          next: () => {
+            this.onAdopterUpdated();
+            this.showCreateModal = false;
+            this.resetForm();
+          },
+          error: (error) => {
+            console.error('Erro ao atualizar adotante:', error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.setupModalActions();
+          }
+        });
+      } else {
+        // Criar novo adotante
+        this.adopterService.createAdopter(adopterData).subscribe({
+          next: () => {
+            this.onAdopterCreated();
+            this.showCreateModal = false;
+            this.resetForm();
+          },
+          error: (error) => {
+            console.error('Erro ao criar adotante:', error);
+          },
+          complete: () => {
+            this.loading = false;
+            this.setupModalActions();
+          }
+        });
+      }
+    } else {
+      this.markFormGroupTouched();
+    }
+  }
+
+  private markFormGroupTouched(): void {
+    Object.keys(this.adopterForm.controls).forEach(key => {
+      const control = this.adopterForm.get(key);
+      control?.markAsTouched();
+    });
+  }
+
+  getFieldError(fieldName: string): string | null {
+    const field = this.adopterForm.get(fieldName);
+    if (field?.errors && field.touched) {
+      if (field.errors['required']) {
+        return 'Este campo é obrigatório';
+      }
+      if (field.errors['minlength']) {
+        return `Mínimo de ${field.errors['minlength'].requiredLength} caracteres`;
+      }
+      if (field.errors['email']) {
+        return 'Email inválido';
+      }
+    }
+    return null;
+  }
+
+  isFieldInvalid(fieldName: string): boolean {
+    const field = this.adopterForm.get(fieldName);
+    return !!(field?.invalid && field.touched);
   }
 }
