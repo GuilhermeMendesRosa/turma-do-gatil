@@ -174,17 +174,23 @@
 .filter-input {
   width: 100%;
   padding: 0.75rem 1rem !important;
-  border: 2px solid var(--p-surface-border) !important;
+  border: 1px solid var(--p-surface-border) !important;
   border-radius: 8px !important;
-  background: var(--p-surface-card) !important;
+  background: white !important;
   color: var(--p-text-color) !important;
   transition: all 0.3s ease !important;
+  min-height: 45px !important;
+  box-sizing: border-box !important;
 }
 
 .filter-input:focus {
   border-color: var(--p-primary-color) !important;
-  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.1) !important;
+  box-shadow: 0 0 0 2px rgba(242, 187, 174, 0.2) !important;
   outline: none !important;
+}
+
+.filter-input:hover {
+  border-color: var(--p-primary-color) !important;
 }
 
 .filter-input::placeholder {
@@ -234,29 +240,6 @@
   cursor: pointer;
   user-select: none;
   position: relative;
-}
-
-.clickable-card::after {
-  content: '';
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 24px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.clickable-card:hover::after,
-.clickable-card:hover::before {
-  opacity: 1;
 }
 
 .clickable-card:hover {
@@ -706,11 +689,12 @@
 ::ng-deep .p-select {
   width: 100% !important;
   border-radius: 8px !important;
-  border: 2px solid var(--p-surface-border) !important;
-  background: var(--p-surface-card) !important;
+  border: 1px solid var(--p-surface-border) !important;
+  background: white !important;
   background-color: white !important;
   transition: all 0.3s ease !important;
   min-height: 45px !important;
+  box-shadow: none !important;
 }
 
 ::ng-deep .p-select:not(.p-disabled) {
@@ -720,7 +704,13 @@
 
 ::ng-deep .p-select:not(.p-disabled).p-focus {
   border-color: var(--p-primary-color) !important;
-  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.1) !important;
+  box-shadow: 0 0 0 2px rgba(242, 187, 174, 0.2) !important;
+  background: white !important;
+  background-color: white !important;
+}
+
+::ng-deep .p-select:hover {
+  border-color: var(--p-primary-color) !important;
   background: white !important;
   background-color: white !important;
 }
@@ -788,14 +778,7 @@
   color: white !important;
 }
 
-/* Forçar background nos estados específicos */
-::ng-deep .filter-select .p-select,
-::ng-deep .filter-select .p-select:not(.p-disabled),
-::ng-deep .filter-select .p-select:focus,
-::ng-deep .filter-select .p-select:hover {
-  background: white !important;
-  background-color: white !important;
-}
+/* Forçar background nos estados específicos - removido para evitar conflitos */
 
 ::ng-deep .p-paginator {
   background: var(--p-surface-card) !important;
@@ -843,21 +826,7 @@
 .custom-select ::ng-deep .p-select {
   background: white !important;
   background-color: white !important;
-}
-
-.custom-select ::ng-deep .p-select-label {
-  background: white !important;
-  background-color: white !important;
-}
-
-.custom-select ::ng-deep .p-select:hover {
-  background: white !important;
-  background-color: white !important;
-}
-
-.custom-select ::ng-deep .p-select:focus {
-  background: white !important;
-  background-color: white !important;
+  border: 1px solid var(--p-surface-border) !important;
 }
 
 /* ===== CORES E TEMAS ===== */

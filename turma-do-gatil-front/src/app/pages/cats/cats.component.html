@@ -137,7 +137,7 @@
   <!-- Grid de gatos -->
   <div class="cats-grid" *ngIf="!loading">
     <div class="cat-card" *ngFor="let cat of cats; trackBy: trackByCatId">
-      <div class="cat-card-inner clickable-card" (click)="viewCatDetails(cat)" pTooltip="Clique para ver o perfil completo">
+      <div class="cat-card-inner clickable-card" (click)="viewCatDetails(cat)">
         <!-- Imagem do gato -->
         <div class="cat-image-container">
           <img 
