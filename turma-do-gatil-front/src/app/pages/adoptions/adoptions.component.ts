@@ -23,7 +23,7 @@ import {
 } from '../../shared/components';
 
 @Component({
-  selector: 'app-adocoes',
+  selector: 'app-adoptions',
   standalone: true,
   imports: [
     CommonModule,
@@ -34,10 +34,10 @@ import {
     PaginationComponent,
     GenericModalComponent
   ],
-  templateUrl: './adocoes.component.html',
-  styleUrls: ['./adocoes.component.css']
+  templateUrl: './adoptions.component.html',
+  styleUrls: ['./adoptions.component.css']
 })
-export class AdocoesComponent implements OnInit {
+export class AdoptionsComponent implements OnInit {
   // Dados existentes
   adoptions: Adoption[] = [];
   totalRecords: number = 0;

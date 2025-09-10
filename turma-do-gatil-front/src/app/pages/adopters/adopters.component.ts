@@ -22,7 +22,7 @@ import {
 } from '../../shared/components';
 
 @Component({
-  selector: 'app-adotantes',
+  selector: 'app-adopters',
   standalone: true,
   imports: [
     CommonModule,
@@ -39,10 +39,10 @@ import {
     PaginationComponent,
     ModalButtonComponent
   ],
-  templateUrl: './adotantes.component.html',
-  styleUrls: ['./adotantes.component.css']
+  templateUrl: './adopters.component.html',
+  styleUrls: ['./adopters.component.css']
 })
-export class AdotantesComponent implements OnInit {
+export class AdoptersComponent implements OnInit {
   adopters: Adopter[] = [];
   totalRecords: number = 0;
   loading: boolean = false;

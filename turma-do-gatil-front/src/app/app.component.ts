@@ -28,22 +28,22 @@ export class AppComponent {
     {
       label: 'Gatos',
       icon: 'fas fa-cat',
-      routerLink: '/gatos'
+      routerLink: '/cats'
     },
     {
       label: 'Castrações',
       icon: 'pi pi-briefcase',
-      routerLink: '/castracoes'
+      routerLink: '/sterilizations'
     },
     {
       label: 'Adoções',
       icon: 'pi pi-home',
-      routerLink: '/adocoes'
+      routerLink: '/adoptions'
     },
     {
       label: 'Adotantes',
       icon: 'pi pi-users',
-      routerLink: '/adotantes'
+      routerLink: '/adopters'
     }
   ];
 

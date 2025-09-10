@@ -11,7 +11,7 @@ import { Adopter } from '../../../models/adopter.model';
 import { Adoption, AdoptionRequest, AdoptionStatus } from '../../../models/adoption.model';
 import { AdopterService } from '../../../services/adopter.service';
 import { AdoptionService } from '../../../services/adoption.service';
-import { AdopterCreateModalComponent } from '../../adotantes/adopter-create-modal/adopter-create-modal.component';
+import { AdopterCreateModalComponent } from '../../adopters/adopter-create-modal/adopter-create-modal.component';
 
 @Component({
   selector: 'app-adoption-modal',

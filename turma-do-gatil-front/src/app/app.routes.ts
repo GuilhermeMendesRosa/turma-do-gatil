@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
-import { GatosComponent } from './pages/gatos/gatos.component';
-import { AdocoesComponent } from './pages/adocoes/adocoes.component';
-import { AdotantesComponent } from './pages/adotantes/adotantes.component';
-import { CastracoesComponent } from './pages/castracoes/castracoes.component';
+import { CatsComponent } from './pages/cats/cats.component';
+import { AdoptionsComponent } from './pages/adoptions/adoptions.component';
+import { AdoptersComponent } from './pages/adopters/adopters.component';
+import { SterilizationsComponent } from './pages/sterilizations/sterilizations.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
-  { path: 'gatos', component: GatosComponent },
-  { path: 'adocoes', component: AdocoesComponent },
-  { path: 'adotantes', component: AdotantesComponent },
-  { path: 'castracoes', component: CastracoesComponent },
+  { path: 'cats', component: CatsComponent },
+  { path: 'adoptions', component: AdoptionsComponent },
+  { path: 'adopters', component: AdoptersComponent },
+  { path: 'sterilizations', component: SterilizationsComponent },
   { path: '**', redirectTo: '/home' }
 ];

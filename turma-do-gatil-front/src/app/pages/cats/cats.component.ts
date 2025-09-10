@@ -30,7 +30,7 @@ import {
 } from '../../shared/components';
 
 @Component({
-  selector: 'app-gatos',
+  selector: 'app-cats',
   standalone: true,
   imports: [
     CommonModule,
@@ -56,10 +56,10 @@ import {
     GenericButtonComponent
   ],
   providers: [MessageService],
-  templateUrl: './gatos.component.html',
-  styleUrl: './gatos.component.css'
+  templateUrl: './cats.component.html',
+  styleUrl: './cats.component.css'
 })
-export class GatosComponent implements OnInit {
+export class CatsComponent implements OnInit {
   cats: Cat[] = [];
   loading = false;
   totalRecords = 0;

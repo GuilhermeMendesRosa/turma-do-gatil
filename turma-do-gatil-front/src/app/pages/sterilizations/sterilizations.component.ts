@@ -23,7 +23,7 @@ import {
 } from '../../shared/components';
 
 @Component({
-  selector: 'app-castracoes',
+  selector: 'app-sterilizations',
   standalone: true,
   imports: [
     CommonModule, 
@@ -35,10 +35,10 @@ import {
     PageHeaderComponent,
     DataTableComponent
   ],
-  templateUrl: './castracoes.component.html',
-  styleUrls: ['./castracoes.component.css']
+  templateUrl: './sterilizations.component.html',
+  styleUrls: ['./sterilizations.component.css']
 })
-export class CastracoesComponent implements OnInit {
+export class SterilizationsComponent implements OnInit {
   stats: SterilizationStatsDto | null = null;
   catsNeedingSterilization: CatSterilizationStatusDto[] = [];
   scheduledSterilizations: SterilizationDto[] = [];
