@@ -1,18 +1,34 @@
 
+<!-- 
+  Template do componente de gestão de adoções
+  
+  Estrutura:
+  1. Cabeçalho da página com título e descrição
+  2. Card de conteúdo com tabela de dados
+  3. Paginação integrada
+  4. Modal para alteração de status
+-->
+
 <div class="page-container">
-  <!-- Page Header genérico -->
+  <!-- Cabeçalho da página -->
   <app-page-header
     title="Gestão de Adoções"
     subtitle="Acompanhe e gerencie os processos de adoção registrados no sistema"
     icon="pi-heart">
   </app-page-header>
 
-  <!-- Content Card genérico -->
+  <!-- Card principal com dados das adoções -->
   <app-content-card
     title="Lista de Adoções"
     icon="pi-list">
     
-    <!-- Data Table genérico -->
+    <!-- Indicador de carregamento de dados relacionados -->
+    <div *ngIf="loadingRelatedData" class="related-data-loading">
+      <i class="pi pi-spinner loading-icon"></i>
+      <span>Carregando informações complementares...</span>
+    </div>
+    
+    <!-- Tabela de dados das adoções -->
     <app-data-table
       [columns]="tableColumns"
       [data]="adoptions"
@@ -23,7 +39,7 @@
       (actionClick)="onTableAction($event)">
     </app-data-table>
 
-    <!-- Pagination genérico -->
+    <!-- Controles de paginação -->
     <app-pagination 
       slot="footer"
       *ngIf="totalRecords > 0"
@@ -36,42 +52,67 @@
   </app-content-card>
 </div>
 
-<!-- Modal genérico -->
+<!-- Modal para alteração de status da adoção -->
 <app-generic-modal
   [(visible)]="showStatusModal"
-  title="Alterar Status da Adoção"
+  [title]="modalConfig.title"
   [actions]="modalActions"
-  [dialogStyle]="{ width: '90vw', maxWidth: '500px' }">
+  [dialogStyle]="modalConfig.dialogStyle">
   
-  <div class="modal-content">
-    <div class="field-group">
-      <label>Gato:</label>
-      <span>{{ getCatName(selectedAdoption?.catId) }}</span>
+  <!-- Conteúdo do modal -->
+  <div class="modal-content" [class.modal-loading]="modalLoading">
+    
+    <!-- Loading overlay para o modal -->
+    <div *ngIf="modalLoading" class="modal-loading-overlay">
+      <div class="modal-loading-content">
+        <i class="pi pi-spinner modal-spinner"></i>
+        <span>Atualizando status...</span>
+      </div>
     </div>
     
-    <div class="field-group">
-      <label>Adotante:</label>
-      <span>{{ getAdopterName(selectedAdoption?.adopterId) }}</span>
+    <!-- Informações da adoção selecionada -->
+    <div class="adoption-info-section">
+      <div class="field-group">
+        <label>Gato:</label>
+        <span class="field-value">{{ displayCatName(selectedAdoption?.catId) }}</span>
+      </div>
+      
+      <div class="field-group">
+        <label>Adotante:</label>
+        <span class="field-value">{{ displayAdopterName(selectedAdoption?.adopterId) }}</span>
+      </div>
+      
+      <div class="field-group">
+        <label>Data da Adoção:</label>
+        <span class="field-value">{{ displayFormattedDate(selectedAdoption?.adoptionDate) }}</span>
+      </div>
     </div>
     
-    <div class="field-group">
-      <label>Data da Adoção:</label>
-      <span>{{ formatDate(selectedAdoption?.adoptionDate) }}</span>
+    <!-- Seleção do novo status -->
+    <div class="status-selection-section">
+      <div class="field-group">
+        <label for="status-select">Novo Status:</label>
+        <select 
+          id="status-select"
+          class="status-select"
+          [(ngModel)]="selectedStatus"
+          [disabled]="modalLoading"
+          [attr.aria-label]="'Selecionar novo status para a adoção'">
+          
+          <option value="" disabled>
+            Selecione um status
+          </option>
+          
+          <option 
+            *ngFor="let option of statusOptions; trackBy: trackByStatusValue" 
+            [value]="option.value">
+            {{ option.label }}
+          </option>
+          
+        </select>
+      </div>
     </div>
-    
-    <div class="field-group">
-      <label for="status">Novo Status:</label>
-      <select 
-        id="status"
-        class="form-control"
-        [(ngModel)]="selectedStatus"
-        [disabled]="modalLoading">
-        <option value="" disabled>Selecione um status</option>
-        <option *ngFor="let option of statusOptions" [value]="option.value">
-          {{ option.label }}
-        </option>
-      </select>
-    </div>
+
   </div>
 
 </app-generic-modal>

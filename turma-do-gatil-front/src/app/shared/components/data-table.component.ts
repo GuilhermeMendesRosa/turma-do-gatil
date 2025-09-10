@@ -32,8 +32,16 @@ export interface TableEmptyState {
   standalone: true,
   imports: [CommonModule, ActionButtonsGroupComponent],
   template: `
-    <div class="table-container">
-      <table class="data-table" *ngIf="data.length > 0; else emptyTemplate">
+    <div class="table-container" [class.loading]="loading">
+      <!-- Loading overlay -->
+      <div *ngIf="loading" class="loading-overlay">
+        <div class="loading-content">
+          <i class="pi pi-spinner loading-spinner"></i>
+          <p>Carregando dados...</p>
+        </div>
+      </div>
+      
+      <table class="data-table" *ngIf="data.length > 0 && !loading; else emptyTemplate">
         <thead>
           <tr>
             <th 
@@ -126,7 +134,7 @@ export interface TableEmptyState {
       </table>
 
       <ng-template #emptyTemplate>
-        <div class="empty-message">
+        <div *ngIf="!loading" class="empty-message">
           <i [class]="emptyState.icon"></i>
           <p>{{ emptyState.message }}</p>
         </div>
@@ -136,6 +144,52 @@ export interface TableEmptyState {
   styles: [`
     .table-container {
       width: 100%;
+      position: relative;
+      min-height: 200px;
+    }
+
+    .table-container.loading {
+      opacity: 0.7;
+    }
+
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      border-radius: 8px;
+      backdrop-filter: blur(2px);
+    }
+
+    .loading-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      padding: 2rem;
+    }
+
+    .loading-spinner {
+      font-size: 2rem;
+      color: var(--p-primary-color, #3b82f6);
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-content p {
+      margin: 0;
+      color: var(--p-text-color-secondary, #6b7280);
+      font-weight: 500;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     .data-table {

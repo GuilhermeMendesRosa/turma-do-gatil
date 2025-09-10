@@ -1,261 +1,176 @@
+/**
+ * Estilos do componente de gestão de adoções
+ * 
+ * Organização:
+ * 1. Layout principal e containers
+ * 2. Estilos de modal
+ * 3. Formulários e campos
+ * 4. Estados e badges de status
+ * 5. Responsividade
+ * 6. Customizações de componentes PrimeNG
+ */
+
+/* ==================== LAYOUT PRINCIPAL ==================== */
+
 .page-container {
   padding: 1rem;
+  min-height: 100vh;
+  background: var(--p-surface-ground, #f8f9fa);
 }
 
-.page-header {
-  margin-bottom: 1.5rem;
-}
-
-.page-header h1 {
-  color: var(--p-primary-color);
-  margin-bottom: 0.5rem;
+/* Indicador de carregamento de dados relacionados */
+.related-data-loading {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 2rem;
+  padding: 0.75rem 1rem;
+  background: var(--p-surface-100, #f3f4f6);
+  border: 1px solid var(--p-surface-200, #e5e7eb);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--p-text-color-secondary, #6b7280);
 }
 
-.page-title {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--p-text-color);
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+.related-data-loading .loading-icon {
+  animation: spin 1s linear infinite;
+  color: var(--p-primary-color, #3b82f6);
+  font-size: 0.9rem;
 }
 
-.page-title i {
-  color: var(--p-primary-color);
-  font-size: 2rem;
-}
+/* ==================== MODAL E FORMULÁRIOS ==================== */
 
-.page-subtitle {
-  color: var(--p-text-color-secondary);
-  margin: 0.5rem 0 0 0;
-  font-size: 1.1rem;
-}
-
-.page-header p {
-  color: var(--p-text-color-secondary);
-  margin: 0;
-}
-
-.content-card {
-  background: var(--p-surface-card);
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--p-surface-border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--p-surface-border);
-}
-
-.card-header h3 {
-  margin: 0;
-  color: var(--p-text-color);
-  font-size: 1.5rem;
-}
-
-.actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.table-container {
+.modal-content {
   width: 100%;
-}
-
-/* Tabela personalizada */
-.adopters-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.adopters-table th {
-  background: var(--p-surface-ground);
-  color: var(--p-text-color);
-  font-weight: 600;
-  padding: 1rem;
-  text-align: left;
-  border-bottom: 2px solid var(--p-surface-border);
+  padding: 0.5rem 0;
   position: relative;
+  min-height: 200px;
 }
 
-.adopters-table th.sortable {
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.2s;
+.modal-content.modal-loading {
+  pointer-events: none;
+  opacity: 0.7;
 }
 
-.adopters-table th.sortable:hover {
-  background: var(--p-surface-hover);
+.modal-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  border-radius: 8px;
+  backdrop-filter: blur(1px);
 }
 
-.adopters-table th.sortable i {
-  margin-left: 0.5rem;
-  color: var(--p-text-color-secondary);
-}
-
-.adopters-table td {
-  padding: 1rem;
-  border-bottom: 1px solid var(--p-surface-border);
-  vertical-align: middle;
-}
-
-.adopters-table tbody tr {
-  transition: background-color 0.2s;
-}
-
-.adopters-table tbody tr:hover {
-  background: var(--p-surface-hover);
-}
-
-.adopters-table tbody tr:nth-child(even) {
-  background: rgba(0, 0, 0, 0.02);
-}
-
-.adopters-table tbody tr:nth-child(even):hover {
-  background: var(--p-surface-hover);
-}
-
-.adopter-name {
+.modal-loading-content {
   display: flex;
   flex-direction: column;
-}
-
-.adopter-name strong {
-  color: var(--p-text-color);
-  font-weight: 600;
-}
-
-/* Botões personalizados */
-.p-button {
-  background: var(--p-primary-color);
-  border: 1px solid var(--p-primary-color);
-  color: white;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  display: inline-flex;
   align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+}
+
+.modal-spinner {
+  font-size: 1.5rem;
+  color: var(--p-primary-color, #3b82f6);
+  animation: spin 1s linear infinite;
+}
+
+.modal-loading-content span {
+  color: var(--p-text-color-secondary, #6b7280);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.adoption-info-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--p-surface-border, #e5e7eb);
+}
+
+.status-selection-section {
+  margin-top: 1rem;
+}
+
+.field-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  transition: all 0.2s;
-  text-decoration: none;
 }
 
-.p-button:hover {
-  background: var(--p-primary-600);
-  border-color: var(--p-primary-600);
-  transform: translateY(-1px);
+.field-group label {
+  font-weight: 600;
+  color: var(--p-text-color, #1f2937);
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
 }
 
-.p-button:disabled {
+.field-value {
+  color: var(--p-text-color-secondary, #6b7280);
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
+  border-radius: 4px;
+  background: var(--p-surface-50, #f9fafb);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--p-surface-200, #e5e7eb);
+}
+
+.status-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: var(--p-surface-card, #ffffff);
+  color: var(--p-text-color, #1f2937);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: var(--p-primary-color, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.status-select:disabled {
+  background: var(--p-surface-100, #f3f4f6);
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
 
-.p-button-icon {
+.status-select option {
   padding: 0.5rem;
-  border-radius: 50%;
-  min-width: 2.5rem;
-  height: 2.5rem;
+  background: var(--p-surface-card, #ffffff);
+  color: var(--p-text-color, #1f2937);
+}
+
+/* ==================== BADGES DE STATUS ==================== */
+
+.status-badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 1rem;
-  background: var(--p-surface-card);
-  border: 1px solid var(--p-surface-border);
-  
-  &:hover:not(:disabled) {
-    background: var(--p-surface-hover);
-    transform: translateY(-1px);
-  }
-  
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
-}
-
-.p-button-info {
-  background: #17a2b8;
-  color: white;
-}
-
-.p-button-info:hover {
-  background: #138496;
-  transform: translateY(-1px);
-}
-
-.p-button-warning {
-  background: #ffc107;
-  color: #212529;
-}
-
-.p-button-warning:hover {
-  background: #e0a800;
-  transform: translateY(-1px);
-}
-
-.p-button-danger {
-  background: #dc3545;
-  color: white;
-}
-
-.p-button-danger:hover {
-  background: #c82333;
-  transform: translateY(-1px);
-}
-
-.p-button-secondary {
-  background: #6c757d;
-  color: white;
-}
-
-.p-button-secondary:hover {
-  background: #5a6268;
-  transform: translateY(-1px);
-}
-
-.action-buttons {
-  display: flex;
   gap: 0.25rem;
-  justify-content: center;
-}
-
-/* Status badges */
-.status-badge {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
+  padding: 0.375rem 0.75rem;
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border: 1px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .status-badge.completed {
-  background-color: #d1fae5;
-  color: #065f46;
-  border-color: #a7f3d0;
+  background-color: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
 }
 
 .status-badge.pending {
@@ -270,225 +185,285 @@
   border-color: #fca5a5;
 }
 
-/* Mensagens de estado */
-.empty-message,
-.loading-message {
-  text-align: center;
-  padding: 2rem;
-  color: var(--p-text-color-secondary);
-}
+/* ==================== RESPONSIVIDADE ==================== */
 
-.empty-message i,
-.loading-message i {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  display: block;
-  color: var(--p-text-color-muted);
-}
-
-.loading-message i.pi-spinner {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.empty-message p,
-.loading-message {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-/* Paginação */
-.pagination-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--p-surface-border);
-}
-
-.pagination-info {
-  color: var(--p-text-color-secondary);
-  font-size: 0.9rem;
-}
-
-.pagination-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.page-select {
-  padding: 0.5rem;
-  border: 1px solid var(--p-surface-border);
-  border-radius: 4px;
-  background: var(--p-surface-card);
-  color: var(--p-text-color);
-}
-
-/* Responsividade */
 @media (max-width: 768px) {
   .page-container {
-    padding: 0.5rem;
+    padding: 0.75rem;
   }
 
-  .content-card {
-    padding: 1rem;
+  .modal-content {
+    padding: 0;
   }
 
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+  .field-group {
+    margin-bottom: 0.75rem;
   }
 
-  .card-header h3 {
-    font-size: 1.25rem;
+  .field-group label {
+    font-size: 0.85rem;
   }
 
-  .adopters-table {
-    font-size: 0.875rem;
+  .field-value {
+    font-size: 0.9rem;
+    padding: 0.375rem 0.5rem;
   }
 
-  .adopters-table th,
-  .adopters-table td {
-    padding: 0.75rem 0.5rem;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .pagination-container {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-
-  .pagination-controls {
-    order: -1;
+  .status-select {
+    padding: 0.625rem;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 480px) {
-  .adopters-table {
-    font-size: 0.8rem;
+  .page-container {
+    padding: 0.5rem;
   }
-  
-  .p-button-icon {
-    min-width: 2rem;
-    height: 2rem;
-    padding: 0.25rem;
+
+  .adoption-info-section {
+    margin-bottom: 1rem;
+  }
+
+  .field-value {
+    font-size: 0.85rem;
   }
 }
 
-/* ===== CUSTOMIZAÇÕES DE BOTÕES (igual aos gatos) ===== */
-::ng-deep .p-button {
-  border-radius: 10px !important;
-  font-weight: 600 !important;
-  transition: all 0.3s ease !important;
-}
+/* ==================== CUSTOMIZAÇÕES DE COMPONENTES ==================== */
 
-::ng-deep .p-button:hover {
-  transform: translateY(-2px) !important;
-}
-
-/* ===== CORES E TEMAS ===== */
-:host {
-  --primary-color: var(--p-primary-color, #F2BBAE);
-  --text-color: var(--p-text-color, #1f2937);
-  --text-color-secondary: var(--p-text-color-secondary, #6b7280);
-  --surface-card: var(--p-surface-card, #ffffff);
-  --surface-border: var(--p-surface-border, #e5e7eb);
-  --surface-ground: var(--p-surface-ground, #f9fafb);
-}
-
-/* ===== ESTILOS DO MODAL GENÉRICO ===== */
-.modal-content {
-  width: 100%;
-}
-
-.field-group {
-  margin-bottom: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.field-group label {
-  font-weight: 600;
-  color: var(--p-text-color);
-  font-size: 0.9rem;
-}
-
-.field-group span {
-  color: var(--p-text-color-secondary);
-  font-size: 0.9rem;
-  padding: 0.5rem 0;
-}
-
-.form-control {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--p-surface-border);
-  border-radius: 6px;
-  font-size: 0.9rem;
-  background: var(--p-surface-card);
-  color: var(--p-text-color);
-  transition: all 0.2s ease;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--p-primary-color);
-  box-shadow: 0 0 0 2px rgba(242, 187, 174, 0.2);
-}
-
-.form-control:disabled {
-  background: var(--p-surface-ground);
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Personalização do modal para manter consistência visual */
+/* Modal personalizado */
 ::ng-deep .generic-modal .p-dialog {
-  min-width: 400px;
-  max-width: 90vw;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+::ng-deep .generic-modal .p-dialog-header {
+  background: var(--p-surface-card, #ffffff);
+  border-bottom: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 12px 12px 0 0;
 }
 
 ::ng-deep .generic-modal .p-dialog-content {
+  background: var(--p-surface-card, #ffffff);
+  padding: 1.5rem;
   max-height: 70vh;
   overflow-y: auto;
 }
 
-/* ===== BOTÕES DE AÇÃO ===== */
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  align-items: center;
+::ng-deep .generic-modal .p-dialog-footer {
+  background: var(--p-surface-card, #ffffff);
+  border-top: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 0 0 12px 12px;
+  padding: 1rem 1.5rem;
 }
 
-.action-buttons p-button {
-  flex-shrink: 0;
+/* Botões do modal */
+::ng-deep .generic-modal .p-button {
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease;
 }
 
-/* Ajuste para botões pequenos */
-::ng-deep .action-buttons .p-button {
-  padding: 0.5rem;
-  min-width: 2rem;
-  height: 2rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+::ng-deep .generic-modal .p-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+::ng-deep .generic-modal .p-button.p-button-secondary {
+  background: var(--p-surface-200, #e5e7eb);
+  border-color: var(--p-surface-300, #d1d5db);
+  color: var(--p-text-color, #1f2937);
+}
+
+::ng-deep .generic-modal .p-button.p-button-secondary:hover {
+  background: var(--p-surface-300, #d1d5db);
+  border-color: var(--p-surface-400, #9ca3af);
+}
+
+/* Tabela personalizada */
+::ng-deep .data-table .p-datatable {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .data-table .p-datatable-header {
+  background: var(--p-surface-100, #f3f4f6);
+  border-bottom: 2px solid var(--p-surface-border, #e5e7eb);
+  padding: 1rem;
+}
+
+::ng-deep .data-table .p-datatable-tbody > tr {
+  transition: background-color 0.2s ease;
+}
+
+::ng-deep .data-table .p-datatable-tbody > tr:hover {
+  background: var(--p-surface-hover, #f8f9fa);
+}
+
+/* Paginação personalizada */
+::ng-deep .pagination .p-paginator {
+  background: var(--p-surface-card, #ffffff);
+  border: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+::ng-deep .pagination .p-paginator .p-paginator-pages .p-paginator-page {
   border-radius: 6px;
+  margin: 0 0.125rem;
+  transition: all 0.2s ease;
 }
 
-::ng-deep .action-buttons .p-button i {
-  font-size: 0.875rem;
+::ng-deep .pagination .p-paginator .p-paginator-pages .p-paginator-page:hover {
+  transform: translateY(-1px);
+}
+
+/* ==================== VARIÁVEIS CSS ==================== */
+
+:host {
+  --primary-color: var(--p-primary-color, #3b82f6);
+  --text-color: var(--p-text-color, #1f2937);
+  --text-color-secondary: var(--p-text-color-secondary, #6b7280);
+  --surface-card: var(--p-surface-card, #ffffff);
+  --surface-border: var(--p-surface-border, #e5e7eb);
+  --surface-ground: var(--p-surface-ground, #f8f9fa);
+  --surface-hover: var(--p-surface-hover, #f1f5f9);
+}
+
+/* ==================== ANIMAÇÕES ==================== */
+
+.modal-content {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.field-group {
+  animation: slideInLeft 0.2s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ==================== ESTADOS DE CARREGAMENTO E VAZIO ==================== */
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 8px;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  color: var(--primary-color);
+  font-size: 1.5rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Estado vazio personalizado */
+::ng-deep .data-table .empty-message {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--p-text-color-secondary, #6b7280);
+}
+
+::ng-deep .data-table .empty-message i {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  display: block;
+  color: var(--p-primary-300, #93c5fd);
+  opacity: 0.6;
+}
+
+::ng-deep .data-table .empty-message i.pi {
+  font-family: 'primeicons' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::ng-deep .data-table .empty-message p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--p-text-color, #1f2937);
+}
+
+::ng-deep .data-table .empty-message .empty-submessage {
+  font-size: 0.9rem;
+  color: var(--p-text-color-muted, #9ca3af);
+  margin-top: 0.5rem;
+}
+
+/* ==================== ACESSIBILIDADE ==================== */
+
+.status-select:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.field-group label {
+  cursor: pointer;
+}
+
+/* Estados de validação */
+.field-group.error .status-select {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.field-group.error .field-value {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+/* ==================== IMPRESSÃO ==================== */
+
+@media print {
+  .page-container {
+    padding: 0;
+    background: white;
+  }
+  
+  .modal-content,
+  .adoption-info-section,
+  .status-selection-section {
+    break-inside: avoid;
+  }
 }

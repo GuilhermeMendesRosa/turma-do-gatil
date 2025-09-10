@@ -84,9 +84,6 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   /** Estado de carregamento do modal */
   modalLoading: boolean = false;
   
-  /** Estado de carregamento de dados relacionados */
-  loadingRelatedData: boolean = false;
-  
   /** Controle de visibilidade do modal */
   showStatusModal: boolean = false;
   
@@ -266,15 +263,6 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     const adopterIds = this.adoptionUtils.extractUniqueIds(this.adoptions, 'adopterId');
     const catIds = this.adoptionUtils.extractUniqueIds(this.adoptions, 'catId');
 
-    // Verifica se há dados para carregar
-    const hasDataToLoad = adopterIds.some(id => !this.adoptersMap.has(id)) || 
-                         catIds.some(id => !this.catsMap.has(id));
-
-    if (hasDataToLoad) {
-      this.loadingRelatedData = true;
-      this.cdr.markForCheck();
-    }
-
     this.loadAdoptersData(adopterIds);
     this.loadCatsData(catIds);
   }
@@ -305,7 +293,6 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
               this.adoptersMap.set(missingAdopterIds[index], adopter);
             }
           });
-          this.checkRelatedDataLoadingComplete();
           this.cdr.markForCheck();
         }
       });
@@ -337,7 +324,6 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
               this.catsMap.set(missingCatIds[index], cat);
             }
           });
-          this.checkRelatedDataLoadingComplete();
           this.cdr.markForCheck();
         }
       });
@@ -457,36 +443,6 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
       });
   }
 
-  // ==================== MÉTODOS PÚBLICOS PARA TEMPLATE ====================
-
-  /**
-   * Exibe o nome do gato para o template
-   */
-  displayCatName(catId: string | undefined): string {
-    return this.getCatName(catId);
-  }
-
-  /**
-   * Exibe o nome do adotante para o template
-   */
-  displayAdopterName(adopterId: string | undefined): string {
-    return this.getAdopterName(adopterId);
-  }
-
-  /**
-   * Exibe a data formatada para o template
-   */
-  displayFormattedDate(dateString: string | undefined): string {
-    return this.adoptionUtils.formatDate(dateString);
-  }
-
-  /**
-   * TrackBy function para opções de status
-   */
-  trackByStatusValue(index: number, option: any): any {
-    return option.value;
-  }
-
   // ==================== MÉTODOS AUXILIARES ====================
 
   /**
@@ -596,23 +552,5 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
    */
   onAdoptionUpdated(): void {
     this.loadAdoptionsData();
-  }
-
-  /**
-   * Verifica se o carregamento de dados relacionados foi completado
-   */
-  private checkRelatedDataLoadingComplete(): void {
-    // Verifica se todos os dados necessários foram carregados
-    const allAdoptersLoaded = this.adoptions.every(adoption => 
-      this.adoptersMap.has(adoption.adopterId)
-    );
-    const allCatsLoaded = this.adoptions.every(adoption => 
-      this.catsMap.has(adoption.catId)
-    );
-
-    if (allAdoptersLoaded && allCatsLoaded) {
-      this.loadingRelatedData = false;
-      this.cdr.markForCheck();
-    }
   }
 }
