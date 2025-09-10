@@ -1,160 +1,121 @@
 <div class="page-container">
   <!-- Cabeçalho -->
-  <div class="page-header">
-    <h1 class="page-title">
-      <i class="fas fa-cat"></i>
-      Gestão de Gatos
-    </h1>
-    <p class="page-subtitle">Gerencie os gatos disponíveis para adoção no abrigo</p>
-  </div>
+  <app-page-header
+    title="Gestão de Gatos"
+    subtitle="Gerencie os gatos disponíveis para adoção no abrigo"
+    icon="pi-tag">
+  </app-page-header>
 
   <!-- Estatísticas -->
-  <div class="stats-container">
-    <div class="stat-card">
-      <div class="stat-icon available">
-        <i class="fas fa-heart"></i>
-      </div>
-      <div class="stat-content">
-        <h3>{{ getAvailableCatsCount() }}</h3>
-        <p>Disponíveis</p>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon adopted">
-        <i class="fas fa-home"></i>
-      </div>
-      <div class="stat-content">
-        <h3>{{ getAdoptedCatsCount() }}</h3>
-        <p>Adotados</p>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon total">
-        <i class="fas fa-cat"></i>
-      </div>
-      <div class="stat-content">
-        <h3>{{ totalRecords }}</h3>
-        <p>Total</p>
-      </div>
-    </div>
-  </div>
+  <app-stats-grid [stats]="statsData"></app-stats-grid>
 
   <!-- Filtros -->
-  <div class="filters-section">
-    <div class="filters-card">
-      <div class="filters-header">
-        <h3>
-          <i class="fas fa-filter"></i>
-          Filtros de Busca
-        </h3>
-        <p-button 
-          label="Novo Gato" 
-          icon="pi pi-plus" 
-          (onClick)="openAddCatDialog()"
-          size="small">
-        </p-button>
+  <app-content-card
+    title="Filtros de Busca"
+    icon="pi-filter"
+    [hasActions]="true">
+    
+    <app-generic-button 
+      slot="actions"
+      [config]="newCatButtonConfig"
+      (click)="openAddCatDialog()">
+    </app-generic-button>
+    
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="nameFilter">
+          <i class="pi pi-search"></i>
+          Nome do Gato
+        </label>
+        <input 
+          id="nameFilter"
+          type="text" 
+          pInputText 
+          [(ngModel)]="filters.name" 
+          (ngModelChange)="onFilterChange()"
+          placeholder="Digite o nome do gato..." 
+          class="filter-input">
       </div>
-      
-      <div class="filters-grid">
-        <div class="filter-group">
-          <label for="nameFilter">
-            <i class="pi pi-search"></i>
-            Nome do Gato
-          </label>
-          <input 
-            id="nameFilter"
-            type="text" 
-            pInputText 
-            [(ngModel)]="filters.name" 
-            (ngModelChange)="onFilterChange()"
-            placeholder="Digite o nome do gato..." 
-            class="filter-input">
-        </div>
 
-        <div class="filter-group">
-          <label for="colorFilter">
-            <i class="pi pi-palette"></i>
-            Cor
-          </label>
-          <p-select
-            id="colorFilter"
-            [(ngModel)]="filters.color"
-            (ngModelChange)="onFilterChange()"
-            [options]="colorOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Todas as cores"
-            [showClear]="true"
-            class="filter-select custom-select">
-          </p-select>
-        </div>
+      <div class="filter-group">
+        <label for="colorFilter">
+          <i class="pi pi-palette"></i>
+          Cor
+        </label>
+        <p-select
+          id="colorFilter"
+          [(ngModel)]="filters.color"
+          (ngModelChange)="onFilterChange()"
+          [options]="colorOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Todas as cores"
+          [showClear]="true"
+          class="filter-select custom-select">
+        </p-select>
+      </div>
 
-        <div class="filter-group">
-          <label for="sexFilter">
-            <i class="pi pi-user"></i>
-            Sexo
-          </label>
-          <p-select
-            id="sexFilter"
-            [(ngModel)]="filters.sex"
-            (ngModelChange)="onFilterChange()"
-            [options]="sexOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Todos os sexos"
-            [showClear]="true"
-            class="filter-select custom-select">
-          </p-select>
-        </div>
+      <div class="filter-group">
+        <label for="sexFilter">
+          <i class="pi pi-user"></i>
+          Sexo
+        </label>
+        <p-select
+          id="sexFilter"
+          [(ngModel)]="filters.sex"
+          (ngModelChange)="onFilterChange()"
+          [options]="sexOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Todos os sexos"
+          [showClear]="true"
+          class="filter-select custom-select">
+        </p-select>
+      </div>
 
-        <div class="filter-group">
-          <label for="adoptionFilter">
-            <i class="pi pi-heart-fill"></i>
-            Status
-          </label>
-          <p-select
-            id="adoptionFilter"
-            [(ngModel)]="filters.adoptionStatus"
-            (ngModelChange)="onFilterChange()"
-            [options]="adoptionStatusOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Disponíveis para adoção"
-            [showClear]="true"
-            class="filter-select custom-select">
-          </p-select>
-        </div>
+      <div class="filter-group">
+        <label for="adoptionFilter">
+          <i class="pi pi-heart-fill"></i>
+          Status
+        </label>
+        <p-select
+          id="adoptionFilter"
+          [(ngModel)]="filters.adoptionStatus"
+          (ngModelChange)="onFilterChange()"
+          [options]="adoptionStatusOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Disponíveis para adoção"
+          [showClear]="true"
+          class="filter-select custom-select">
+        </p-select>
+      </div>
 
-        <div class="filter-group">
-          <label for="sortFilter">
-            <i class="pi pi-sort"></i>
-            Ordenar por
-          </label>
-          <p-select
-            id="sortFilter"
-            [(ngModel)]="filters.sortBy"
-            (ngModelChange)="onSortChange()"
-            [options]="sortOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Ordenação"
-            class="filter-select custom-select">
-          </p-select>
-        </div>
+      <div class="filter-group">
+        <label for="sortFilter">
+          <i class="pi pi-sort"></i>
+          Ordenar por
+        </label>
+        <p-select
+          id="sortFilter"
+          [(ngModel)]="filters.sortBy"
+          (ngModelChange)="onSortChange()"
+          [options]="sortOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Ordenação"
+          class="filter-select custom-select">
+        </p-select>
+      </div>
 
-        <div class="filter-actions">
-          <p-button 
-            label="Limpar" 
-            icon="pi pi-filter-slash" 
-            (onClick)="clearFilters()"
-            [outlined]="true"
-            severity="secondary"
-            size="small">
-          </p-button>
-        </div>
+      <div class="filter-actions">
+        <app-generic-button 
+          [config]="clearFiltersButtonConfig"
+          (click)="clearFilters()">
+        </app-generic-button>
       </div>
     </div>
-  </div>
+  </app-content-card>
 
   <!-- Loading skeleton -->
   <div class="cats-grid" *ngIf="loading">
@@ -253,18 +214,15 @@
       </ng-template>
       
       <div class="empty-actions">
-        <p-button 
+        <app-generic-button 
           *ngIf="hasActiveFilters()"
-          label="Limpar Filtros" 
-          icon="pi pi-filter-slash" 
-          (onClick)="clearFilters()"
-          [outlined]="true">
-        </p-button>
-        <p-button 
-          label="Cadastrar Primeiro Gato" 
-          icon="pi pi-plus" 
-          (onClick)="openAddCatDialog()">
-        </p-button>
+          [config]="clearFiltersEmptyButtonConfig"
+          (click)="clearFilters()">
+        </app-generic-button>
+        <app-generic-button 
+          [config]="addFirstCatButtonConfig"
+          (click)="openAddCatDialog()">
+        </app-generic-button>
       </div>
     </div>
   </div>
@@ -324,15 +282,11 @@
 </app-cat-create-modal>
 
 <!-- Dialog de Confirmação de Delete -->
-<p-dialog 
-  [(visible)]="deleteConfirmDialog" 
-  [modal]="true" 
-  [closable]="true"
-  [draggable]="false"
-  [resizable]="false"
-  styleClass="delete-confirm-dialog"
-  [style]="{width: '450px'}"
-  header="Confirmar Exclusão">
+<app-generic-modal 
+  [(visible)]="deleteConfirmDialog"
+  title="Confirmar Exclusão"
+  [dialogStyle]="{width: '450px'}"
+  [actions]="deleteModalActions">
   
   <div class="delete-confirm-content">
     <div class="delete-icon">
@@ -343,25 +297,7 @@
       <p class="delete-warning">Esta ação não pode ser desfeita.</p>
     </div>
   </div>
-
-  <ng-template pTemplate="footer">
-    <div class="delete-dialog-footer">
-      <p-button 
-        label="Cancelar" 
-        icon="pi pi-times" 
-        severity="secondary"
-        [outlined]="true"
-        (onClick)="cancelDelete()">
-      </p-button>
-      <p-button 
-        label="Sim, excluir" 
-        icon="pi pi-trash" 
-        severity="danger"
-        (onClick)="confirmDelete()">
-      </p-button>
-    </div>
-  </ng-template>
-</p-dialog>
+</app-generic-modal>
 
 <!-- Toast para mensagens -->
 <p-toast></p-toast>

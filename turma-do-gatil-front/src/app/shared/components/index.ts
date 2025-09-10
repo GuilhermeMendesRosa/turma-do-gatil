@@ -22,3 +22,5 @@ export type { ModalAction } from './generic-modal.component';
 export { ExampleGenericModalComponent } from './example-generic-modal.component';
 export { ModalButtonComponent } from './modal-button.component';
 export type { ModalButtonConfig, ModalButtonSeverity } from './modal-button.component';
+export { GenericButtonComponent } from './generic-button.component';
+export type { GenericButtonConfig, GenericButtonSeverity, GenericButtonSize } from './generic-button.component';

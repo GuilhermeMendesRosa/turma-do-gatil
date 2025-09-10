@@ -17,6 +17,17 @@ import { CatService } from '../../services/cat.service';
 import { Cat, Color, Sex, CatFilters, Page, CatAdoptionStatus } from '../../models/cat.model';
 import { CatDetailsModalComponent } from './cat-details-modal/cat-details-modal.component';
 import { CatCreateModalComponent } from './cat-create-modal/cat-create-modal.component';
+// Importar componentes genéricos
+import { 
+  PageHeaderComponent,
+  StatsGridComponent, 
+  StatCardData,
+  ContentCardComponent,
+  GenericModalComponent,
+  ModalAction,
+  GenericButtonComponent,
+  GenericButtonConfig
+} from '../../shared/components';
 
 @Component({
   selector: 'app-gatos',
@@ -36,7 +47,13 @@ import { CatCreateModalComponent } from './cat-create-modal/cat-create-modal.com
     DialogModule,
     ToastModule,
     CatDetailsModalComponent,
-    CatCreateModalComponent
+    CatCreateModalComponent,
+    // Componentes genéricos
+    PageHeaderComponent,
+    StatsGridComponent,
+    ContentCardComponent,
+    GenericModalComponent,
+    GenericButtonComponent
   ],
   providers: [MessageService],
   templateUrl: './gatos.component.html',
@@ -115,6 +132,88 @@ export class GatosComponent implements OnInit {
 
   // Expor Math para o template
   Math = Math;
+
+  // Dados para os componentes genéricos
+  get statsData(): StatCardData[] {
+    return [
+      {
+        number: this.getAvailableCatsCount(),
+        label: 'Disponíveis',
+        description: 'Gatos prontos para adoção',
+        icon: 'pi-heart',
+        type: 'success' // Verde como no original (.stat-icon.available)
+      },
+      {
+        number: this.getAdoptedCatsCount(),
+        label: 'Adotados',
+        description: 'Gatos que encontraram um lar',
+        icon: 'pi-home',
+        type: 'warning' // Laranja como no original (.stat-icon.adopted)
+      },
+      {
+        number: this.totalRecords,
+        label: 'Total',
+        description: 'Total de gatos cadastrados',
+        icon: 'pi-tag',
+        type: 'primary' // Gradient primary como no original (.stat-icon.total)
+      }
+    ];
+  }
+
+  get deleteModalActions(): ModalAction[] {
+    return [
+      {
+        label: 'Cancelar',
+        icon: 'pi-times',
+        severity: 'secondary',
+        outlined: true,
+        action: () => this.cancelDelete()
+      },
+      {
+        label: 'Sim, excluir',
+        icon: 'pi-trash',
+        severity: 'danger',
+        action: () => this.confirmDelete()
+      }
+    ];
+  }
+
+  // Configurações dos botões genéricos
+  get newCatButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Novo Gato',
+      icon: 'pi-plus',
+      severity: 'primary',
+      size: 'small'
+    };
+  }
+
+  get clearFiltersButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Limpar',
+      icon: 'pi-filter-slash',
+      severity: 'secondary',
+      outlined: true,
+      size: 'small'
+    };
+  }
+
+  get clearFiltersEmptyButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Limpar Filtros',
+      icon: 'pi-filter-slash',
+      severity: 'secondary',
+      outlined: true
+    };
+  }
+
+  get addFirstCatButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Cadastrar Primeiro Gato',
+      icon: 'pi-plus',
+      severity: 'primary'
+    };
+  }
 
   constructor(
     private catService: CatService,
