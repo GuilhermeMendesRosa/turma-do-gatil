@@ -1,11 +1,12 @@
 <div class="page-container">
+  <!-- ==================== CABEÇALHO DA PÁGINA ==================== -->
   <app-page-header
     title="Gestão de Adotantes"
     subtitle="Gerencie as informações dos adotantes cadastrados no sistema"
     icon="pi-users">
   </app-page-header>
 
-  <!-- Filtros -->
+  <!-- ==================== SEÇÃO DE FILTROS ==================== -->
   <app-content-card
     title="Filtros de Busca"
     icon="pi-filter"
@@ -35,7 +36,7 @@
     </div>
   </app-content-card>
   
-  <!-- Tabela de Adotantes -->
+  <!-- ==================== TABELA DE ADOTANTES ==================== -->
   <app-content-card
     title="Lista de Adotantes"
     icon="pi-list"
@@ -49,6 +50,7 @@
       </app-refresh-button>
     </div>
 
+    <!-- Conteúdo da tabela -->
     <div *ngIf="!loading; else loadingTemplate">
       <app-data-table
         [columns]="adoptersTableColumns"
@@ -72,6 +74,7 @@
     </div>
   </app-content-card>
 
+  <!-- ==================== TEMPLATE DE CARREGAMENTO ==================== -->
   <ng-template #loadingTemplate>
     <div class="loading-message">
       <i class="pi pi-spinner"></i>
@@ -80,15 +83,16 @@
   </ng-template>
 </div>
 
-<!-- Modal Genérico de Criação/Edição de Adotante -->
+<!-- ==================== MODAL DE CRIAÇÃO/EDIÇÃO ==================== -->
 <app-generic-modal
   [(visible)]="showCreateModal"
-  [title]="isEditMode ? 'Editar Adotante' : 'Adicionar Novo Adotante'"
+  [title]="modalTitle"
   [actions]="modalActions"
   [dialogStyle]="{ width: '90vw', maxWidth: '700px' }">
   
   <form [formGroup]="adopterForm" class="adopter-create-form">
-    <!-- Informações Pessoais -->
+    
+    <!-- ==================== SEÇÃO: INFORMAÇÕES PESSOAIS ==================== -->
     <div class="form-section">
       <h3>
         <i class="pi pi-user"></i>
@@ -160,7 +164,7 @@
 
     <p-divider></p-divider>
 
-    <!-- Informações de Contato -->
+    <!-- ==================== SEÇÃO: INFORMAÇÕES DE CONTATO ==================== -->
     <div class="form-section">
       <h3>
         <i class="pi pi-address-book"></i>

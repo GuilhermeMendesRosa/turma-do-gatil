@@ -75,7 +75,7 @@ const TABLE_CONFIG = {
 @Component({
   selector: 'app-sterilizations',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush, // Temporariamente removido para resolver problema de loading
   imports: [
     CommonModule, 
     SterilizationScheduleModalComponent,

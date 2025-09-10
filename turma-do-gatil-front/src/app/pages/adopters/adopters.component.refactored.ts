@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
@@ -47,7 +47,7 @@ import {
 @Component({
   selector: 'app-adopters',
   standalone: true,
-  // changeDetection: ChangeDetectionStrategy.OnPush, // Temporariamente removido para resolver problema de loading
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -187,28 +187,41 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    * Carrega lista de adotantes com filtros aplicados
    */
   loadAdopters(): void {
-    console.log('🔄 Iniciando carregamento de adotantes...', this.filters);
-    this.loading = true;
+    this.setLoadingState(true);
     
     this.adopterService.getAllAdopters(this.filters)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          console.log('✅ Adotantes carregados com sucesso:', response);
-          this.adopters = response.content;
-          this.totalRecords = response.totalElements;
-          this.loading = false;
-          console.log('📊 Estado atualizado:', { 
-            adopters: this.adopters.length, 
-            totalRecords: this.totalRecords, 
-            loading: this.loading 
-          });
-        },
-        error: (error) => {
-          console.error('❌ Erro ao carregar adotantes:', error);
-          this.loading = false;
-        }
+        next: (response) => this.handleAdoptersLoaded(response),
+        error: (error) => this.handleLoadError(error)
       });
+  }
+
+  /**
+   * Manipula resposta do carregamento de adotantes
+   */
+  private handleAdoptersLoaded(response: any): void {
+    this.adopters = response.content;
+    this.totalRecords = response.totalElements;
+    this.setLoadingState(false);
+  }
+
+  /**
+   * Manipula erros no carregamento
+   */
+  private handleLoadError(error: any): void {
+    console.error('Erro ao carregar adotantes:', error);
+    this.setLoadingState(false);
+  }
+
+  /**
+   * Define estado de carregamento
+   */
+  private setLoadingState(loading: boolean): void {
+    this.loading = loading;
+    if (this.showCreateModal) {
+      this.setupModalActions();
+    }
   }
 
   // ==================== EVENTOS DE PAGINAÇÃO ====================
@@ -588,7 +601,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    */
   onSubmit(): void {
     if (this.adopterForm.valid) {
-      this.loading = true;
+      this.setLoadingState(true);
       const adopterData = this.buildAdopterRequest();
       
       if (this.isEditMode && this.selectedAdopter) {
@@ -628,7 +641,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => this.handleAdopterSaved(),
         error: (error) => this.handleSaveError(error),
-        complete: () => this.loading = false
+        complete: () => this.setLoadingState(false)
       });
   }
 
@@ -643,7 +656,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => this.handleAdopterSaved(),
         error: (error) => this.handleSaveError(error),
-        complete: () => this.loading = false
+        complete: () => this.setLoadingState(false)
       });
   }
 
@@ -684,8 +697,8 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       const errorType = Object.keys(field.errors)[0];
       const fieldMessages = VALIDATION_MESSAGES[fieldName as keyof typeof VALIDATION_MESSAGES];
       
-      if (fieldMessages && (fieldMessages as any)[errorType]) {
-        return (fieldMessages as any)[errorType];
+      if (fieldMessages && fieldMessages[errorType]) {
+        return fieldMessages[errorType];
       }
       
       return this.getGenericErrorMessage(errorType, field.errors[errorType]);

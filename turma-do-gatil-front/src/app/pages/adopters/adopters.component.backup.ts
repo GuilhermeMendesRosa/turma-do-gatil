@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
 import { DividerModule } from 'primeng/divider';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import { AdopterService } from '../../services/adopter.service';
 import { Adopter, AdopterFilters, AdopterRequest } from '../../models/adopter.model';
@@ -33,6 +33,7 @@ import {
   ADOPTERS_CONFIG,
   VALIDATION_MESSAGES 
 } from './constants/adopters.constants';
+import { ADOPTER_FORM_FIELDS, ADOPTER_TABLE_COLUMNS_CONFIG } from './config/adopters-form.config';
 
 /**
  * Componente responsável pela gestão de adotantes
@@ -47,7 +48,7 @@ import {
 @Component({
   selector: 'app-adopters',
   standalone: true,
-  // changeDetection: ChangeDetectionStrategy.OnPush, // Temporariamente removido para resolver problema de loading
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -104,6 +105,9 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     message: 'Nenhum adotante encontrado.'
   };
 
+  // ==================== CONFIGURAÇÕES DO FORMULÁRIO ====================
+  readonly formFields = ADOPTER_FORM_FIELDS;
+
   // ==================== COMPUTED PROPERTIES ====================
   /**
    * Verifica se o modal está em modo de edição
@@ -137,6 +141,14 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     this.initForm();
     this.setupModalActions();
     this.loadAdopters();
+    this.setupFilterSubscription();
+  }
+
+  /**
+   * Configura subscription para filtros com debounce
+   */
+  private setupFilterSubscription(): void {
+    // Implementar se necessário para filtros reativos
   }
 
   // ==================== CONFIGURAÇÃO DA TABELA ====================
@@ -187,28 +199,42 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    * Carrega lista de adotantes com filtros aplicados
    */
   loadAdopters(): void {
-    console.log('🔄 Iniciando carregamento de adotantes...', this.filters);
-    this.loading = true;
+    this.setLoadingState(true);
     
     this.adopterService.getAllAdopters(this.filters)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          console.log('✅ Adotantes carregados com sucesso:', response);
-          this.adopters = response.content;
-          this.totalRecords = response.totalElements;
-          this.loading = false;
-          console.log('📊 Estado atualizado:', { 
-            adopters: this.adopters.length, 
-            totalRecords: this.totalRecords, 
-            loading: this.loading 
-          });
-        },
-        error: (error) => {
-          console.error('❌ Erro ao carregar adotantes:', error);
-          this.loading = false;
-        }
+        next: (response) => this.handleAdoptersLoaded(response),
+        error: (error) => this.handleLoadError(error)
       });
+  }
+
+  /**
+   * Manipula resposta do carregamento de adotantes
+   */
+  private handleAdoptersLoaded(response: any): void {
+    this.adopters = response.content;
+    this.totalRecords = response.totalElements;
+    this.setLoadingState(false);
+  }
+
+  /**
+   * Manipula erros no carregamento
+   */
+  private handleLoadError(error: any): void {
+    console.error('Erro ao carregar adotantes:', error);
+    this.setLoadingState(false);
+    // TODO: Implementar notificação de erro para o usuário
+  }
+
+  /**
+   * Define estado de carregamento
+   */
+  private setLoadingState(loading: boolean): void {
+    this.loading = loading;
+    if (this.showCreateModal) {
+      this.setupModalActions();
+    }
   }
 
   // ==================== EVENTOS DE PAGINAÇÃO ====================
@@ -262,6 +288,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    * Manipula mudança nos filtros
    */
   onFilterChange(): void {
+    // Reset para primeira página quando filtros mudam
     this.first = 0;
     this.filters = {
       ...this.filters,
@@ -281,7 +308,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
         tooltip: this.adopterUtils.generateActionTooltip('edit', adopter.firstName, adopter.lastName)
       },
       {
-        type: 'cancel',
+        type: 'cancel', // Usando cancel para representar delete
         tooltip: this.adopterUtils.generateActionTooltip('delete', adopter.firstName, adopter.lastName)
       }
     ];
@@ -295,7 +322,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       case AdopterTableAction.EDIT:
         this.openEditModal(event.data);
         break;
-      case 'cancel':
+      case 'cancel': // delete
         this.confirmDeleteAdopter(event.data);
         break;
     }
@@ -329,6 +356,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    */
   private handleAdopterDeleted(): void {
     this.loadAdopters();
+    // TODO: Implementar notificação de sucesso
   }
 
   /**
@@ -337,6 +365,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   private handleDeleteError(error: any): void {
     console.error('Erro ao excluir adotante:', error);
     alert('Erro ao excluir adotante. Tente novamente.');
+    // TODO: Implementar notificação de erro mais elegante
   }
 
   // ==================== MÉTODOS DE PAGINAÇÃO ====================
@@ -446,6 +475,22 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   private resetModalState(): void {
     this.selectedAdopter = null;
     this.currentModalType = ModalType.CREATE;
+  }
+
+  /**
+   * Callback para quando adotante é criado
+   */
+  onAdopterCreated(): void {
+    this.loadAdopters();
+    // TODO: Implementar notificação de sucesso
+  }
+
+  /**
+   * Callback para quando adotante é atualizado
+   */
+  onAdopterUpdated(): void {
+    this.loadAdopters();
+    // TODO: Implementar notificação de sucesso
   }
 
   /**
@@ -588,7 +633,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    */
   onSubmit(): void {
     if (this.adopterForm.valid) {
-      this.loading = true;
+      this.setLoadingState(true);
       const adopterData = this.buildAdopterRequest();
       
       if (this.isEditMode && this.selectedAdopter) {
@@ -628,7 +673,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => this.handleAdopterSaved(),
         error: (error) => this.handleSaveError(error),
-        complete: () => this.loading = false
+        complete: () => this.setLoadingState(false)
       });
   }
 
@@ -643,7 +688,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => this.handleAdopterSaved(),
         error: (error) => this.handleSaveError(error),
-        complete: () => this.loading = false
+        complete: () => this.setLoadingState(false)
       });
   }
 
@@ -655,6 +700,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     this.showCreateModal = false;
     this.resetForm();
     this.resetModalState();
+    // TODO: Implementar notificação de sucesso
   }
 
   /**
@@ -662,6 +708,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    */
   private handleSaveError(error: any): void {
     console.error('Erro ao salvar adotante:', error);
+    // TODO: Implementar notificação de erro mais elegante
   }
 
   /**
@@ -684,10 +731,11 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       const errorType = Object.keys(field.errors)[0];
       const fieldMessages = VALIDATION_MESSAGES[fieldName as keyof typeof VALIDATION_MESSAGES];
       
-      if (fieldMessages && (fieldMessages as any)[errorType]) {
-        return (fieldMessages as any)[errorType];
+      if (fieldMessages && fieldMessages[errorType]) {
+        return fieldMessages[errorType];
       }
       
+      // Fallback para erros genéricos
       return this.getGenericErrorMessage(errorType, field.errors[errorType]);
     }
     return null;
@@ -716,4 +764,5 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     const field = this.adopterForm.get(fieldName);
     return !!(field?.invalid && field.touched);
   }
+}
 }

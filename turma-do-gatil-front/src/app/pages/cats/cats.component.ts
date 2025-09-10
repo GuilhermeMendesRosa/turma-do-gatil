@@ -84,8 +84,8 @@ import {
   ],
   providers: [MessageService],
   templateUrl: './cats.component.html',
-  styleUrl: './cats.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './cats.component.css'
+  // changeDetection: ChangeDetectionStrategy.OnPush // Temporariamente removido para resolver problema de loading
 })
 export class CatsComponent implements OnInit, OnDestroy {
   
