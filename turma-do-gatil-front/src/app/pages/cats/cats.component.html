@@ -118,8 +118,8 @@
   </app-content-card>
 
   <!-- Loading skeleton -->
-  <div class="cats-grid" *ngIf="loading">
-    <div class="cat-card-skeleton" *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12]">
+  <div class="cats-grid" *ngIf="loadingState.isLoading">
+    <div class="cat-card-skeleton" *ngFor="let item of getSkeletonArray(); index as i; trackBy: trackByIndex">
       <div class="skeleton-content">
         <p-skeleton height="200px" class="skeleton-image"></p-skeleton>
         <div class="skeleton-body">
@@ -135,7 +135,7 @@
   </div>
 
   <!-- Grid de gatos -->
-  <div class="cats-grid" *ngIf="!loading">
+  <div class="cats-grid" *ngIf="!loadingState.isLoading">
     <div class="cat-card" *ngFor="let cat of cats; trackBy: trackByCatId">
       <div class="cat-card-inner clickable-card" (click)="viewCatDetails(cat)">
         <!-- Imagem do gato -->
@@ -199,7 +199,7 @@
   </div>
 
   <!-- Mensagem quando não há gatos -->
-  <div class="empty-state-container" *ngIf="!loading && cats.length === 0">
+  <div class="empty-state-container" *ngIf="!loadingState.isLoading && cats.length === 0">
     <div class="empty-state">
       <div class="empty-icon">
         <i class="fas fa-cat"></i>
@@ -228,17 +228,17 @@
   </div>
 
   <!-- Resultados e Paginação -->
-  <div class="results-section" *ngIf="!loading && cats.length > 0">
+  <div class="results-section" *ngIf="!loadingState.isLoading && cats.length > 0">
     <div class="results-info">
       <span class="results-text">
-        Mostrando {{ (currentPage * pageSize) + 1 }} - {{ Math.min((currentPage + 1) * pageSize, totalRecords) }} 
-        de {{ totalRecords }} gatos
+        Mostrando {{ (paginationConfig.currentPage * paginationConfig.pageSize) + 1 }} - {{ Math.min((paginationConfig.currentPage + 1) * paginationConfig.pageSize, paginationConfig.totalRecords) }} 
+        de {{ paginationConfig.totalRecords }} gatos
       </span>
       
       <div class="page-size-selector">
         <label>Itens por página:</label>
         <p-select
-          [(ngModel)]="pageSize"
+          [(ngModel)]="paginationConfig.pageSize"
           (ngModelChange)="onPageSizeChange()"
           [options]="pageSizeOptions"
           optionLabel="label"
@@ -248,11 +248,11 @@
     </div>
 
     <!-- Paginação -->
-    <div class="pagination-container" *ngIf="totalRecords > pageSize">
+    <div class="pagination-container" *ngIf="paginationConfig.totalRecords > paginationConfig.pageSize">
       <p-paginator
-        [rows]="pageSize"
-        [totalRecords]="totalRecords"
-        [first]="currentPage * pageSize"
+        [rows]="paginationConfig.pageSize"
+        [totalRecords]="paginationConfig.totalRecords"
+        [first]="paginationConfig.currentPage * paginationConfig.pageSize"
         (onPageChange)="onPageChange($event)"
         [showCurrentPageReport]="true"
         [showJumpToPageDropdown]="true"

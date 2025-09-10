@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
@@ -13,11 +13,38 @@ import { ImageModule } from 'primeng/image';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { Subject, takeUntil, finalize } from 'rxjs';
+
+// Services
 import { CatService } from '../../services/cat.service';
-import { Cat, Color, Sex, CatFilters, Page, CatAdoptionStatus } from '../../models/cat.model';
+import { CatDisplayService } from './services/cat-display.service';
+import { CatFiltersService } from './services/cat-filters.service';
+import { CatStatsService } from './services/cat-stats.service';
+
+// Models & Interfaces
+import { Cat, CatFilters, Page, CatAdoptionStatus } from '../../models/cat.model';
+import { 
+  DialogsState, 
+  LoadingState, 
+  PaginationConfig,
+  FilterOption,
+  CatDisplayInfo
+} from './models/cats-view.interface';
+
+// Constants
+import { 
+  COLOR_OPTIONS,
+  SEX_OPTIONS,
+  ADOPTION_STATUS_OPTIONS,
+  SORT_OPTIONS,
+  PAGE_SIZE_OPTIONS,
+  BUTTON_CONFIGS,
+  CATS_CONFIG
+} from './constants/cats.constants';
+
+// Components
 import { CatDetailsModalComponent } from './cat-details-modal/cat-details-modal.component';
 import { CatCreateModalComponent } from './cat-create-modal/cat-create-modal.component';
-// Importar componentes genéricos
 import { 
   PageHeaderComponent,
   StatsGridComponent, 
@@ -57,109 +84,66 @@ import {
   ],
   providers: [MessageService],
   templateUrl: './cats.component.html',
-  styleUrl: './cats.component.css'
+  styleUrl: './cats.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CatsComponent implements OnInit {
+export class CatsComponent implements OnInit, OnDestroy {
+  
+  //#region Private Properties
+  private readonly destroy$ = new Subject<void>();
+  //#endregion
+
+  //#region Public Properties - Data
   cats: Cat[] = [];
-  loading = false;
+  catsDisplay: CatDisplayInfo[] = [];
   totalRecords = 0;
-  currentPage = 0;
-  pageSize = 12;
+  //#endregion
 
-  // Dialog de detalhes do gato
-  catDetailsDialog = false;
-  selectedCat: Cat | null = null;
-
-  // Dialog de criação/edição de gato
-  catCreateDialog = false;
-  catToEdit: Cat | null = null; // Gato sendo editado (null para criação)
-
-  // Dialog de confirmação de delete
-  deleteConfirmDialog = false;
-  catToDelete: Cat | null = null;
-
-  // Filtros
-  filters: CatFilters = {
-    adoptionStatus: CatAdoptionStatus.NAO_ADOTADO, // Por padrão, mostra apenas gatos não adotados
-    page: 0,
-    size: 12,
-    sortBy: 'name',
-    sortDir: 'asc'
+  //#region Public Properties - State Management
+  loadingState: LoadingState = { isLoading: false };
+  
+  dialogsState: DialogsState = {
+    catDetails: { visible: false, cat: null },
+    catCreateEdit: { visible: false, cat: null },
+    deleteConfirm: { visible: false, cat: null }
   };
 
-  // Opções para os dropdowns
-  colorOptions = [
-    { label: 'Todas as cores', value: null },
-    { label: 'Branco', value: Color.WHITE },
-    { label: 'Preto', value: Color.BLACK },
-    { label: 'Cinza', value: Color.GRAY },
-    { label: 'Marrom', value: Color.BROWN },
-    { label: 'Laranja', value: Color.ORANGE },
-    { label: 'Misto', value: Color.MIXED },
-    { label: 'Cálico', value: Color.CALICO },
-    { label: 'Tigrado', value: Color.TABBY },
-    { label: 'Siamês', value: Color.SIAMESE },
-    { label: 'Outro', value: Color.OTHER }
-  ];
+  paginationConfig: PaginationConfig = {
+    currentPage: 0,
+    pageSize: CATS_CONFIG.DEFAULT_PAGE_SIZE,
+    totalRecords: 0,
+    pageSizeOptions: PAGE_SIZE_OPTIONS
+  };
+  //#endregion
 
-  sexOptions = [
-    { label: 'Todos os sexos', value: null },
-    { label: 'Macho', value: Sex.MALE },
-    { label: 'Fêmea', value: Sex.FEMALE }
-  ];
+  //#region Public Properties - Options for Dropdowns
+  readonly colorOptions: FilterOption[] = COLOR_OPTIONS;
+  readonly sexOptions: FilterOption[] = SEX_OPTIONS;
+  readonly adoptionStatusOptions: FilterOption[] = ADOPTION_STATUS_OPTIONS;
+  readonly sortOptions: FilterOption[] = SORT_OPTIONS;
+  readonly pageSizeOptions: FilterOption<number>[] = PAGE_SIZE_OPTIONS;
+  //#endregion
 
-  adoptionStatusOptions = [
-    { label: 'Disponíveis para adoção', value: CatAdoptionStatus.NAO_ADOTADO },
-    { label: 'Em processo de adoção', value: CatAdoptionStatus.EM_PROCESSO },
-    { label: 'Já adotados', value: CatAdoptionStatus.ADOTADO },
-    { label: 'Todos os gatos', value: null }
-  ];
+  //#region Public Properties - Computed Values
+  
+  // Expose Math for template usage
+  readonly Math = Math;
 
-  sortOptions = [
-    { label: 'Nome (A-Z)', value: 'name' },
-    { label: 'Nome (Z-A)', value: 'name-desc' },
-    { label: 'Idade (Mais novo)', value: 'birthDate' },
-    { label: 'Idade (Mais velho)', value: 'birthDate-desc' },
-    { label: 'Data de entrada', value: 'shelterEntryDate' }
-  ];
-
-  pageSizeOptions = [
-    { label: '6', value: 6 },
-    { label: '12', value: 12 },
-    { label: '24', value: 24 },
-    { label: '48', value: 48 }
-  ];
-
-  // Expor Math para o template
-  Math = Math;
-
-  // Dados para os componentes genéricos
+  /**
+   * Dados das estatísticas para o componente de stats
+   */
   get statsData(): StatCardData[] {
-    return [
-      {
-        number: this.getAvailableCatsCount(),
-        label: 'Disponíveis',
-        description: 'Gatos prontos para adoção',
-        icon: 'pi-heart',
-        type: 'success' // Verde como no original (.stat-icon.available)
-      },
-      {
-        number: this.getAdoptedCatsCount(),
-        label: 'Adotados',
-        description: 'Gatos que encontraram um lar',
-        icon: 'pi-home',
-        type: 'warning' // Laranja como no original (.stat-icon.adopted)
-      },
-      {
-        number: this.totalRecords,
-        label: 'Total',
-        description: 'Total de gatos cadastrados',
-        icon: 'pi-tag',
-        type: 'primary' // Gradient primary como no original (.stat-icon.total)
-      }
-    ];
+    const stats = this.catStatsService.calculateStats(
+      this.cats,
+      this.totalRecords,
+      this.getCurrentFilters().adoptionStatus
+    );
+    return this.catStatsService.convertToStatCardData(stats);
   }
 
+  /**
+   * Ações para o modal de confirmação de exclusão
+   */
   get deleteModalActions(): ModalAction[] {
     return [
       {
@@ -178,184 +162,313 @@ export class CatsComponent implements OnInit {
     ];
   }
 
-  // Configurações dos botões genéricos
-  get newCatButtonConfig(): GenericButtonConfig {
+  /**
+   * Configurações dos botões genéricos
+   */
+  get buttonConfigs() {
     return {
-      label: 'Novo Gato',
-      icon: 'pi-plus',
-      severity: 'primary',
-      size: 'small'
+      newCat: BUTTON_CONFIGS.NEW_CAT,
+      clearFilters: BUTTON_CONFIGS.CLEAR_FILTERS,
+      clearFiltersEmpty: BUTTON_CONFIGS.CLEAR_FILTERS_EMPTY,
+      addFirstCat: BUTTON_CONFIGS.ADD_FIRST_CAT
     };
   }
+  //#endregion
 
-  get clearFiltersButtonConfig(): GenericButtonConfig {
-    return {
-      label: 'Limpar',
-      icon: 'pi-filter-slash',
-      severity: 'secondary',
-      outlined: true,
-      size: 'small'
-    };
-  }
-
-  get clearFiltersEmptyButtonConfig(): GenericButtonConfig {
-    return {
-      label: 'Limpar Filtros',
-      icon: 'pi-filter-slash',
-      severity: 'secondary',
-      outlined: true
-    };
-  }
-
-  get addFirstCatButtonConfig(): GenericButtonConfig {
-    return {
-      label: 'Cadastrar Primeiro Gato',
-      icon: 'pi-plus',
-      severity: 'primary'
-    };
-  }
-
+  //#region Constructor and Lifecycle
   constructor(
-    private catService: CatService,
-    private messageService: MessageService
-  ) { }
+    private readonly catService: CatService,
+    private readonly messageService: MessageService,
+    private readonly catDisplayService: CatDisplayService,
+    private readonly catFiltersService: CatFiltersService,
+    private readonly catStatsService: CatStatsService
+  ) {}
 
   ngOnInit(): void {
+    this.initializeComponent();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  //#endregion
+
+  //#region Initialization
+  /**
+   * Inicializa o componente configurando listeners e carregando dados
+   */
+  private initializeComponent(): void {
+    this.setupFilterSubscription();
     this.loadCats();
   }
 
-  loadCats(): void {
-    this.loading = true;
-    
-    // Remove propriedades undefined do filtro
-    const cleanFilters = Object.keys(this.filters).reduce((acc, key) => {
-      const value = (this.filters as any)[key];
-      if (value !== null && value !== undefined && value !== '') {
-        (acc as any)[key] = value;
-      }
-      return acc;
-    }, {} as CatFilters);
-
-    this.catService.getAllCats(cleanFilters).subscribe({
-      next: (response: Page<Cat>) => {
-        this.cats = response.content;
-        this.totalRecords = response.totalElements;
-        this.currentPage = response.number;
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar gatos:', error);
-        this.loading = false;
-      }
-    });
+  /**
+   * Configura a subscription para mudanças nos filtros
+   */
+  private setupFilterSubscription(): void {
+    this.catFiltersService.filters$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(filters => {
+        this.updatePaginationFromFilters(filters);
+      });
   }
 
-  onPageChange(event: any): void {
-    this.filters.page = event.page;
-    this.loadCats();
-  }
-
-  onFilterChange(): void {
-    this.filters.page = 0; // Reset para primeira página ao filtrar
-    this.loadCats();
-  }
-
-  onSortChange(): void {
-    const sortValue = this.filters.sortBy;
-    if (sortValue?.includes('-desc')) {
-      this.filters.sortBy = sortValue.replace('-desc', '');
-      this.filters.sortDir = 'desc';
-    } else {
-      this.filters.sortBy = sortValue;
-      this.filters.sortDir = 'asc';
-    }
-    this.filters.page = 0;
-    this.loadCats();
-  }
-
-  clearFilters(): void {
-    this.filters = {
-      adoptionStatus: CatAdoptionStatus.NAO_ADOTADO, // Manter filtro padrão para não adotados
-      page: 0,
-      size: 12,
-      sortBy: 'name',
-      sortDir: 'asc'
+  /**
+   * Atualiza a configuração de paginação baseada nos filtros
+   */
+  private updatePaginationFromFilters(filters: CatFilters): void {
+    this.paginationConfig = {
+      ...this.paginationConfig,
+      currentPage: filters.page || 0,
+      pageSize: filters.size || CATS_CONFIG.DEFAULT_PAGE_SIZE
     };
-    this.loadCats();
+  }
+  //#endregion
+
+  //#region Data Loading
+
+  /**
+   * Carrega a lista de gatos baseada nos filtros atuais
+   */
+  loadCats(): void {
+    this.setLoadingState(true);
+    
+    const cleanFilters = this.catFiltersService.getCleanFiltersForApi();
+
+    this.catService.getAllCats(cleanFilters)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.setLoadingState(false))
+      )
+      .subscribe({
+        next: (response: Page<Cat>) => this.handleCatsLoaded(response),
+        error: (error) => this.handleLoadError(error)
+      });
   }
 
-  getAvailableCatsCount(): number {
-    // Se está filtrando por não adotados, retorna o total
-    if (this.filters.adoptionStatus === CatAdoptionStatus.NAO_ADOTADO) {
-      return this.totalRecords;
-    }
-    // Se está filtrando por em processo, retorna o total
-    if (this.filters.adoptionStatus === CatAdoptionStatus.EM_PROCESSO) {
-      return this.totalRecords;
-    }
-    // Caso contrário, conta os não adotados e em processo na lista atual
-    return this.cats.filter(cat => 
-      cat.adoptionStatus === CatAdoptionStatus.NAO_ADOTADO || 
-      cat.adoptionStatus === CatAdoptionStatus.EM_PROCESSO
-    ).length;
+  /**
+   * Manipula o sucesso do carregamento dos gatos
+   */
+  private handleCatsLoaded(response: Page<Cat>): void {
+    this.cats = response.content;
+    this.catsDisplay = this.catDisplayService.transformCatsToDisplayInfo(response.content);
+    this.totalRecords = response.totalElements;
+    this.paginationConfig = {
+      ...this.paginationConfig,
+      currentPage: response.number,
+      totalRecords: response.totalElements
+    };
   }
 
-  getAdoptedCatsCount(): number {
-    // Se está filtrando por adotados, retorna o total
-    if (this.filters.adoptionStatus === CatAdoptionStatus.ADOTADO) {
-      return this.totalRecords;
-    }
-    // Caso contrário, conta os adotados na lista atual
-    return this.cats.filter(cat => cat.adoptionStatus === CatAdoptionStatus.ADOTADO).length;
-  }
-
-  openAddCatDialog(): void {
-    this.catToEdit = null; // Limpar gato para criação
-    this.catCreateDialog = true;
-  }
-
-  onCatCreated(): void {
-    this.catCreateDialog = false;
-    this.catToEdit = null;
-    this.loadCats(); // Recarrega a lista de gatos
-  }
-
-  onCatUpdated(): void {
-    this.catCreateDialog = false;
-    this.catToEdit = null;
-    this.loadCats(); // Recarrega a lista de gatos
-  }
-
-  trackByCatId(index: number, cat: Cat): string {
-    return cat.id;
-  }
-
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+  /**
+   * Manipula erros no carregamento dos gatos
+   */
+  private handleLoadError(error: any): void {
+    console.error('Erro ao carregar gatos:', error);
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Ocorreu um erro ao carregar os gatos. Tente novamente.'
     });
   }
 
-  viewCatDetails(cat: Cat): void {
-    this.selectedCat = cat;
-    this.catDetailsDialog = true;
+  /**
+   * Define o estado de loading
+   */
+  private setLoadingState(isLoading: boolean, error?: string): void {
+    this.loadingState = { isLoading, error };
+  }
+  //#endregion
+
+  //#region Filter Management
+
+  /**
+   * Retorna os filtros atuais
+   */
+  getCurrentFilters(): CatFilters {
+    return this.catFiltersService.getCurrentFilters();
   }
 
-  editCat(cat: Cat): void {
-    this.catToEdit = cat;
-    this.catCreateDialog = true;
-    this.catDetailsDialog = false; // Fechar o modal de detalhes
+  /**
+   * Manipula mudanças nos filtros
+   */
+  onFilterChange(): void {
+    this.catFiltersService.resetPage();
+    this.loadCats();
   }
 
-  adoptCat(cat: Cat): void {
-    // A adoção foi processada no modal, recarregar os dados
-    this.catDetailsDialog = false;
-    this.selectedCat = null;
-    this.loadCats(); // Recarrega a lista para atualizar o status de adoção
+  /**
+   * Manipula mudanças na ordenação
+   */
+  onSortChange(): void {
+    const currentFilters = this.getCurrentFilters();
+    const { sortBy, sortDir } = this.catFiltersService.processSortValue(currentFilters.sortBy || '');
     
+    this.catFiltersService.updateSort(sortBy, sortDir);
+    this.loadCats();
+  }
+
+  /**
+   * Limpa todos os filtros
+   */
+  clearFilters(): void {
+    this.catFiltersService.clearFilters();
+    this.loadCats();
+  }
+
+  /**
+   * Verifica se há filtros ativos
+   */
+  hasActiveFilters(): boolean {
+    return this.catFiltersService.hasActiveFilters();
+  }
+  //#endregion
+
+  //#region Pagination Management
+
+  /**
+   * Manipula mudanças de página
+   */
+  onPageChange(event: any): void {
+    this.catFiltersService.updatePage(event.page);
+    this.loadCats();
+  }
+
+  /**
+   * Manipula mudanças no tamanho da página
+   */
+  onPageSizeChange(): void {
+    this.catFiltersService.updatePageSize(this.paginationConfig.pageSize);
+    this.loadCats();
+  }
+  //#endregion
+
+  //#region Dialog Management
+
+  /**
+   * Abre o diálogo para adicionar novo gato
+   */
+  openAddCatDialog(): void {
+    this.dialogsState.catCreateEdit = { visible: true, cat: null };
+  }
+
+  /**
+   * Visualiza detalhes de um gato
+   */
+  viewCatDetails(cat: Cat): void {
+    this.dialogsState.catDetails = { visible: true, cat };
+  }
+
+  /**
+   * Edita um gato
+   */
+  editCat(cat: Cat): void {
+    this.dialogsState.catCreateEdit = { visible: true, cat };
+    this.dialogsState.catDetails = { visible: false, cat: null };
+  }
+
+  /**
+   * Inicia processo de exclusão de um gato
+   */
+  deleteCat(cat: Cat): void {
+    this.dialogsState.deleteConfirm = { visible: true, cat };
+  }
+
+  /**
+   * Cancela a exclusão de um gato
+   */
+  cancelDelete(): void {
+    this.dialogsState.deleteConfirm = { visible: false, cat: null };
+  }
+
+  /**
+   * Confirma a exclusão de um gato
+   */
+  confirmDelete(): void {
+    const catToDelete = this.dialogsState.deleteConfirm.cat;
+    if (!catToDelete) return;
+
+    this.catService.deleteCat(catToDelete.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => this.handleDeleteSuccess(catToDelete),
+        error: (error) => this.handleDeleteError(error)
+      });
+  }
+
+  /**
+   * Manipula sucesso na exclusão
+   */
+  private handleDeleteSuccess(deletedCat: Cat): void {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `O gato "${deletedCat.name}" foi excluído com sucesso.`
+    });
+    this.closeAllDialogs();
+    this.loadCats();
+  }
+
+  /**
+   * Manipula erro na exclusão
+   */
+  private handleDeleteError(error: any): void {
+    console.error('Erro ao deletar gato:', error);
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Ocorreu um erro ao tentar excluir o gato. Tente novamente.'
+    });
+    this.dialogsState.deleteConfirm = { visible: false, cat: null };
+  }
+
+  /**
+   * Fecha todos os diálogos
+   */
+  private closeAllDialogs(): void {
+    this.dialogsState = {
+      catDetails: { visible: false, cat: null },
+      catCreateEdit: { visible: false, cat: null },
+      deleteConfirm: { visible: false, cat: null }
+    };
+  }
+  //#endregion
+
+  //#region Event Handlers
+
+  /**
+   * Manipula o sucesso na criação de um gato
+   */
+  onCatCreated(): void {
+    this.dialogsState.catCreateEdit = { visible: false, cat: null };
+    this.loadCats();
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Gato cadastrado com sucesso!'
+    });
+  }
+
+  /**
+   * Manipula o sucesso na atualização de um gato
+   */
+  onCatUpdated(): void {
+    this.dialogsState.catCreateEdit = { visible: false, cat: null };
+    this.loadCats();
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Gato atualizado com sucesso!'
+    });
+  }
+
+  /**
+   * Manipula a adoção de um gato
+   */
+  adoptCat(cat: Cat): void {
+    this.dialogsState.catDetails = { visible: false, cat: null };
+    this.loadCats();
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -363,135 +476,171 @@ export class CatsComponent implements OnInit {
     });
   }
 
-  deleteCat(cat: Cat): void {
-    this.catToDelete = cat;
-    this.deleteConfirmDialog = true;
-  }
-
-  cancelDelete(): void {
-    this.deleteConfirmDialog = false;
-    this.catToDelete = null;
-  }
-
-  confirmDelete(): void {
-    if (this.catToDelete) {
-      this.catService.deleteCat(this.catToDelete.id).subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Sucesso',
-            detail: `O gato "${this.catToDelete!.name}" foi excluído com sucesso.`
-          });
-          this.catDetailsDialog = false;
-          this.selectedCat = null;
-          this.deleteConfirmDialog = false;
-          this.catToDelete = null;
-          this.loadCats(); // Recarrega a lista
-        },
-        error: (error) => {
-          console.error('Erro ao deletar gato:', error);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Ocorreu um erro ao tentar excluir o gato. Tente novamente.'
-          });
-          this.deleteConfirmDialog = false;
-          this.catToDelete = null;
-        }
-      });
-    }
-  }
-
-  hasActiveFilters(): boolean {
-    return !!(this.filters.name || 
-             this.filters.color || 
-             this.filters.sex || 
-             (this.filters.adoptionStatus !== CatAdoptionStatus.NAO_ADOTADO && this.filters.adoptionStatus !== undefined));
-  }
-
-  onPageSizeChange(): void {
-    this.filters.size = this.pageSize;
-    this.filters.page = 0;
-    this.loadCats();
-  }
-
-  getColorLabel(color: Color): string {
-    const colorMap: { [key in Color]: string } = {
-      [Color.WHITE]: 'Branco',
-      [Color.BLACK]: 'Preto',
-      [Color.GRAY]: 'Cinza',
-      [Color.BROWN]: 'Marrom',
-      [Color.ORANGE]: 'Laranja',
-      [Color.MIXED]: 'Misto',
-      [Color.CALICO]: 'Cálico',
-      [Color.TABBY]: 'Tigrado',
-      [Color.SIAMESE]: 'Siamês',
-      [Color.OTHER]: 'Outro'
-    };
-    return colorMap[color] || color;
-  }
-
-  getSexLabel(sex: Sex): string {
-    return sex === Sex.MALE ? 'Macho' : 'Fêmea';
-  }
-
-  getAge(birthDate: string): string {
-    const birth = new Date(birthDate);
-    const today = new Date();
-    const ageInMonths = (today.getFullYear() - birth.getFullYear()) * 12 + (today.getMonth() - birth.getMonth());
-    
-    if (ageInMonths < 12) {
-      return `${ageInMonths} ${ageInMonths === 1 ? 'mês' : 'meses'}`;
-    } else {
-      const years = Math.floor(ageInMonths / 12);
-      return `${years} ${years === 1 ? 'ano' : 'anos'}`;
-    }
-  }
-
-  getDefaultImage(): string {
-    return 'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80';
-  }
-
+  /**
+   * Manipula erro no carregamento de imagem
+   */
   onImageError(event: any): void {
-    event.target.src = this.getDefaultImage();
+    event.target.src = this.catDisplayService.getDefaultImageUrl();
+  }
+  //#endregion
+
+  //#region Utility Methods
+
+  /**
+   * TrackBy function para otimizar *ngFor dos gatos
+   */
+  trackByCatId(index: number, cat: Cat): string {
+    return cat.id;
   }
 
+  /**
+   * TrackBy function para arrays de índices
+   */
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
+
+  /**
+   * Gera array para skeleton loading
+   */
+  getSkeletonArray(): number[] {
+    return Array.from({ length: CATS_CONFIG.SKELETON_ITEMS_COUNT }, (_, i) => i);
+  }
+  //#endregion
+
+  //#region Template Helper Methods
+
+  /**
+   * Formata uma data para exibição
+   */
+  formatDate(dateString: string): string {
+    return this.catDisplayService.formatDate(dateString);
+  }
+
+  /**
+   * Calcula a idade de um gato
+   */
+  getAge(birthDate: string): string {
+    return this.catDisplayService.calculateAge(birthDate);
+  }
+
+  /**
+   * Retorna o label de uma cor
+   */
+  getColorLabel(color: string): string {
+    return this.catDisplayService.getColorLabel(color as any);
+  }
+
+  /**
+   * Retorna o label de um sexo
+   */
+  getSexLabel(sex: string): string {
+    return this.catDisplayService.getSexLabel(sex as any);
+  }
+
+  /**
+   * Retorna informações de display do status de adoção
+   */
   getAdoptionStatusText(status: CatAdoptionStatus): string {
-    switch(status) {
-      case CatAdoptionStatus.NAO_ADOTADO:
-        return 'Disponível';
-      case CatAdoptionStatus.EM_PROCESSO:
-        return 'Em Processo';
-      case CatAdoptionStatus.ADOTADO:
-        return 'Adotado';
-      default:
-        return 'Disponível';
-    }
+    return this.catDisplayService.getAdoptionStatusInfo(status).text;
   }
 
   getAdoptionStatusIcon(status: CatAdoptionStatus): string {
-    switch(status) {
-      case CatAdoptionStatus.NAO_ADOTADO:
-        return 'fa-heart';
-      case CatAdoptionStatus.EM_PROCESSO:
-        return 'fa-clock';
-      case CatAdoptionStatus.ADOTADO:
-        return 'fa-home';
-      default:
-        return 'fa-heart';
-    }
+    return this.catDisplayService.getAdoptionStatusInfo(status).icon;
   }
 
   getAdoptionStatusClass(status: CatAdoptionStatus): string {
-    switch(status) {
-      case CatAdoptionStatus.NAO_ADOTADO:
-        return '';
-      case CatAdoptionStatus.EM_PROCESSO:
-        return 'in-process';
-      case CatAdoptionStatus.ADOTADO:
-        return 'adopted';
-      default:
-        return '';
-    }
+    return this.catDisplayService.getAdoptionStatusInfo(status).cssClass;
   }
+
+  /**
+   * Retorna a URL da imagem padrão
+   */
+  getDefaultImage(): string {
+    return this.catDisplayService.getDefaultImageUrl();
+  }
+
+  //#endregion
+
+  //#region Legacy Property Getters (for template compatibility)
+  
+  // Mantendo compatibilidade com template durante refatoração
+  get loading(): boolean {
+    return this.loadingState.isLoading;
+  }
+
+  get currentPage(): number {
+    return this.paginationConfig.currentPage;
+  }
+
+  get pageSize(): number {
+    return this.paginationConfig.pageSize;
+  }
+
+  set pageSize(value: number) {
+    this.paginationConfig.pageSize = value;
+  }
+
+  get catDetailsDialog(): boolean {
+    return this.dialogsState.catDetails.visible;
+  }
+
+  set catDetailsDialog(value: boolean) {
+    this.dialogsState.catDetails.visible = value;
+  }
+
+  get selectedCat(): Cat | null {
+    return this.dialogsState.catDetails.cat;
+  }
+
+  get catCreateDialog(): boolean {
+    return this.dialogsState.catCreateEdit.visible;
+  }
+
+  set catCreateDialog(value: boolean) {
+    this.dialogsState.catCreateEdit.visible = value;
+  }
+
+  get catToEdit(): Cat | null {
+    return this.dialogsState.catCreateEdit.cat;
+  }
+
+  get deleteConfirmDialog(): boolean {
+    return this.dialogsState.deleteConfirm.visible;
+  }
+
+  set deleteConfirmDialog(value: boolean) {
+    this.dialogsState.deleteConfirm.visible = value;
+  }
+
+  get catToDelete(): Cat | null {
+    return this.dialogsState.deleteConfirm.cat;
+  }
+
+  get filters(): CatFilters {
+    return this.getCurrentFilters();
+  }
+
+  set filters(value: CatFilters) {
+    this.catFiltersService.updateFilters(value);
+  }
+
+  // Configurações dos botões para compatibilidade com template
+  get newCatButtonConfig() {
+    return this.buttonConfigs.newCat;
+  }
+
+  get clearFiltersButtonConfig() {
+    return this.buttonConfigs.clearFilters;
+  }
+
+  get clearFiltersEmptyButtonConfig() {
+    return this.buttonConfigs.clearFiltersEmpty;
+  }
+
+  get addFirstCatButtonConfig() {
+    return this.buttonConfigs.addFirstCat;
+  }
+
+  //#endregion
 }
