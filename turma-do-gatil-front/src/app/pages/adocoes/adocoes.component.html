@@ -1,126 +1,77 @@
 
 <div class="page-container">
-  <div class="page-header">
-    <h1 class="page-title">
-      <i class="fas fa-paw"></i>
-      Gestão de Adoções
-    </h1>
-    <p class="page-subtitle">Acompanhe e gerencie os processos de adoção registrados no sistema</p>
-  </div>
+  <!-- Page Header genérico -->
+  <app-page-header
+    title="Gestão de Adoções"
+    subtitle="Acompanhe e gerencie os processos de adoção registrados no sistema"
+    icon="pi-heart">
+  </app-page-header>
 
-  <div class="content-card">
-    <div class="card-header">
-      <h3>Lista de Adoções</h3>
-    </div>
+  <!-- Content Card genérico -->
+  <app-content-card
+    title="Lista de Adoções"
+    icon="pi-list">
+    
+    <!-- Data Table genérico -->
+    <app-data-table
+      [columns]="tableColumns"
+      [data]="adoptions"
+      [loading]="loading"
+      [actionProvider]="getRowActions"
+      [emptyState]="emptyState"
+      [trackByProperty]="'id'"
+      (actionClick)="onTableAction($event)">
+    </app-data-table>
 
-    <div class="table-container">
-      <table class="adopters-table" *ngIf="!loading">
-        <thead>
-          <tr>
-            <th>Gato</th>
-            <th>Adotante</th>
-            <th>Data da Adoção</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let adoption of adoptions">
-            <td>{{ getCatName(adoption.catId) }}</td>
-            <td>{{ getAdopterName(adoption.adopterId) }}</td>
-            <td>{{ formatDate(adoption.adoptionDate) }}</td>
-            <td>
-              <span class="status-badge" [ngClass]="getStatusClass(adoption.status)">
-                {{ getStatusLabel(adoption.status) }}
-              </span>
-            </td>
-            <td>
-              <div class="action-buttons">
-                <p-button 
-                  icon="pi pi-pencil" 
-                  severity="secondary"
-                  size="small"
-                  (onClick)="openStatusModal(adoption)"
-                  title="Alterar Status">
-                </p-button>
-              </div>
-            </td>
-          </tr>
+    <!-- Pagination genérico -->
+    <app-pagination 
+      slot="footer"
+      *ngIf="totalRecords > 0"
+      [pagination]="paginationInfo"
+      (pageChange)="onPageChange($event)"
+      (previousPage)="onPreviousPage()"
+      (nextPage)="onNextPage()">
+    </app-pagination>
 
-          <!-- Loading skeleton -->
-          <tr *ngIf="loading">
-            <td colspan="5">
-              <div class="loading-message">
-                <i class="pi pi-spin pi-spinner"></i>
-                Carregando adoções...
-              </div>
-            </td>
-          </tr>
-
-          <!-- Empty message -->
-          <tr *ngIf="!loading && adoptions.length === 0">
-            <td colspan="5">
-              <div class="empty-message">
-                <i class="pi pi-info-circle"></i>
-                <p>Nenhuma adoção encontrada.</p>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Pagination -->
-      <div class="pagination-container" *ngIf="!loading && totalRecords > 0">
-        <div class="pagination-info">
-          Mostrando {{ (first + 1) }} - {{ getMinRecord() }} de {{ totalRecords }} registros
-        </div>
-        <div class="pagination-controls">
-          <button 
-            class="p-button-icon p-button-secondary" 
-            [disabled]="first === 0"
-            (click)="onPageChange({first: 0, rows: rows, page: 0})"
-            title="Primeira página">
-            &laquo;&laquo;
-          </button>
-          <button 
-            class="p-button-icon p-button-secondary" 
-            [disabled]="first === 0"
-            (click)="onPageChange({first: first - rows, rows: rows, page: (first / rows) - 1})"
-            title="Página anterior">
-            &laquo;
-          </button>
-          <select 
-            class="page-select" 
-            [value]="rows" 
-            (change)="onRowsChange($event)">
-            <option value="5">5 por página</option>
-            <option value="10">10 por página</option>
-            <option value="20">20 por página</option>
-            <option value="50">50 por página</option>
-          </select>
-          <button 
-            class="p-button-icon p-button-secondary" 
-            [disabled]="first + rows >= totalRecords"
-            (click)="onPageChange({first: first + rows, rows: rows, page: (first / rows) + 1})"
-            title="Próxima página">
-            &raquo;
-          </button>
-          <button 
-            class="p-button-icon p-button-secondary" 
-            [disabled]="first + rows >= totalRecords"
-            (click)="onPageChange({first: getLastPageFirst(), rows: rows, page: getLastPage()})"
-            title="Última página">
-            &raquo;&raquo;
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+  </app-content-card>
 </div>
 
-<!-- Modal de Alteração de Status -->
-<app-adoption-status-modal
+<!-- Modal genérico -->
+<app-generic-modal
   [(visible)]="showStatusModal"
-  [adoption]="selectedAdoption"
-  (adoptionUpdated)="onAdoptionUpdated()">
-</app-adoption-status-modal>
+  title="Alterar Status da Adoção"
+  [actions]="modalActions"
+  [dialogStyle]="{ width: '90vw', maxWidth: '500px' }">
+  
+  <div class="modal-content">
+    <div class="field-group">
+      <label>Gato:</label>
+      <span>{{ getCatName(selectedAdoption?.catId) }}</span>
+    </div>
+    
+    <div class="field-group">
+      <label>Adotante:</label>
+      <span>{{ getAdopterName(selectedAdoption?.adopterId) }}</span>
+    </div>
+    
+    <div class="field-group">
+      <label>Data da Adoção:</label>
+      <span>{{ formatDate(selectedAdoption?.adoptionDate) }}</span>
+    </div>
+    
+    <div class="field-group">
+      <label for="status">Novo Status:</label>
+      <select 
+        id="status"
+        class="form-control"
+        [(ngModel)]="selectedStatus"
+        [disabled]="modalLoading">
+        <option value="" disabled>Selecione um status</option>
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+</app-generic-modal>

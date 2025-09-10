@@ -258,6 +258,12 @@ export interface TableEmptyState {
       font-size: 0.75rem;
     }
 
+    .status-badge.pending {
+      background-color: #fef3c7;
+      color: #92400e;
+      border-color: #fcd34d;
+    }
+
     .status-badge.canceled {
       background-color: #fee2e2;
       color: #991b1b;

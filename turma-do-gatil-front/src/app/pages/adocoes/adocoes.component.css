@@ -408,6 +408,64 @@
   --surface-ground: var(--p-surface-ground, #f9fafb);
 }
 
+/* ===== ESTILOS DO MODAL GENÉRICO ===== */
+.modal-content {
+  width: 100%;
+}
+
+.field-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field-group label {
+  font-weight: 600;
+  color: var(--p-text-color);
+  font-size: 0.9rem;
+}
+
+.field-group span {
+  color: var(--p-text-color-secondary);
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--p-surface-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--p-surface-card);
+  color: var(--p-text-color);
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--p-primary-color);
+  box-shadow: 0 0 0 2px rgba(242, 187, 174, 0.2);
+}
+
+.form-control:disabled {
+  background: var(--p-surface-ground);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Personalização do modal para manter consistência visual */
+::ng-deep .generic-modal .p-dialog {
+  min-width: 400px;
+  max-width: 90vw;
+}
+
+::ng-deep .generic-modal .p-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
 /* ===== BOTÕES DE AÇÃO ===== */
 .action-buttons {
   display: flex;

@@ -1,29 +1,44 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonModule } from 'primeng/button';
+import { FormsModule } from '@angular/forms';
 import { AdoptionService } from '../../services/adoption.service';
 import { Adoption, AdoptionStatus, Page } from '../../models/adoption.model';
 import { AdopterService } from '../../services/adopter.service';
 import { CatService } from '../../services/cat.service';
 import { Adopter } from '../../models/adopter.model';
 import { Cat } from '../../models/cat.model';
-import { AdoptionStatusModalComponent } from './adoption-status-modal/adoption-status-modal.component';
+// Imports dos componentes genéricos
+import { 
+  PageHeaderComponent,
+  ContentCardComponent,
+  DataTableComponent,
+  PaginationComponent,
+  GenericModalComponent,
+  ActionButtonConfig,
+  TableColumn,
+  TableEmptyState,
+  PaginationInfo,
+  ModalAction
+} from '../../shared/components';
 
 @Component({
   selector: 'app-adocoes',
   standalone: true,
-  imports: [CommonModule, ButtonModule, AdoptionStatusModalComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    PageHeaderComponent,
+    ContentCardComponent,
+    DataTableComponent,
+    PaginationComponent,
+    GenericModalComponent
+  ],
   templateUrl: './adocoes.component.html',
   styleUrls: ['./adocoes.component.css']
 })
 export class AdocoesComponent implements OnInit {
-  // ...existing code...
-
-  onRowsChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.onPageChange({first: 0, rows: +target.value, page: 0});
-  }
+  // Dados existentes
   adoptions: Adoption[] = [];
   totalRecords: number = 0;
   loading: boolean = false;
@@ -33,9 +48,101 @@ export class AdocoesComponent implements OnInit {
   adoptersMap: { [id: string]: Adopter } = {};
   catsMap: { [id: string]: Cat } = {};
 
-  // Modal properties
+  // Propriedades do modal genérico
   showStatusModal = false;
   selectedAdoption: Adoption | null = null;
+  selectedStatus: AdoptionStatus | '' = '';
+  modalLoading = false;
+
+  // Configuração da tabela genérica
+  tableColumns: TableColumn[] = [
+    {
+      key: 'catId',
+      header: 'Gato',
+      type: 'text',
+      formatter: (value: string) => this.getCatName(value)
+    },
+    {
+      key: 'adopterId',
+      header: 'Adotante',
+      type: 'text',
+      formatter: (value: string) => this.getAdopterName(value)
+    },
+    {
+      key: 'adoptionDate',
+      header: 'Data da Adoção',
+      type: 'date',
+      formatter: (value: string) => this.formatDate(value)
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      type: 'badge',
+      formatter: (value: AdoptionStatus) => this.getStatusLabel(value),
+      badgeClass: (value: AdoptionStatus) => this.getStatusClass(value)
+    }
+  ];
+
+  // Estado vazio da tabela
+  emptyState: TableEmptyState = {
+    icon: 'pi pi-info-circle',
+    message: 'Nenhuma adoção encontrada.'
+  };
+
+  // Informações de paginação para o componente genérico
+  get paginationInfo(): PaginationInfo {
+    const currentPage = Math.floor(this.first / this.rows);
+    const totalPages = Math.ceil(this.totalRecords / this.rows);
+    
+    return {
+      totalElements: this.totalRecords,
+      numberOfElements: Math.min(this.rows, this.totalRecords - this.first),
+      first: this.first === 0,
+      last: this.first + this.rows >= this.totalRecords,
+      totalPages,
+      currentPage
+    };
+  }
+
+  // Ações do modal genérico
+  get modalActions(): ModalAction[] {
+    return [
+      {
+        label: 'Cancelar',
+        icon: 'pi-times',
+        severity: 'secondary',
+        outlined: true,
+        action: () => this.onHideModal()
+      },
+      {
+        label: 'Salvar',
+        icon: 'pi-check',
+        severity: 'primary',
+        loading: this.modalLoading,
+        disabled: !this.selectedStatus || this.modalLoading,
+        action: () => this.onSaveStatus()
+      }
+    ];
+  }
+
+  // Opções de status para o modal
+  statusOptions = [
+    { label: 'Pendente', value: AdoptionStatus.PENDING },
+    { label: 'Concluída', value: AdoptionStatus.COMPLETED },
+    { label: 'Cancelada', value: AdoptionStatus.CANCELED }
+  ];
+
+  // Provider de ações para cada linha da tabela
+  getRowActions = (adoption: Adoption): ActionButtonConfig[] => {
+    return [
+      {
+        type: 'edit',
+        tooltip: 'Alterar Status',
+        disabled: false,
+        visible: true
+      }
+    ];
+  };
 
   constructor(
     private adoptionService: AdoptionService,
@@ -47,6 +154,8 @@ export class AdocoesComponent implements OnInit {
     this.loadAdoptions();
   }
 
+  // === MÉTODOS DE CARREGAMENTO DE DADOS ===
+  
   loadAdoptions(): void {
     this.loading = true;
     this.adoptionService.getAllAdoptions({
@@ -80,6 +189,7 @@ export class AdocoesComponent implements OnInit {
         });
       }
     });
+
     catIds.forEach(id => {
       if (!this.catsMap[id]) {
         this.catService.getCatById(id).subscribe({
@@ -89,34 +199,98 @@ export class AdocoesComponent implements OnInit {
     });
   }
 
-  onPageChange(event: any): void {
-    this.first = event.first;
-    this.rows = event.rows;
+  // === MÉTODOS DE PAGINAÇÃO ===
+
+  onPageChange(page: number): void {
+    this.first = page * this.rows;
     this.loadAdoptions();
   }
 
-  formatDate(dateString: string): string {
+  onPreviousPage(): void {
+    if (this.first > 0) {
+      this.first = Math.max(0, this.first - this.rows);
+      this.loadAdoptions();
+    }
+  }
+
+  onNextPage(): void {
+    if (this.first + this.rows < this.totalRecords) {
+      this.first = this.first + this.rows;
+      this.loadAdoptions();
+    }
+  }
+
+  // === MÉTODOS DE AÇÕES DA TABELA ===
+
+  onTableAction(event: {type: string, data: any}): void {
+    const adoption = event.data as Adoption;
+    
+    switch (event.type) {
+      case 'edit':
+        this.openStatusModal(adoption);
+        break;
+      default:
+        console.warn('Ação não reconhecida:', event.type);
+    }
+  }
+
+  // === MÉTODOS DO MODAL ===
+
+  openStatusModal(adoption: Adoption): void {
+    this.selectedAdoption = adoption;
+    this.selectedStatus = adoption.status;
+    this.showStatusModal = true;
+  }
+
+  onHideModal(): void {
+    this.showStatusModal = false;
+    this.selectedAdoption = null;
+    this.selectedStatus = '';
+    this.modalLoading = false;
+  }
+
+  onSaveStatus(): void {
+    if (!this.selectedAdoption || !this.selectedStatus || this.modalLoading) {
+      return;
+    }
+
+    this.modalLoading = true;
+
+    const adoptionRequest = {
+      catId: this.selectedAdoption.catId,
+      adopterId: this.selectedAdoption.adopterId,
+      adoptionDate: this.selectedAdoption.adoptionDate,
+      status: this.selectedStatus
+    };
+
+    this.adoptionService.updateAdoption(this.selectedAdoption.id, adoptionRequest).subscribe({
+      next: () => {
+        this.modalLoading = false;
+        this.onHideModal();
+        this.loadAdoptions(); // Recarrega a lista
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar status da adoção:', error);
+        this.modalLoading = false;
+      }
+    });
+  }
+
+  // === MÉTODOS AUXILIARES ===
+
+  formatDate(dateString: string | undefined): string {
+    if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('pt-BR');
   }
 
-  getMinRecord(): number {
-    return Math.min(this.first + this.rows, this.totalRecords);
-  }
-
-  getLastPageFirst(): number {
-    return Math.floor(this.totalRecords / this.rows) * this.rows;
-  }
-
-  getLastPage(): number {
-    return Math.floor(this.totalRecords / this.rows);
-  }
-
-  getAdopterName(adopterId: string): string {
+  getAdopterName(adopterId: string | undefined): string {
+    if (!adopterId) return '-';
     const adopter = this.adoptersMap[adopterId];
     return adopter ? `${adopter.firstName} ${adopter.lastName}` : '...';
   }
 
-  getCatName(catId: string): string {
+  getCatName(catId: string | undefined): string {
+    if (!catId) return '-';
     const cat = this.catsMap[catId];
     return cat ? cat.name : '...';
   }
@@ -139,9 +313,25 @@ export class AdocoesComponent implements OnInit {
     }
   }
 
-  openStatusModal(adoption: Adoption): void {
-    this.selectedAdoption = adoption;
-    this.showStatusModal = true;
+  // === MÉTODOS LEGADOS (mantidos para compatibilidade) ===
+
+  onRowsChange(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.rows = +target.value;
+    this.first = 0;
+    this.loadAdoptions();
+  }
+
+  getMinRecord(): number {
+    return Math.min(this.first + this.rows, this.totalRecords);
+  }
+
+  getLastPageFirst(): number {
+    return Math.floor(this.totalRecords / this.rows) * this.rows;
+  }
+
+  getLastPage(): number {
+    return Math.floor(this.totalRecords / this.rows);
   }
 
   onAdoptionUpdated(): void {
