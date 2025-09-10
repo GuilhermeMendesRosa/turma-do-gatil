@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { SterilizationService } from '../../services/sterilization.service';
@@ -99,11 +99,9 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   completedSterilizations: SterilizationDto[] = [];
   
   // ===== LOADING STATES =====
-  readonly loadingStates = {
-    cats: false,
-    sterilizations: false,
-    completedSterilizations: false
-  };
+  loadingCats = false;
+  loadingSterilizations = false;
+  loadingCompletedSterilizations = false;
   
   // ===== MODAL STATE =====
   readonly modalState = {
@@ -236,11 +234,20 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     }
   ];
 
-  constructor(private readonly sterilizationService: SterilizationService) {
+  constructor(
+    private readonly sterilizationService: SterilizationService,
+    private readonly cdr: ChangeDetectorRef
+  ) {
     this.initializePagination();
   }
 
   ngOnInit(): void {
+    // Reset pagination state to avoid infinite loading on subsequent visits
+    this.resetPaginationState();
+    // Reset loading states
+    this.resetLoadingStates();
+    // Cancel any pending requests from previous navigation
+    this.destroy$.next();
     this.initializeComponent();
   }
 
@@ -264,6 +271,25 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   private initializePagination(): void {
     this.paginationState.scheduled.pagination = this.createEmptyPage<SterilizationDto>();
     this.paginationState.completed.pagination = this.createEmptyPage<SterilizationDto>();
+  }
+
+  /**
+   * Resets pagination state to avoid infinite loading
+   */
+  private resetPaginationState(): void {
+    this.paginationState.scheduled.currentPage = 0;
+    this.paginationState.completed.currentPage = 0;
+    this.initializePagination();
+  }
+
+  /**
+   * Resets all loading states
+   */
+  private resetLoadingStates(): void {
+    this.loadingCats = false;
+    this.loadingSterilizations = false;
+    this.loadingCompletedSterilizations = false;
+    this.cdr.markForCheck();
   }
 
   /**
@@ -312,20 +338,6 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Refreshes only scheduled sterilizations data
-   */
-  refreshScheduledSterilizations(): void {
-    this.loadScheduledSterilizations();
-  }
-
-  /**
-   * Refreshes only completed sterilizations data
-   */
-  refreshCompletedSterilizations(): void {
-    this.loadCompletedSterilizations();
-  }
-
-  /**
    * Loads sterilization statistics
    */
   private loadStats(): void {
@@ -334,9 +346,11 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (stats) => {
           this.stats = stats;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           console.error('Erro ao carregar estatísticas:', error);
+          this.cdr.markForCheck();
         }
       });
   }
@@ -345,19 +359,25 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
    * Loads cats that need sterilization
    */
   private loadCatsNeedingSterilization(): void {
-    this.setLoadingState('cats', true);
+    this.loadingCats = true;
+    this.cdr.markForCheck();
     
     this.sterilizationService.getCatsNeedingSterilization()
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.setLoadingState('cats', false))
+        finalize(() => {
+          this.loadingCats = false;
+          this.cdr.markForCheck();
+        })
       )
       .subscribe({
         next: (cats) => {
           this.catsNeedingSterilization = cats;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           console.error('Erro ao carregar gatos que precisam de castração:', error);
+          this.cdr.markForCheck();
         }
       });
   }
@@ -365,8 +385,9 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   /**
    * Loads scheduled sterilizations with pagination
    */
-  loadScheduledSterilizations(): void {
-    this.setLoadingState('sterilizations', true);
+  private loadScheduledSterilizations(): void {
+    this.loadingSterilizations = true;
+    this.cdr.markForCheck();
     
     const params = {
       page: this.paginationState.scheduled.currentPage,
@@ -378,15 +399,20 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     this.sterilizationService.getSterilizationsByStatus(SterilizationStatus.SCHEDULED, params)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.setLoadingState('sterilizations', false))
+        finalize(() => {
+          this.loadingSterilizations = false;
+          this.cdr.markForCheck();
+        })
       )
       .subscribe({
         next: (response) => {
           this.paginationState.scheduled.pagination = response;
           this.scheduledSterilizations = response.content;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           console.error('Erro ao carregar castrações agendadas:', error);
+          this.cdr.markForCheck();
         }
       });
   }
@@ -394,8 +420,9 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   /**
    * Loads completed sterilizations with pagination
    */
-  loadCompletedSterilizations(): void {
-    this.setLoadingState('completedSterilizations', true);
+  private loadCompletedSterilizations(): void {
+    this.loadingCompletedSterilizations = true;
+    this.cdr.markForCheck();
     
     const params = {
       page: this.paginationState.completed.currentPage,
@@ -407,27 +434,25 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     this.sterilizationService.getSterilizationsByStatus(SterilizationStatus.COMPLETED, params)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.setLoadingState('completedSterilizations', false))
+        finalize(() => {
+          this.loadingCompletedSterilizations = false;
+          this.cdr.markForCheck();
+        })
       )
       .subscribe({
         next: (response) => {
           this.paginationState.completed.pagination = response;
           this.completedSterilizations = response.content;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           console.error('Erro ao carregar castrações realizadas:', error);
+          this.cdr.markForCheck();
         }
       });
   }
 
   // ===== UTILITY METHODS =====
-
-  /**
-   * Sets loading state for a specific operation
-   */
-  private setLoadingState(key: keyof typeof this.loadingStates, value: boolean): void {
-    this.loadingStates[key] = value;
-  }
 
   /**
    * Gets statistics data for display
@@ -773,18 +798,6 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   }
 
   // ===== TEMPLATE GETTERS FOR EASIER ACCESS =====
-
-  get loadingCats(): boolean {
-    return this.loadingStates.cats;
-  }
-
-  get loadingSterilizations(): boolean {
-    return this.loadingStates.sterilizations;
-  }
-
-  get loadingCompletedSterilizations(): boolean {
-    return this.loadingStates.completedSterilizations;
-  }
 
   get scheduleModalVisible(): boolean {
     return this.modalState.scheduleModalVisible;
