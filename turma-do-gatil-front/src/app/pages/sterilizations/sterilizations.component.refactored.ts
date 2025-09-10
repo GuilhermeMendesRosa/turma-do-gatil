@@ -53,6 +53,11 @@ enum SterilizationStatusType {
   OVERDUE = 'OVERDUE'
 }
 
+interface SterilizationTableAction {
+  type: 'schedule' | 'edit' | 'complete' | 'cancel';
+  data: CatSterilizationStatusDto | SterilizationDto;
+}
+
 /**
  * Configuration constants
  */
@@ -312,20 +317,6 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Refreshes only scheduled sterilizations data
-   */
-  refreshScheduledSterilizations(): void {
-    this.loadScheduledSterilizations();
-  }
-
-  /**
-   * Refreshes only completed sterilizations data
-   */
-  refreshCompletedSterilizations(): void {
-    this.loadCompletedSterilizations();
-  }
-
-  /**
    * Loads sterilization statistics
    */
   private loadStats(): void {
@@ -365,7 +356,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   /**
    * Loads scheduled sterilizations with pagination
    */
-  loadScheduledSterilizations(): void {
+  private loadScheduledSterilizations(): void {
     this.setLoadingState('sterilizations', true);
     
     const params = {
@@ -394,7 +385,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   /**
    * Loads completed sterilizations with pagination
    */
-  loadCompletedSterilizations(): void {
+  private loadCompletedSterilizations(): void {
     this.setLoadingState('completedSterilizations', true);
     
     const params = {
@@ -542,7 +533,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   /**
    * Handles table actions for cats
    */
-  onCatsTableAction(event: { type: string; data: any }): void {
+  onCatsTableAction(event: SterilizationTableAction): void {
     if (event.type === 'schedule') {
       this.scheduleSterilization(event.data as CatSterilizationStatusDto);
     }
@@ -551,7 +542,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   /**
    * Handles table actions for scheduled sterilizations
    */
-  onScheduledTableAction(event: { type: string; data: any }): void {
+  onScheduledTableAction(event: SterilizationTableAction): void {
     const sterilization = event.data as SterilizationDto;
     
     switch (event.type) {

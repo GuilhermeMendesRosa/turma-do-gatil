@@ -45,7 +45,7 @@
     <div slot="actions">
       <app-refresh-button 
         [loading]="loadingSterilizations"
-        (refresh)="refreshData()">
+        (refresh)="loadScheduledSterilizations()">
       </app-refresh-button>
     </div>
     
@@ -82,7 +82,7 @@
     <div slot="actions">
       <app-refresh-button 
         [loading]="loadingCompletedSterilizations"
-        (refresh)="refreshData()">
+        (refresh)="loadCompletedSterilizations()">
       </app-refresh-button>
     </div>
     
