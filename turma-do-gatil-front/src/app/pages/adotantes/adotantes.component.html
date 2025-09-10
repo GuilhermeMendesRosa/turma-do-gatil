@@ -12,12 +12,9 @@
     [hasActions]="true">
     
     <div slot="actions">
-      <p-button 
-        label="Novo Adotante" 
-        icon="pi pi-plus" 
-        (onClick)="openCreateModal()"
-        size="small">
-      </p-button>
+      <app-modal-button 
+        [config]="getNewAdopterButtonConfig()">
+      </app-modal-button>
     </div>
     
     <div class="filters-grid">

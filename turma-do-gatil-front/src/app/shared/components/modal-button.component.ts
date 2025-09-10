@@ -67,16 +67,24 @@ export interface ModalButtonConfig {
 
     /* Primary Button */
     .btn-primary {
-      background: var(--gradient-primary, linear-gradient(135deg, #F2BBAE, #E5A693));
-      border-color: var(--p-primary-color, #F2BBAE);
-      color: white;
+      background: linear-gradient(135deg, #F2BBAE, #E5A693) !important;
+      border-color: #F2BBAE !important;
+      color: white !important;
     }
 
     .btn-primary:hover:not(:disabled) {
-      background: var(--p-primary-600, #E5A693);
-      border-color: var(--p-primary-600, #E5A693);
+      background: #E5A693 !important;
+      border-color: #E5A693 !important;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(242, 187, 174, 0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6 !important;
+      cursor: not-allowed !important;
+      background: #cccccc !important;
+      border-color: #cccccc !important;
+      color: #666666 !important;
     }
 
     .btn-primary.outlined {

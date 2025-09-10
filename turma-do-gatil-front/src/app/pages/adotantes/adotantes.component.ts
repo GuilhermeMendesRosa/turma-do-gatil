@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
 import { DividerModule } from 'primeng/divider';
@@ -18,7 +17,8 @@ import {
   PaginationComponent,
   PaginationInfo,
   GenericModalComponent,
-  ModalAction
+  ModalAction,
+  ModalButtonComponent
 } from '../../shared/components';
 
 @Component({
@@ -28,7 +28,6 @@ import {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    ButtonModule,
     InputTextModule,
     InputMaskModule,
     DividerModule,
@@ -37,7 +36,8 @@ import {
     ContentCardComponent,
     PageHeaderComponent,
     RefreshButtonComponent,
-    PaginationComponent
+    PaginationComponent,
+    ModalButtonComponent
   ],
   templateUrl: './adotantes.component.html',
   styleUrls: ['./adotantes.component.css']
@@ -114,6 +114,7 @@ export class AdotantesComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.setupModalActions(); // Inicializar ações do modal
     this.loadAdopters();
   }
 
@@ -297,6 +298,27 @@ export class AdotantesComponent implements OnInit {
       address: ['', [Validators.required, Validators.minLength(5)]],
       registrationDate: [todayString, Validators.required]
     });
+
+    // Monitora mudanças no formulário para atualizar botões
+    this.adopterForm.statusChanges.subscribe(status => {
+      if (this.showCreateModal) {
+        // Atualizar apenas o botão de salvar
+        const saveAction = this.modalActions.find(action => action.icon === 'pi pi-check');
+        if (saveAction) {
+          saveAction.disabled = this.isFormInvalid();
+        }
+      }
+    });
+  }
+
+  // Button configuration methods
+  getNewAdopterButtonConfig() {
+    return {
+      label: 'Novo Adotante',
+      icon: 'pi-plus',
+      severity: 'primary' as const,
+      action: this.openCreateModal.bind(this)
+    };
   }
 
   updateFormForEditing(): void {
@@ -347,10 +369,15 @@ export class AdotantesComponent implements OnInit {
         icon: 'pi pi-check',
         severity: 'primary',
         loading: this.loading,
-        disabled: !this.adopterForm?.valid,
+        disabled: this.isFormInvalid(),
         action: () => this.onSubmit()
       }
     ];
+  }
+
+  private isFormInvalid(): boolean {
+    if (!this.adopterForm) return true;
+    return !this.adopterForm.valid;
   }
 
   onModalCancel(): void {

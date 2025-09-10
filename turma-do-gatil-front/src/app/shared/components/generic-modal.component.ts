@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, TemplateRef, ContentChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, TemplateRef, ContentChild, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ModalButtonComponent, ModalButtonConfig } from './modal-button.component';
@@ -37,12 +37,12 @@ export interface ModalAction {
       </div>
 
       <!-- Footer com ações -->
-      <ng-template pTemplate="footer" *ngIf="actions && actions.length > 0">
-                <div class="generic-modal-footer" *ngIf="actions && actions.length > 0">
+      <ng-template pTemplate="footer">
+        <div class="generic-modal-footer" *ngIf="actions && actions.length > 0">
           <app-modal-button 
             *ngFor="let action of actions"
             [config]="action"
-            (clicked)="action.action()"
+            (click)="action.action()"
           ></app-modal-button>
         </div>
       </ng-template>
@@ -97,6 +97,16 @@ export interface ModalAction {
       width: 100%;
     }
 
+    .generic-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0;
+      border: none;
+      margin: 0;
+    }
+
     .dialog-footer {
       display: flex;
       justify-content: flex-end;
@@ -121,7 +131,7 @@ export interface ModalAction {
     }
   `]
 })
-export class GenericModalComponent {
+export class GenericModalComponent implements OnInit, OnChanges {
   @Input() visible: boolean = false;
   @Input() title: string = '';
   @Input() closable: boolean = true;
@@ -134,6 +144,14 @@ export class GenericModalComponent {
 
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() hide = new EventEmitter<void>();
+
+  ngOnInit() {
+    // Modal initialized
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Handle changes if needed
+  }
 
   onHide(): void {
     this.visible = false;
