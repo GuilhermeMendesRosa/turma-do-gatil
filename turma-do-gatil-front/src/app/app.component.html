@@ -20,16 +20,12 @@
     <p-button 
       icon="pi pi-cog" 
       [text]="true" 
-      class="config-button"
-      pTooltip="Configurações"
-      tooltipPosition="bottom">
+      class="config-button">
     </p-button>
     <p-avatar 
       icon="pi pi-user" 
       shape="circle" 
-      class="user-avatar"
-      pTooltip="Perfil do usuário"
-      tooltipPosition="bottom">
+      class="user-avatar">
     </p-avatar>
   </div>
 </div>
@@ -50,7 +46,10 @@
   <div class="sidebar-content">
     <ul class="menu-list">
       <li *ngFor="let item of menuItems" class="menu-item">
-        <a [routerLink]="item.routerLink" class="menu-link" (click)="toggleSidebar()">
+        <a [routerLink]="item.routerLink" 
+           class="menu-link" 
+           [class.active]="isMenuItemActive(item.routerLink)"
+           (click)="toggleSidebar()">
           <i [class]="item.icon"></i>
           <span>{{ item.label }}</span>
         </a>

@@ -188,13 +188,24 @@
 }
 
 .menu-link:hover {
-  background: var(--p-surface-hover);
-  border-left-color: var(--p-primary-color);
+  background: rgba(242, 187, 174, 0.08);
+  border-left-color: #F2BBAE;
+}
+
+.menu-link.active {
+  background: rgba(242, 187, 174, 0.15);
+  border-left-color: #F2BBAE;
+  color: #2D2D2D;
+  font-weight: 600;
+}
+
+.menu-link.active i {
+  color: #F2BBAE;
 }
 
 .menu-link i {
   font-size: 1.2rem;
-  color: var(--p-primary-color);
+  color: #F2BBAE;
   width: 20px;
   text-align: center;
 }
