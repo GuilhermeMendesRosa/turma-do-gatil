@@ -160,4 +160,46 @@
       </div>
     </div>
   </div>
+
+  <!-- Seção de Teste dos Toasts -->
+  <div class="dashboard-section">
+    <div class="section-header">
+      <h2><i class="pi pi-bell"></i> Teste de Notificações</h2>
+      <p>Use os botões abaixo para testar os diferentes tipos de toast</p>
+    </div>
+    
+    <div class="toast-test-buttons">
+      <p-button 
+        label="Sucesso" 
+        icon="pi pi-check" 
+        severity="success"
+        (onClick)="testSuccessToast()"
+        styleClass="test-button">
+      </p-button>
+      
+      <p-button 
+        label="Erro" 
+        icon="pi pi-times" 
+        severity="danger"
+        (onClick)="testErrorToast()"
+        styleClass="test-button">
+      </p-button>
+      
+      <p-button 
+        label="Aviso" 
+        icon="pi pi-exclamation-triangle" 
+        severity="warn"
+        (onClick)="testWarningToast()"
+        styleClass="test-button">
+      </p-button>
+      
+      <p-button 
+        label="Info" 
+        icon="pi pi-info-circle" 
+        severity="info"
+        (onClick)="testInfoToast()"
+        styleClass="test-button">
+      </p-button>
+    </div>
+  </div>
 </div>

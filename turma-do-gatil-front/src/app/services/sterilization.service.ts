@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { 
   SterilizationStatsDto, 
   CatSterilizationStatusDto, 
@@ -9,6 +10,7 @@ import {
   SterilizationFilters, 
   Page 
 } from '../models/sterilization.model';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,16 +18,29 @@ import {
 export class SterilizationService {
   private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private notificationService: NotificationService
+  ) { }
 
   // Obter estatísticas de castração
   getSterilizationStats(): Observable<SterilizationStatsDto> {
-    return this.http.get<SterilizationStatsDto>(`${this.apiUrl}/cats/sterilization-stats`);
+    return this.http.get<SterilizationStatsDto>(`${this.apiUrl}/cats/sterilization-stats`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   // Obter gatos que precisam de castração
   getCatsNeedingSterilization(): Observable<CatSterilizationStatusDto[]> {
-    return this.http.get<CatSterilizationStatusDto[]>(`${this.apiUrl}/cats/needing-sterilization`);
+    return this.http.get<CatSterilizationStatusDto[]>(`${this.apiUrl}/cats/needing-sterilization`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   // Obter todas as castrações com filtros
@@ -57,7 +72,12 @@ export class SterilizationService {
       params = params.set('endDate', filters.endDate);
     }
 
-    return this.http.get<Page<SterilizationDto>>(`${this.apiUrl}/sterilizations`, { params });
+    return this.http.get<Page<SterilizationDto>>(`${this.apiUrl}/sterilizations`, { params }).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   // Obter castrações por status
@@ -77,31 +97,61 @@ export class SterilizationService {
       params = params.set('sortDir', filters.sortDir);
     }
 
-    return this.http.get<Page<SterilizationDto>>(`${this.apiUrl}/sterilizations/status/${status}`, { params });
+    return this.http.get<Page<SterilizationDto>>(`${this.apiUrl}/sterilizations/status/${status}`, { params }).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   // Obter castração por ID
   getSterilizationById(id: string): Observable<SterilizationDto> {
-    return this.http.get<SterilizationDto>(`${this.apiUrl}/sterilizations/${id}`);
+    return this.http.get<SterilizationDto>(`${this.apiUrl}/sterilizations/${id}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   // Criar nova castração
   createSterilization(sterilization: SterilizationRequest): Observable<SterilizationDto> {
-    return this.http.post<SterilizationDto>(`${this.apiUrl}/sterilizations`, sterilization);
+    return this.http.post<SterilizationDto>(`${this.apiUrl}/sterilizations`, sterilization).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   // Atualizar castração
   updateSterilization(id: string, sterilization: SterilizationRequest): Observable<SterilizationDto> {
-    return this.http.put<SterilizationDto>(`${this.apiUrl}/sterilizations/${id}`, sterilization);
+    return this.http.put<SterilizationDto>(`${this.apiUrl}/sterilizations/${id}`, sterilization).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   // Deletar castração
   deleteSterilization(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/sterilizations/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/sterilizations/${id}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   // Obter castrações de um gato específico
   getSterilizationsByCatId(catId: string): Observable<SterilizationDto[]> {
-    return this.http.get<SterilizationDto[]>(`${this.apiUrl}/sterilizations/cat/${catId}`);
+    return this.http.get<SterilizationDto[]>(`${this.apiUrl}/sterilizations/cat/${catId}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 }

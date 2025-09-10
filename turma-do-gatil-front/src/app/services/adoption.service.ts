@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Adoption, AdoptionRequest, AdoptionFilters, Page } from '../models/adoption.model';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,10 @@ import { Adoption, AdoptionRequest, AdoptionFilters, Page } from '../models/adop
 export class AdoptionService {
   private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api/adoptions';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private notificationService: NotificationService
+  ) { }
 
   getAllAdoptions(filters: AdoptionFilters = {}): Observable<Page<Adoption>> {
     let params = new HttpParams();
@@ -37,22 +42,47 @@ export class AdoptionService {
       params = params.set('adopterId', filters.adopterId);
     }
 
-    return this.http.get<Page<Adoption>>(this.apiUrl, { params });
+    return this.http.get<Page<Adoption>>(this.apiUrl, { params }).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   getAdoptionById(id: string): Observable<Adoption> {
-    return this.http.get<Adoption>(`${this.apiUrl}/${id}`);
+    return this.http.get<Adoption>(`${this.apiUrl}/${id}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   createAdoption(adoption: AdoptionRequest): Observable<Adoption> {
-    return this.http.post<Adoption>(this.apiUrl, adoption);
+    return this.http.post<Adoption>(this.apiUrl, adoption).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   updateAdoption(id: string, adoption: AdoptionRequest): Observable<Adoption> {
-    return this.http.put<Adoption>(`${this.apiUrl}/${id}`, adoption);
+    return this.http.put<Adoption>(`${this.apiUrl}/${id}`, adoption).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   deleteAdoption(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 }

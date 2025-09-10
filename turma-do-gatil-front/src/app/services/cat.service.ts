@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Cat, CatRequest, CatFilters, Page } from '../models/cat.model';
 import { DashboardSummary } from '../models/dashboard.model';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,10 @@ import { DashboardSummary } from '../models/dashboard.model';
 export class CatService {
   private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api/cats';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private notificationService: NotificationService
+  ) { }
 
   getAllCats(filters: CatFilters = {}): Observable<Page<Cat>> {
     let params = new HttpParams();
@@ -41,26 +46,56 @@ export class CatService {
       params = params.set('adoptionStatus', filters.adoptionStatus);
     }
 
-    return this.http.get<Page<Cat>>(this.apiUrl, { params });
+    return this.http.get<Page<Cat>>(this.apiUrl, { params }).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   getCatById(id: string): Observable<Cat> {
-    return this.http.get<Cat>(`${this.apiUrl}/${id}`);
+    return this.http.get<Cat>(`${this.apiUrl}/${id}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   createCat(cat: CatRequest): Observable<Cat> {
-    return this.http.post<Cat>(this.apiUrl, cat);
+    return this.http.post<Cat>(this.apiUrl, cat).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   updateCat(id: string, cat: CatRequest): Observable<Cat> {
-    return this.http.put<Cat>(`${this.apiUrl}/${id}`, cat);
+    return this.http.put<Cat>(`${this.apiUrl}/${id}`, cat).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   deleteCat(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 
   getDashboardSummary(): Observable<DashboardSummary> {
-    return this.http.get<DashboardSummary>(`${this.apiUrl}/dashboard-summary`);
+    return this.http.get<DashboardSummary>(`${this.apiUrl}/dashboard-summary`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
   }
 }

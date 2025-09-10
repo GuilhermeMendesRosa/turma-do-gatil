@@ -6,13 +6,14 @@ import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
+import { ToastModule } from 'primeng/toast';
 import { MenuItem } from 'primeng/api';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, MenubarModule, ButtonModule, AvatarModule, MenuModule, TooltipModule],
+  imports: [RouterOutlet, RouterLink, CommonModule, MenubarModule, ButtonModule, AvatarModule, MenuModule, TooltipModule, ToastModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

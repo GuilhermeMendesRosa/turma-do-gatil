@@ -385,3 +385,25 @@ h1 {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* ===== TOAST TEST BUTTONS ===== */
+.toast-test-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.toast-test-buttons .test-button {
+  min-width: 120px;
+}
+
+@media (max-width: 768px) {
+  .toast-test-buttons {
+    flex-direction: column;
+  }
+  
+  .toast-test-buttons .test-button {
+    width: 100%;
+  }
+}

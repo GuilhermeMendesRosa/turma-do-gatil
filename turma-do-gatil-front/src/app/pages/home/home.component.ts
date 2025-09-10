@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
 import { DashboardSummary } from '../../models/dashboard.model';
 import { CatService } from '../../services/cat.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ButtonModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -16,7 +18,10 @@ export class HomeComponent implements OnInit {
   loading = true;
   error: string | null = null;
 
-  constructor(private catService: CatService) {}
+  constructor(
+    private catService: CatService,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -75,5 +80,22 @@ export class HomeComponent implements OnInit {
 
   refreshData(): void {
     this.loadDashboardData();
+  }
+
+  // Métodos para testar os toasts
+  testSuccessToast(): void {
+    this.notificationService.showSuccess('Teste de toast de sucesso!', 'Este é um exemplo de notificação de sucesso.');
+  }
+
+  testErrorToast(): void {
+    this.notificationService.showError('Teste de toast de erro!', 'Este é um exemplo de notificação de erro.');
+  }
+
+  testWarningToast(): void {
+    this.notificationService.showWarning('Teste de toast de aviso!', 'Este é um exemplo de notificação de aviso.');
+  }
+
+  testInfoToast(): void {
+    this.notificationService.showInfo('Teste de toast de informação!', 'Este é um exemplo de notificação informativa.');
   }
 }
