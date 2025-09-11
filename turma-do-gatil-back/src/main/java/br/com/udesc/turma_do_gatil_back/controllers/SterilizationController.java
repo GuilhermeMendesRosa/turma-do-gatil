@@ -40,8 +40,8 @@ public class SterilizationController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
 
         Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -60,7 +60,7 @@ public class SterilizationController {
     public ResponseEntity<SterilizationDto> getSterilizationById(@PathVariable UUID id) {
         Optional<Sterilization> sterilization = sterilizationService.findById(id);
         return sterilization.map(s -> ResponseEntity.ok(EntityMapper.toSterilizationDto(s)))
-                           .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -115,8 +115,8 @@ public class SterilizationController {
             @RequestParam(defaultValue = "desc") String sortDir) {
 
         Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 

@@ -39,8 +39,8 @@ public class NoteController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
 
         Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -59,7 +59,7 @@ public class NoteController {
     public ResponseEntity<NoteDto> getNoteById(@PathVariable UUID id) {
         Optional<Note> note = noteService.findById(id);
         return note.map(n -> ResponseEntity.ok(EntityMapper.toNoteDto(n)))
-                  .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping

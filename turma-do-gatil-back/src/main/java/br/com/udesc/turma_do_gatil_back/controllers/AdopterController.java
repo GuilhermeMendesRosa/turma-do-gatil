@@ -35,8 +35,8 @@ public class AdopterController {
             @RequestParam(required = false) String cpf) {
 
         Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
@@ -55,21 +55,21 @@ public class AdopterController {
     public ResponseEntity<AdopterDto> getAdopterById(@PathVariable UUID id) {
         Optional<Adopter> adopter = adopterService.findById(id);
         return adopter.map(a -> ResponseEntity.ok(EntityMapper.toAdopterDto(a)))
-                     .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<AdopterDto> getAdopterByCpf(@PathVariable String cpf) {
         Optional<Adopter> adopter = adopterService.findByCpf(cpf);
         return adopter.map(a -> ResponseEntity.ok(EntityMapper.toAdopterDto(a)))
-                     .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/email/{email}")
     public ResponseEntity<AdopterDto> getAdopterByEmail(@PathVariable String email) {
         Optional<Adopter> adopter = adopterService.findByEmail(email);
         return adopter.map(a -> ResponseEntity.ok(EntityMapper.toAdopterDto(a)))
-                     .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping

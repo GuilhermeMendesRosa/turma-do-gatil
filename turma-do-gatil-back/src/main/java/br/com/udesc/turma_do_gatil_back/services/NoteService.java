@@ -22,68 +22,53 @@ public class NoteService {
 
     private final NoteRepository noteRepository;
 
-    /**
-     * Retrieves all notes with pagination support.
-     */
     public Page<Note> findAll(Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
         log.debug("Finding all notes with pageable: {}", pageable);
         return noteRepository.findAll(pageable);
     }
 
-    /**
-     * Finds a note by its ID.
-     */
     public Optional<Note> findById(UUID id) {
         Objects.requireNonNull(id, "ID cannot be null");
         log.debug("Finding note by id: {}", id);
         return noteRepository.findById(id);
     }
 
-    /**
-     * Saves a new note.
-     */
     public Note save(Note note) {
         Objects.requireNonNull(note, "Note cannot be null");
         validateNote(note);
-        
+
         log.info("Saving new note for cat: {}", note.getCatId());
         Note savedNote = noteRepository.save(note);
         log.debug("Note saved with id: {}", savedNote.getId());
         return savedNote;
     }
 
-    /**
-     * Updates an existing note.
-     */
     public Note update(UUID id, Note note) {
         Objects.requireNonNull(id, "ID cannot be null");
         Objects.requireNonNull(note, "Note cannot be null");
         validateNote(note);
 
         log.info("Updating note with id: {}", id);
-        
+
         if (!existsById(id)) {
             throw new NoteNotFoundException(id);
         }
-        
+
         note.setId(id);
         Note updatedNote = noteRepository.save(note);
         log.debug("Note updated successfully: {}", id);
         return updatedNote;
     }
 
-    /**
-     * Deletes a note by its ID.
-     */
     public void deleteById(UUID id) {
         Objects.requireNonNull(id, "ID cannot be null");
         log.info("Deleting note with id: {}", id);
-        
+
         if (!existsById(id)) {
             throw new NoteNotFoundException(id);
         }
-        
+
         noteRepository.deleteById(id);
         log.debug("Note deleted successfully: {}", id);
     }
@@ -99,7 +84,7 @@ public class NoteService {
         Objects.requireNonNull(startDate, "Start date cannot be null");
         Objects.requireNonNull(endDate, "End date cannot be null");
         Objects.requireNonNull(pageable, "Pageable cannot be null");
-        
+
         validateDateRange(startDate, endDate);
         log.debug("Finding notes by date range: {} to {}", startDate, endDate);
         return noteRepository.findByDateBetween(startDate, endDate, pageable);
@@ -113,14 +98,14 @@ public class NoteService {
     }
 
     public Page<Note> findWithFilters(UUID catId, String text, LocalDateTime startDate,
-                                     LocalDateTime endDate, Pageable pageable) {
+                                      LocalDateTime endDate, Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
-        
+
         if (startDate != null && endDate != null) {
             validateDateRange(startDate, endDate);
         }
-        
-        log.debug("Finding notes with filters - catId: {}, text: {}, dateRange: {} to {}", 
+
+        log.debug("Finding notes with filters - catId: {}, text: {}, dateRange: {} to {}",
                 catId, text, startDate, endDate);
         return noteRepository.findWithFilters(catId, text, startDate, endDate, pageable);
     }
@@ -132,11 +117,11 @@ public class NoteService {
     private void validateNote(Note note) {
         Objects.requireNonNull(note.getCatId(), "Cat ID cannot be null");
         Objects.requireNonNull(note.getDate(), "Date cannot be null");
-        
+
         if (!StringUtils.hasText(note.getText())) {
             throw new IllegalArgumentException("Note text cannot be null or empty");
         }
-        
+
         if (note.getText().trim().length() > 5000) {
             throw new IllegalArgumentException("Note text cannot exceed 5000 characters");
         }

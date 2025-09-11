@@ -222,6 +222,4 @@ public class CatService {
                         sterilization.getStatus() == SterilizationStatus.COMPLETED ||
                                 sterilization.getStatus() == SterilizationStatus.SCHEDULED);
     }
-
-
 }

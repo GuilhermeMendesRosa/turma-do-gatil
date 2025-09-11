@@ -1,11 +1,6 @@
 package br.com.udesc.turma_do_gatil_back.controllers;
 
-import br.com.udesc.turma_do_gatil_back.dto.AdopterDto;
-import br.com.udesc.turma_do_gatil_back.dto.CatDto;
-import br.com.udesc.turma_do_gatil_back.dto.CatSterilizationStatusDto;
-import br.com.udesc.turma_do_gatil_back.dto.DashboardSummaryDto;
-import br.com.udesc.turma_do_gatil_back.dto.SterilizationDto;
-import br.com.udesc.turma_do_gatil_back.dto.SterilizationStatsDto;
+import br.com.udesc.turma_do_gatil_back.dto.*;
 import br.com.udesc.turma_do_gatil_back.entities.Adopter;
 import br.com.udesc.turma_do_gatil_back.entities.Cat;
 import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
@@ -17,14 +12,6 @@ import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.AdopterService;
 import br.com.udesc.turma_do_gatil_back.services.CatService;
 import br.com.udesc.turma_do_gatil_back.services.SterilizationService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,8 +27,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/cats")
-@CrossOrigin(originPatterns = "*", maxAge = 3600)
-@Tag(name = "Gatos", description = "Operações relacionadas ao gerenciamento de gatos")
+@CrossOrigin(origins = "*")
 public class CatController {
 
     @Autowired
@@ -64,118 +50,57 @@ public class CatController {
             @RequestParam(required = false) Sex sex,
             @RequestParam(required = false) CatAdoptionStatus adoptionStatus) {
 
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
+        Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Cat> cats = catService.findWithFilters(name, color, sex, adoptionStatus, pageable);
+        Page<CatDto> catDtos = cats.map(EntityMapper::toCatDto);
 
-        Page<Cat> cats;
-        if (name != null || color != null || sex != null || adoptionStatus != null) {
-            cats = catService.findWithFilters(name, color, sex, adoptionStatus, pageable);
-        } else {
-            cats = catService.findAll(pageable);
-        }
-
-        Page<CatDto> catsDto = EntityMapper.toPage(cats, EntityMapper::toCatDto);
-        return ResponseEntity.ok(catsDto);
+        return ResponseEntity.ok(catDtos);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CatDto> getCatById(@PathVariable UUID id) {
         Optional<Cat> cat = catService.findById(id);
-        return cat.map(c -> ResponseEntity.ok(EntityMapper.toCatDto(c)))
-                  .orElse(ResponseEntity.notFound().build());
+        if (cat.isPresent()) {
+            CatDto catDto = EntityMapper.toCatDto(cat.get());
+            return ResponseEntity.ok(catDto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
     public ResponseEntity<CatDto> createCat(@RequestBody CatDto catDto) {
-        try {
-            Cat cat = EntityMapper.toCatEntity(catDto);
-            Cat savedCat = catService.save(cat);
-            return ResponseEntity.status(HttpStatus.CREATED).body(EntityMapper.toCatDto(savedCat));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        Cat cat = EntityMapper.toCatEntity(catDto);
+        Cat savedCat = catService.save(cat);
+        CatDto savedCatDto = EntityMapper.toCatDto(savedCat);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCatDto);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CatDto> updateCat(@PathVariable UUID id, @RequestBody CatDto catDto) {
-        try {
-            Cat cat = EntityMapper.toCatEntity(catDto);
-            Cat updatedCat = catService.update(id, cat);
-            return ResponseEntity.ok(EntityMapper.toCatDto(updatedCat));
-        } catch (RuntimeException e) {
+        if (!catService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
         }
+
+        Cat cat = EntityMapper.toCatEntity(catDto);
+        cat.setId(id);
+        Cat savedCat = catService.save(cat);
+        CatDto savedCatDto = EntityMapper.toCatDto(savedCat);
+        return ResponseEntity.ok(savedCatDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCat(@PathVariable UUID id) {
-        try {
-            catService.deleteById(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
+        if (!catService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
+
+        catService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/adoption-status/{status}")
-    public ResponseEntity<Page<CatDto>> getCatsByAdoptionStatusEnum(
-            @PathVariable CatAdoptionStatus status,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "name") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortBy).descending()
-            : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
-
-        Page<Cat> cats = catService.findByAdoptionStatus(status, pageable);
-        Page<CatDto> catsDto = EntityMapper.toPage(cats, EntityMapper::toCatDto);
-        return ResponseEntity.ok(catsDto);
-    }
-
-    @Operation(
-        summary = "Buscar gatos que precisam de castração",
-        description = "Retorna uma lista de gatos que estão aptos para castração baseado nas seguintes regras:\n\n" +
-                     "**Critérios de Elegibilidade:**\n" +
-                     "- Gato deve ter pelo menos **90 dias de vida**\n" +
-                     "- Gato **não deve ter sido castrado** (status COMPLETED)\n" +
-                     "- Gato **não deve ter castração agendada** (status SCHEDULED)\n" +
-                     "- Apenas gatos **não adotados** são considerados\n\n" +
-                     "**Status Retornados:**\n" +
-                     "- `ELIGIBLE`: Gato com 90-179 dias, apto para castração\n" +
-                     "- `OVERDUE`: Gato com 180+ dias, castração atrasada\n\n" +
-                     "**Informações Retornadas:**\n" +
-                     "- Dados básicos do gato (nome, cor, sexo, foto)\n" +
-                     "- Idade exata em dias\n" +
-                     "- Status de prioridade para castração",
-        tags = {"Gatos"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Lista de gatos que precisam de castração retornada com sucesso",
-            content = @Content(
-                mediaType = "application/json",
-                array = @ArraySchema(schema = @Schema(implementation = CatSterilizationStatusDto.class))
-            )
-        ),
-        @ApiResponse(
-            responseCode = "500",
-            description = "Erro interno do servidor ao processar a solicitação",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(example = "{ \"error\": \"Internal server error\" }")
-            )
-        )
-    })
     @GetMapping("/needing-sterilization")
     public ResponseEntity<List<CatSterilizationStatusDto>> getCatsNeedingSterilization() {
         try {
@@ -186,37 +111,6 @@ public class CatController {
         }
     }
 
-    @Operation(
-        summary = "Obter estatísticas de castração",
-        description = "Retorna as estatísticas resumidas sobre gatos que precisam de castração:\n\n" +
-                     "**Informações Retornadas:**\n" +
-                     "- `eligibleCount`: Quantidade de gatos elegíveis para castração (90-179 dias)\n" +
-                     "- `overdueCount`: Quantidade de gatos com castração atrasada (180+ dias)\n" +
-                     "- `totalNeedingSterilization`: Total de gatos que precisam de castração\n\n" +
-                     "**Critérios Aplicados:**\n" +
-                     "- Apenas gatos não adotados\n" +
-                     "- Gatos com pelo menos 90 dias de vida\n" +
-                     "- Excluídos gatos já castrados ou com castração agendada",
-        tags = {"Gatos"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Estatísticas de castração retornadas com sucesso",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = SterilizationStatsDto.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "500",
-            description = "Erro interno do servidor ao processar a solicitação",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(example = "{ \"error\": \"Internal server error\" }")
-            )
-        )
-    })
     @GetMapping("/sterilization-stats")
     public ResponseEntity<SterilizationStatsDto> getSterilizationStats() {
         try {
@@ -227,56 +121,39 @@ public class CatController {
         }
     }
 
-    @Operation(
-        summary = "Obter resumo do dashboard",
-        description = "Retorna um resumo com:\n\n" +
-                     "**Informações Incluídas:**\n" +
-                     "- `availableCats`: Lista dos primeiros 10 gatos disponíveis para adoção (não adotados)\n" +
-                     "- `pendingSterilizations`: Lista das primeiras 10 castrações pendentes (status SCHEDULED)\n" +
-                     "- `registeredAdopters`: Lista dos primeiros 10 adotantes cadastrados mais recentes\n\n" +
-                     "**Utilidade:**\n" +
-                     "- Ideal para dashboards e telas de resumo\n" +
-                     "- Fornece uma visão geral rápida do sistema\n" +
-                     "- Dados limitados para performance otimizada",
-        tags = {"Gatos"}
-    )
-    @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "Resumo do dashboard retornado com sucesso",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = DashboardSummaryDto.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "500",
-            description = "Erro interno do servidor ao processar a solicitação",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(example = "{ \"error\": \"Internal server error\" }")
-            )
-        )
-    })
     @GetMapping("/dashboard-summary")
     public ResponseEntity<DashboardSummaryDto> getDashboardSummary() {
         try {
-            // Buscar gatos disponíveis para adoção (não adotados)
+            // Buscar os primeiros 10 gatos disponíveis para adoção
             Pageable catsPageable = PageRequest.of(0, 10, Sort.by("name").ascending());
-            Page<Cat> availableCatsPage = catService.findByAdoptionStatus(CatAdoptionStatus.NAO_ADOTADO, catsPageable);
-            List<CatDto> availableCats = EntityMapper.toList(availableCatsPage.getContent(), EntityMapper::toCatDto);
+            Page<Cat> availableCatsPage = catService.findWithFilters(null, null, null, CatAdoptionStatus.NAO_ADOTADO, catsPageable);
+            List<CatDto> availableCats = availableCatsPage.getContent()
+                    .stream()
+                    .map(EntityMapper::toCatDto)
+                    .toList();
 
-            // Buscar castrações pendentes (agendadas)
+            // Buscar as primeiras 10 castrações pendentes
             Pageable sterilizationsPageable = PageRequest.of(0, 10, Sort.by("sterilizationDate").ascending());
             Page<Sterilization> pendingSterilizationsPage = sterilizationService.findByStatus(SterilizationStatus.SCHEDULED, sterilizationsPageable);
-            List<SterilizationDto> pendingSterilizations = EntityMapper.toList(pendingSterilizationsPage.getContent(), EntityMapper::toSterilizationDto);
+            List<SterilizationDto> pendingSterilizations = pendingSterilizationsPage.getContent()
+                    .stream()
+                    .map(EntityMapper::toSterilizationDto)
+                    .toList();
 
-            // Buscar adotantes cadastrados (mais recentes primeiro)
+            // Buscar os 10 adotantes mais recentes
             Pageable adoptersPageable = PageRequest.of(0, 10, Sort.by("registrationDate").descending());
             Page<Adopter> registeredAdoptersPage = adopterService.findAll(adoptersPageable);
-            List<AdopterDto> registeredAdopters = EntityMapper.toList(registeredAdoptersPage.getContent(), EntityMapper::toAdopterDto);
+            List<AdopterDto> registeredAdopters = registeredAdoptersPage.getContent()
+                    .stream()
+                    .map(EntityMapper::toAdopterDto)
+                    .toList();
 
-            DashboardSummaryDto summary = new DashboardSummaryDto(availableCats, pendingSterilizations, registeredAdopters);
+            DashboardSummaryDto summary = new DashboardSummaryDto(
+                    availableCats,
+                    pendingSterilizations,
+                    registeredAdopters
+            );
+
             return ResponseEntity.ok(summary);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
