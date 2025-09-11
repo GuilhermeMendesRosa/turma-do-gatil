@@ -11,12 +11,13 @@ import {
   Page 
 } from '../models/sterilization.model';
 import { NotificationService } from './notification.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SterilizationService {
-  private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,

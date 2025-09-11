@@ -48,6 +48,7 @@ public class CatService {
     public Cat save(Cat cat) {
         Objects.requireNonNull(cat, "Cat cannot be null");
         log.info("Saving new cat: {}", cat.getName());
+        cat.setAdoptionStatus(CatAdoptionStatus.NAO_ADOTADO);
 
         Cat savedCat = catRepository.save(cat);
         log.info("Cat saved successfully with ID: {}", savedCat.getId());

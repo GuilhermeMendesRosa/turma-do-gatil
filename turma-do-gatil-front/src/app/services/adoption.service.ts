@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Adoption, AdoptionRequest, AdoptionFilters, Page } from '../models/adoption.model';
 import { NotificationService } from './notification.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdoptionService {
-  private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api/adoptions';
+  private readonly apiUrl = `${environment.apiUrl}/adoptions`;
 
   constructor(
     private http: HttpClient,

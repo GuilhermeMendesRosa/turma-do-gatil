@@ -5,12 +5,13 @@ import { catchError } from 'rxjs/operators';
 import { Cat, CatRequest, CatFilters, Page } from '../models/cat.model';
 import { DashboardSummary } from '../models/dashboard.model';
 import { NotificationService } from './notification.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CatService {
-  private readonly apiUrl = 'https://turma-do-gatil-production.up.railway.app/api/cats';
+  private readonly apiUrl = `${environment.apiUrl}/cats`;
 
   constructor(
     private http: HttpClient,

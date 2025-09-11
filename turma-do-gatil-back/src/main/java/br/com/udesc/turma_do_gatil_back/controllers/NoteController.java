@@ -4,7 +4,7 @@ import br.com.udesc.turma_do_gatil_back.dto.NoteDto;
 import br.com.udesc.turma_do_gatil_back.entities.Note;
 import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.NoteService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,10 +22,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/notes")
 @CrossOrigin(originPatterns = "*", maxAge = 3600)
+@RequiredArgsConstructor
 public class NoteController {
 
-    @Autowired
-    private NoteService noteService;
+    private final NoteService noteService;
 
     @GetMapping
     public ResponseEntity<Page<NoteDto>> getAllNotes(
@@ -98,7 +98,6 @@ public class NoteController {
 
     @GetMapping("/cat/{catId}")
     public ResponseEntity<List<NoteDto>> getNotesByCatId(@PathVariable UUID catId) {
-        // Como o serviço retorna Page, vamos usar paginação com valores padrão
         Pageable pageable = PageRequest.of(0, 1000); // Página grande para pegar todos
         Page<Note> notesPage = noteService.findByCatId(catId, pageable);
         List<NoteDto> notesDto = EntityMapper.toList(notesPage.getContent(), EntityMapper::toNoteDto);

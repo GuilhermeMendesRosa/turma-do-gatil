@@ -12,7 +12,7 @@ import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.AdopterService;
 import br.com.udesc.turma_do_gatil_back.services.CatService;
 import br.com.udesc.turma_do_gatil_back.services.SterilizationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,16 +28,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/cats")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class CatController {
 
-    @Autowired
-    private CatService catService;
-
-    @Autowired
-    private SterilizationService sterilizationService;
-
-    @Autowired
-    private AdopterService adopterService;
+    private final CatService catService;
+    private final SterilizationService sterilizationService;
+    private final AdopterService adopterService;
 
     @GetMapping
     public ResponseEntity<Page<CatDto>> getAllCats(
@@ -132,7 +128,6 @@ public class CatController {
                     .map(EntityMapper::toCatDto)
                     .toList();
 
-            // Buscar as primeiras 10 castrações pendentes
             Pageable sterilizationsPageable = PageRequest.of(0, 10, Sort.by("sterilizationDate").ascending());
             Page<Sterilization> pendingSterilizationsPage = sterilizationService.findByStatus(SterilizationStatus.SCHEDULED, sterilizationsPageable);
             List<SterilizationDto> pendingSterilizations = pendingSterilizationsPage.getContent()
@@ -140,7 +135,6 @@ public class CatController {
                     .map(EntityMapper::toSterilizationDto)
                     .toList();
 
-            // Buscar os 10 adotantes mais recentes
             Pageable adoptersPageable = PageRequest.of(0, 10, Sort.by("registrationDate").descending());
             Page<Adopter> registeredAdoptersPage = adopterService.findAll(adoptersPageable);
             List<AdopterDto> registeredAdopters = registeredAdoptersPage.getContent()

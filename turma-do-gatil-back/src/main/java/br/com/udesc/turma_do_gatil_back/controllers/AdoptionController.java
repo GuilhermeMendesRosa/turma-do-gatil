@@ -5,7 +5,7 @@ import br.com.udesc.turma_do_gatil_back.entities.Adoption;
 import br.com.udesc.turma_do_gatil_back.enums.AdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.AdoptionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +23,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/adoptions")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class AdoptionController {
 
-    @Autowired
-    private AdoptionService adoptionService;
+    private final AdoptionService adoptionService;
 
     @GetMapping
     public ResponseEntity<Page<AdoptionDto>> getAllAdoptions(
@@ -100,7 +100,6 @@ public class AdoptionController {
 
     @GetMapping("/cat/{catId}")
     public ResponseEntity<List<AdoptionDto>> getAdoptionsByCatId(@PathVariable UUID catId) {
-        // Como o serviço retorna Page, vamos usar paginação com valores padrão
         Pageable pageable = PageRequest.of(0, 1000); // Página grande para pegar todos
         Page<Adoption> adoptionsPage = adoptionService.findByCatId(catId, pageable);
         List<AdoptionDto> adoptionsDto = EntityMapper.toList(adoptionsPage.getContent(), EntityMapper::toAdoptionDto);
@@ -109,7 +108,6 @@ public class AdoptionController {
 
     @GetMapping("/adopter/{adopterId}")
     public ResponseEntity<List<AdoptionDto>> getAdoptionsByAdopterId(@PathVariable UUID adopterId) {
-        // Como o serviço retorna Page, vamos usar paginação com valores padrão
         Pageable pageable = PageRequest.of(0, 1000); // Página grande para pegar todos
         Page<Adoption> adoptionsPage = adoptionService.findByAdopterId(adopterId, pageable);
         List<AdoptionDto> adoptionsDto = EntityMapper.toList(adoptionsPage.getContent(), EntityMapper::toAdoptionDto);

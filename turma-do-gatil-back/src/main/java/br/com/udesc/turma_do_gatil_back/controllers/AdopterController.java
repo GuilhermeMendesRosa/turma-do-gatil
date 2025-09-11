@@ -4,7 +4,7 @@ import br.com.udesc.turma_do_gatil_back.dto.AdopterDto;
 import br.com.udesc.turma_do_gatil_back.entities.Adopter;
 import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.AdopterService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +19,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/adopters")
 @CrossOrigin(originPatterns = "*", maxAge = 3600)
+@RequiredArgsConstructor
 public class AdopterController {
 
-    @Autowired
-    private AdopterService adopterService;
+    private final AdopterService adopterService;
 
     @GetMapping
     public ResponseEntity<Page<AdopterDto>> getAllAdopters(

@@ -1,12 +1,18 @@
 package br.com.udesc.turma_do_gatil_back.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "notes")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Note {
 
     @Id
@@ -25,54 +31,4 @@ public class Note {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat_id", insertable = false, updatable = false)
     private Cat cat;
-
-    // Constructors
-    public Note() {}
-
-    public Note(UUID catId, LocalDateTime date, String text) {
-        this.catId = catId;
-        this.date = date;
-        this.text = text;
-    }
-
-    // Getters and Setters
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getCatId() {
-        return catId;
-    }
-
-    public void setCatId(UUID catId) {
-        this.catId = catId;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Cat getCat() {
-        return cat;
-    }
-
-    public void setCat(Cat cat) {
-        this.cat = cat;
-    }
 }

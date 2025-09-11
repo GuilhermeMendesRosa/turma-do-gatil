@@ -5,7 +5,7 @@ import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
 import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
 import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
 import br.com.udesc.turma_do_gatil_back.services.SterilizationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,10 +23,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/sterilizations")
 @CrossOrigin(originPatterns = "*", maxAge = 3600)
+@RequiredArgsConstructor
 public class SterilizationController {
 
-    @Autowired
-    private SterilizationService sterilizationService;
+    private final SterilizationService sterilizationService;
 
     @GetMapping
     public ResponseEntity<Page<SterilizationDto>> getAllSterilizations(
@@ -99,7 +99,6 @@ public class SterilizationController {
 
     @GetMapping("/cat/{catId}")
     public ResponseEntity<List<SterilizationDto>> getSterilizationsByCatId(@PathVariable UUID catId) {
-        // Como o serviço retorna Page, vamos usar paginação com valores padrão
         Pageable pageable = PageRequest.of(0, 1000); // Página grande para pegar todos
         Page<Sterilization> sterilizationsPage = sterilizationService.findByCatId(catId, pageable);
         List<SterilizationDto> sterilizationsDto = EntityMapper.toList(sterilizationsPage.getContent(), EntityMapper::toSterilizationDto);
