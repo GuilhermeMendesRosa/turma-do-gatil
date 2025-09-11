@@ -74,11 +74,8 @@ public class CatService {
     public Page<Cat> findWithFilters(String name, Color color, Sex sex, CatAdoptionStatus adoptionStatus, Pageable pageable) {
         // Garantir que strings vazias sejam tratadas como null
         String safeName = (name != null && name.trim().isEmpty()) ? null : name;
-        String colorStr = color != null ? color.name() : null;
-        String sexStr = sex != null ? sex.name() : null;
-        String adoptionStatusStr = adoptionStatus != null ? adoptionStatus.name() : null;
         
-        return catRepository.findWithFiltersJPQL(safeName, colorStr, sexStr, adoptionStatusStr, pageable);
+        return catRepository.findWithFilters(safeName, color, sex, adoptionStatus, pageable);
     }
 
     public List<CatSterilizationStatusDto> findCatsNeedingSterilization() {
