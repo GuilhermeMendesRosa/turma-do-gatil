@@ -1,7 +1,12 @@
 package br.com.udesc.turma_do_gatil_back.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@NoArgsConstructor
 @Schema(description = "DTO que representa as estatísticas de castração dos gatos")
 public class SterilizationStatsDto {
 
@@ -14,17 +19,10 @@ public class SterilizationStatsDto {
     @Schema(description = "Total de gatos que precisam de castração", example = "23")
     private Long totalNeedingSterilization;
 
-    public SterilizationStatsDto() {}
-
     public SterilizationStatsDto(Long eligibleCount, Long overdueCount) {
         this.eligibleCount = eligibleCount;
         this.overdueCount = overdueCount;
         this.totalNeedingSterilization = eligibleCount + overdueCount;
-    }
-
-    // Getters and Setters
-    public Long getEligibleCount() {
-        return eligibleCount;
     }
 
     public void setEligibleCount(Long eligibleCount) {
@@ -32,17 +30,9 @@ public class SterilizationStatsDto {
         updateTotal();
     }
 
-    public Long getOverdueCount() {
-        return overdueCount;
-    }
-
     public void setOverdueCount(Long overdueCount) {
         this.overdueCount = overdueCount;
         updateTotal();
-    }
-
-    public Long getTotalNeedingSterilization() {
-        return totalNeedingSterilization;
     }
 
     public void setTotalNeedingSterilization(Long totalNeedingSterilization) {

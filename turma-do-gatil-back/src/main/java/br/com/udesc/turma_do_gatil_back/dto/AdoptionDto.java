@@ -2,10 +2,16 @@ package br.com.udesc.turma_do_gatil_back.dto;
 
 import br.com.udesc.turma_do_gatil_back.enums.AdoptionStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "DTO para transferência de dados de adoção")
 public class AdoptionDto {
 
@@ -31,71 +37,12 @@ public class AdoptionDto {
     @Schema(description = "Dados do adotante (preenchido automaticamente)", accessMode = Schema.AccessMode.READ_ONLY)
     private AdopterDto adopter;
 
-    // Constructors
-    public AdoptionDto() {}
-
+    // Construtor customizado para uso específico
     public AdoptionDto(UUID id, UUID catId, UUID adopterId, LocalDateTime adoptionDate, AdoptionStatus status) {
         this.id = id;
         this.catId = catId;
         this.adopterId = adopterId;
         this.adoptionDate = adoptionDate;
         this.status = status;
-    }
-
-    // Getters and Setters
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getCatId() {
-        return catId;
-    }
-
-    public void setCatId(UUID catId) {
-        this.catId = catId;
-    }
-
-    public UUID getAdopterId() {
-        return adopterId;
-    }
-
-    public void setAdopterId(UUID adopterId) {
-        this.adopterId = adopterId;
-    }
-
-    public LocalDateTime getAdoptionDate() {
-        return adoptionDate;
-    }
-
-    public void setAdoptionDate(LocalDateTime adoptionDate) {
-        this.adoptionDate = adoptionDate;
-    }
-
-    public AdoptionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AdoptionStatus status) {
-        this.status = status;
-    }
-
-    public CatDto getCat() {
-        return cat;
-    }
-
-    public void setCat(CatDto cat) {
-        this.cat = cat;
-    }
-
-    public AdopterDto getAdopter() {
-        return adopter;
-    }
-
-    public void setAdopter(AdopterDto adopter) {
-        this.adopter = adopter;
     }
 }
