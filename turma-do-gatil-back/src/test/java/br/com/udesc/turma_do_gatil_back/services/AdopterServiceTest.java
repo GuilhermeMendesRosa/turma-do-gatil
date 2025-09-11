@@ -52,16 +52,16 @@ class AdopterServiceTest {
     }
 
     private Adopter createTestAdopter() {
-        return new Adopter(
-            "John",
-            "Doe",
-            LocalDateTime.of(1990, 1, 1, 0, 0),
-            "12345678901",
-            "11999887766",
-            "john.doe@example.com",
-            "123 Main St",
-            LocalDateTime.now()
-        );
+        Adopter adopter = new Adopter();
+        adopter.setFirstName("John");
+        adopter.setLastName("Doe");
+        adopter.setBirthDate(LocalDateTime.of(1990, 1, 1, 0, 0));
+        adopter.setCpf("12345678901");
+        adopter.setPhone("11999887766");
+        adopter.setEmail("john.doe@example.com");
+        adopter.setAddress("123 Main St");
+        adopter.setRegistrationDate(LocalDateTime.now());
+        return adopter;
     }
 
     @Nested
