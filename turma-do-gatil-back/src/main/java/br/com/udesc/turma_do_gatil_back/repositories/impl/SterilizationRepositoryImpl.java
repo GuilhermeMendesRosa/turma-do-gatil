@@ -106,8 +106,8 @@ public class SterilizationRepositoryImpl implements SterilizationRepositoryCusto
     }
 
     @Override
-    public Page<Sterilization> findWithFilters(UUID catId, SterilizationStatus status, 
-                                              LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+    public Page<Sterilization> findWithFilters(UUID catId, SterilizationStatus status,
+                                               LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         if (catId != null) {

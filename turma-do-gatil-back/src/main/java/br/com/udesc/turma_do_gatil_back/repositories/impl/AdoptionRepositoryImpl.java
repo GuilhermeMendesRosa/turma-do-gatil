@@ -26,8 +26,8 @@ public class AdoptionRepositoryImpl implements AdoptionRepositoryCustom {
     private final QAdoption qAdoption = QAdoption.adoption;
 
     @Override
-    public Page<Adoption> findWithFilters(AdoptionStatus status, UUID catId, UUID adopterId, 
-                                         LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+    public Page<Adoption> findWithFilters(AdoptionStatus status, UUID catId, UUID adopterId,
+                                          LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         if (status != null) {

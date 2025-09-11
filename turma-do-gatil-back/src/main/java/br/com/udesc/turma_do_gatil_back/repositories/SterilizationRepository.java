@@ -12,7 +12,6 @@ import java.util.UUID;
 @Repository
 public interface SterilizationRepository extends JpaRepository<Sterilization, UUID>, SterilizationRepositoryCustom {
     
-    // Sobrescrever métodos padrão para usar QueryDSL
     @Override
     default Page<Sterilization> findAll(Pageable pageable) {
         return findAllWithCat(pageable);

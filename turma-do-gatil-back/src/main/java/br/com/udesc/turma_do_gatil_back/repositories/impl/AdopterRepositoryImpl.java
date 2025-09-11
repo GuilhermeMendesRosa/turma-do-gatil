@@ -30,10 +30,10 @@ public class AdopterRepositoryImpl implements AdopterRepositoryCustom {
 
         if (StringUtils.hasText(name)) {
             predicate.and(
-                qAdopter.firstName.containsIgnoreCase(name)
-                .or(qAdopter.lastName.containsIgnoreCase(name))
-                .or(Expressions.stringTemplate("concat({0}, ' ', {1})", 
-                    qAdopter.firstName, qAdopter.lastName).containsIgnoreCase(name))
+                    qAdopter.firstName.containsIgnoreCase(name)
+                            .or(qAdopter.lastName.containsIgnoreCase(name))
+                            .or(Expressions.stringTemplate("concat({0}, ' ', {1})",
+                                    qAdopter.firstName, qAdopter.lastName).containsIgnoreCase(name))
             );
         }
 
