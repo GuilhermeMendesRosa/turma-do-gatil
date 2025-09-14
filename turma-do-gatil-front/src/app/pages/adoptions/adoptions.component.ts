@@ -15,6 +15,13 @@ import { Adoption, AdoptionStatus, Page, AdoptionRequest } from '../../models/ad
 import { Adopter } from '../../models/adopter.model';
 import { Cat } from '../../models/cat.model';
 
+// Interface estendida para exibição na tabela
+interface AdoptionDisplay extends Adoption {
+  catPhoto?: string;
+  catName?: string;
+  adopterName?: string;
+}
+
 // View Models and Config
 import { 
   AdoptionComponentState, 
@@ -73,7 +80,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   // ==================== PROPRIEDADES PÚBLICAS ====================
   
   /** Lista de adoções carregadas */
-  adoptions: Adoption[] = [];
+  adoptions: AdoptionDisplay[] = [];
   
   /** Total de registros para paginação */
   totalRecords: number = 0;
@@ -251,7 +258,12 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (response: Page<Adoption>) => {
-          this.adoptions = response.content;
+          this.adoptions = response.content.map(adoption => ({
+            ...adoption,
+            catPhoto: undefined,
+            catName: undefined,
+            adopterName: undefined
+          }));
           this.totalRecords = response.totalElements;
           this.loadRelatedEntities();
           this.cdr.markForCheck();
@@ -305,6 +317,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
               this.adoptersMap.set(missingAdopterIds[index], adopter);
             }
           });
+          this.enrichAdoptionData();
           this.checkRelatedDataLoadingComplete();
           this.cdr.markForCheck();
         }
@@ -337,6 +350,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
               this.catsMap.set(missingCatIds[index], cat);
             }
           });
+          this.enrichAdoptionData();
           this.checkRelatedDataLoadingComplete();
           this.cdr.markForCheck();
         }
@@ -481,6 +495,13 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Exibe a foto do gato para o template
+   */
+  displayCatPhoto(catId: string | undefined): string {
+    return this.getCatPhoto(catId);
+  }
+
+  /**
    * TrackBy function para opções de status
    */
   trackByStatusValue(index: number, option: any): any {
@@ -514,6 +535,15 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     if (!catId) return '-';
     return this.adoptionUtils.getCatName(catId, 
       Object.fromEntries(this.catsMap));
+  }
+
+  /**
+   * Obtém a foto do gato pelo ID
+   */
+  private getCatPhoto(catId: string | undefined): string {
+    if (!catId) return '/assets/images/default-cat.svg';
+    const cat = this.catsMap.get(catId);
+    return cat?.photoUrl || '/assets/images/default-cat.svg';
   }
 
   // ==================== MÉTODOS LEGADOS (compatibilidade) ====================
@@ -599,6 +629,18 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Enriquece os dados das adoções com informações dos gatos e adotantes
+   */
+  private enrichAdoptionData(): void {
+    this.adoptions = this.adoptions.map(adoption => ({
+      ...adoption,
+      catPhoto: this.getCatPhoto(adoption.catId),
+      catName: this.getCatName(adoption.catId),
+      adopterName: this.getAdopterName(adoption.adopterId)
+    }));
+  }
+
+  /**
    * Verifica se o carregamento de dados relacionados foi completado
    */
   private checkRelatedDataLoadingComplete(): void {
@@ -611,6 +653,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     );
 
     if (allAdoptersLoaded && allCatsLoaded) {
+      this.enrichAdoptionData();
       this.loadingRelatedData = false;
       this.cdr.markForCheck();
     }

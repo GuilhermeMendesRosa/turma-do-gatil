@@ -60,6 +60,15 @@ export function createTableColumns(
 ): TableColumn[] {
   return [
     {
+      key: 'catPhoto',
+      header: 'Foto',
+      type: 'image',
+      imageProperty: 'catPhoto',
+      imageAlt: 'catName',
+      imagePlaceholder: 'pi pi-image',
+      width: '80px'
+    },
+    {
       key: 'catId',
       header: 'Gato',
       type: 'text',
