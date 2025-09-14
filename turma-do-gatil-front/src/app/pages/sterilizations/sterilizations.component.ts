@@ -21,7 +21,9 @@ import {
   StatCardData,
   DataTableComponent,
   TableColumn,
-  TableEmptyState
+  TableEmptyState,
+  ConfirmationModalComponent,
+  ConfirmationConfig
 } from '../../shared/components';
 
 /**
@@ -84,7 +86,8 @@ const TABLE_CONFIG = {
     StatsGridComponent,
     ContentCardComponent,
     PageHeaderComponent,
-    DataTableComponent
+    DataTableComponent,
+    ConfirmationModalComponent
   ],
   templateUrl: './sterilizations.component.html',
   styleUrls: ['./sterilizations.component.css']
@@ -109,6 +112,14 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     selectedCatForSchedule: null as CatSterilizationStatusDto | null,
     selectedSterilizationForEdit: null as SterilizationDto | null
   };
+
+  // ===== CONFIRMATION MODAL STATE =====
+  confirmationModalVisible = false;
+  confirmationConfig: ConfirmationConfig = {
+    title: 'Confirmar',
+    message: 'Tem certeza que deseja continuar?'
+  };
+  private pendingConfirmationAction: (() => void) | null = null;
   
   // ===== PAGINATION STATE =====
   readonly paginationState = {
@@ -644,46 +655,94 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     this.modalState.scheduleModalVisible = true;
   }
 
+  // ===== CONFIRMATION MODAL METHODS =====
+
+  /**
+   * Shows confirmation modal with custom configuration
+   */
+  private showConfirmation(config: ConfirmationConfig, onConfirm: () => void): void {
+    this.confirmationConfig = config;
+    this.pendingConfirmationAction = onConfirm;
+    this.confirmationModalVisible = true;
+  }
+
+  /**
+   * Handles confirmation modal confirmation
+   */
+  onConfirmationConfirmed(): void {
+    if (this.pendingConfirmationAction) {
+      this.pendingConfirmationAction();
+      this.pendingConfirmationAction = null;
+    }
+  }
+
+  /**
+   * Handles confirmation modal cancellation
+   */
+  onConfirmationCancelled(): void {
+    this.pendingConfirmationAction = null;
+  }
+
   // ===== STERILIZATION OPERATIONS =====
 
   /**
    * Marks a sterilization as completed
    */
   private completeSterilization(sterilization: SterilizationDto): void {
-    const confirmMessage = `Confirma que a castração de ${sterilization.cat} foi realizada?`;
-    
-    if (!confirm(confirmMessage)) {
-      return;
-    }
-
-    const updatedSterilization: SterilizationRequest = {
-      catId: sterilization.catId,
-      sterilizationDate: sterilization.sterilizationDate,
-      status: SterilizationStatus.COMPLETED,
-      notes: sterilization.notes
+    const config: ConfirmationConfig = {
+      title: 'Confirmar Castração Realizada',
+      message: `Confirma que a castração de ${sterilization.cat} foi realizada?`,
+      confirmLabel: 'Sim, foi realizada',
+      cancelLabel: 'Cancelar',
+      icon: 'pi pi-check-circle',
+      severity: 'success',
+      details: [
+        `Data agendada: ${new Date(sterilization.sterilizationDate).toLocaleString('pt-BR')}`,
+        'Esta ação irá marcar a castração como concluída',
+        'O gato será removido da lista de castrações agendadas'
+      ]
     };
 
-    this.updateSterilization(sterilization.id!, updatedSterilization, 'Castração marcada como realizada');
+    this.showConfirmation(config, () => {
+      const updatedSterilization: SterilizationRequest = {
+        catId: sterilization.catId,
+        sterilizationDate: sterilization.sterilizationDate,
+        status: SterilizationStatus.COMPLETED,
+        notes: sterilization.notes
+      };
+
+      this.updateSterilization(sterilization.id!, updatedSterilization, 'Castração marcada como realizada');
+    });
   }
 
   /**
    * Cancels a sterilization
    */
   private cancelSterilization(sterilization: SterilizationDto): void {
-    const confirmMessage = `Confirma o cancelamento da castração de ${sterilization.cat}?`;
-    
-    if (!confirm(confirmMessage)) {
-      return;
-    }
-
-    const updatedSterilization: SterilizationRequest = {
-      catId: sterilization.catId,
-      sterilizationDate: sterilization.sterilizationDate,
-      status: SterilizationStatus.CANCELED,
-      notes: sterilization.notes
+    const config: ConfirmationConfig = {
+      title: 'Cancelar Castração',
+      message: `Confirma o cancelamento da castração de ${sterilization.cat}?`,
+      confirmLabel: 'Sim, cancelar',
+      cancelLabel: 'Não cancelar',
+      icon: 'pi pi-times-circle',
+      severity: 'danger',
+      details: [
+        `Data agendada: ${new Date(sterilization.sterilizationDate).toLocaleString('pt-BR')}`,
+        'Esta ação irá cancelar definitivamente a castração',
+        'O gato voltará para a lista de gatos que precisam de castração'
+      ]
     };
 
-    this.updateSterilization(sterilization.id!, updatedSterilization, 'Castração cancelada');
+    this.showConfirmation(config, () => {
+      const updatedSterilization: SterilizationRequest = {
+        catId: sterilization.catId,
+        sterilizationDate: sterilization.sterilizationDate,
+        status: SterilizationStatus.CANCELED,
+        notes: sterilization.notes
+      };
+
+      this.updateSterilization(sterilization.id!, updatedSterilization, 'Castração cancelada');
+    });
   }
 
   /**
@@ -814,6 +873,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   get selectedSterilizationForEdit(): SterilizationDto | null {
     return this.modalState.selectedSterilizationForEdit;
   }
+
+
 
   get catsEmptyState(): TableEmptyState {
     return this.emptyStates.cats;

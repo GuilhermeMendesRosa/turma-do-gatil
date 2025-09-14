@@ -125,3 +125,11 @@
   (sterilizationUpdated)="onSterilizationUpdated()"
   (visibleChange)="onScheduleModalHide()">
 </app-sterilization-schedule-modal>
+
+<!-- Confirmation Modal -->
+<app-confirmation-modal
+  [(visible)]="confirmationModalVisible"
+  [config]="confirmationConfig"
+  (confirmed)="onConfirmationConfirmed()"
+  (cancelled)="onConfirmationCancelled()">
+</app-confirmation-modal>

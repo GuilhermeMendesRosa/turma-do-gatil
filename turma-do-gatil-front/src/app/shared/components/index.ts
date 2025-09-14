@@ -24,3 +24,5 @@ export { ModalButtonComponent } from './modal-button.component';
 export type { ModalButtonConfig, ModalButtonSeverity } from './modal-button.component';
 export { GenericButtonComponent } from './generic-button.component';
 export type { GenericButtonConfig, GenericButtonSeverity, GenericButtonSize } from './generic-button.component';
+export { ConfirmationModalComponent } from './confirmation-modal.component';
+export type { ConfirmationConfig } from './confirmation-modal.component';
