@@ -4,7 +4,8 @@
 
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { Cat, CatAdoptionStatus } from '../../../models/cat.model';
+import { Cat, CatAdoptionStatus, CatSummary } from '../../../models/cat.model';
+import { CatService } from '../../../services/cat.service';
 import { StatsConfig } from '../models/cats-view.interface';
 import { StatCardData } from '../../../shared/components';
 
@@ -13,8 +14,49 @@ import { StatCardData } from '../../../shared/components';
 })
 export class CatStatsService {
 
+  constructor(private catService: CatService) {}
+
+  /**
+   * Obtém as estatísticas dos gatos diretamente do backend
+   */
+  getCatStats(): Observable<StatCardData[]> {
+    return this.catService.getCatSummary().pipe(
+      map(summary => this.convertCatSummaryToStatCardData(summary))
+    );
+  }
+
+  /**
+   * Converte CatSummary para StatCardData[]
+   */
+  private convertCatSummaryToStatCardData(summary: CatSummary): StatCardData[] {
+    return [
+      {
+        number: summary.availableCatsCount + summary.inProcessCatsCount,
+        label: 'Disponíveis',
+        description: 'Gatos prontos para adoção',
+        icon: 'pi-heart',
+        type: 'success'
+      },
+      {
+        number: summary.adoptedCatsCount,
+        label: 'Adotados',
+        description: 'Gatos que encontraram um lar',
+        icon: 'pi-home',
+        type: 'warning'
+      },
+      {
+        number: summary.totalCatsCount,
+        label: 'Total',
+        description: 'Total de gatos cadastrados',
+        icon: 'pi-tag',
+        type: 'primary'
+      }
+    ];
+  }
+
   /**
    * Calcula as estatísticas baseado na lista de gatos e filtros atuais
+   * @deprecated Use getCatStats() instead
    */
   calculateStats(
     cats: Cat[],

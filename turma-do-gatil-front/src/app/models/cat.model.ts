@@ -66,3 +66,10 @@ export interface CatFilters {
   sortBy?: string;
   sortDir?: 'asc' | 'desc';
 }
+
+export interface CatSummary {
+  availableCatsCount: number;
+  adoptedCatsCount: number;
+  inProcessCatsCount: number;
+  totalCatsCount: number;
+}

@@ -137,6 +137,11 @@ public class CatService {
         return catRepository.countByAdoptionStatus(adoptionStatus);
     }
 
+    public long countAll() {
+        log.debug("Counting all cats");
+        return catRepository.count();
+    }
+
     public List<CatSterilizationStatusDto> findCatsNeedingSterilization() {
         log.debug("Finding cats needing sterilization");
 

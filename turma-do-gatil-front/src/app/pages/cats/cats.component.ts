@@ -97,6 +97,7 @@ export class CatsComponent implements OnInit, OnDestroy {
   cats: Cat[] = [];
   catsDisplay: CatDisplayInfo[] = [];
   totalRecords = 0;
+  statsData: StatCardData[] = [];
   //#endregion
 
   //#region Public Properties - State Management
@@ -129,17 +130,7 @@ export class CatsComponent implements OnInit, OnDestroy {
   // Expose Math for template usage
   readonly Math = Math;
 
-  /**
-   * Dados das estatísticas para o componente de stats
-   */
-  get statsData(): StatCardData[] {
-    const stats = this.catStatsService.calculateStats(
-      this.cats,
-      this.totalRecords,
-      this.getCurrentFilters().adoptionStatus
-    );
-    return this.catStatsService.convertToStatCardData(stats);
-  }
+
 
   /**
    * Ações para o modal de confirmação de exclusão
@@ -201,6 +192,7 @@ export class CatsComponent implements OnInit, OnDestroy {
   private initializeComponent(): void {
     this.setupFilterSubscription();
     this.loadCats();
+    this.loadStats();
   }
 
   /**
@@ -248,6 +240,18 @@ export class CatsComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Carrega as estatísticas dos gatos
+   */
+  loadStats(): void {
+    this.catStatsService.getCatStats()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (stats) => this.statsData = stats,
+        error: (error) => this.handleStatsError(error)
+      });
+  }
+
+  /**
    * Manipula o sucesso do carregamento dos gatos
    */
   private handleCatsLoaded(response: Page<Cat>): void {
@@ -271,6 +275,20 @@ export class CatsComponent implements OnInit, OnDestroy {
       summary: 'Erro',
       detail: 'Ocorreu um erro ao carregar os gatos. Tente novamente.'
     });
+  }
+
+  /**
+   * Manipula erros no carregamento das estatísticas
+   */
+  private handleStatsError(error: any): void {
+    console.error('Erro ao carregar estatísticas:', error);
+    // Não mostra erro para o usuário pois as estatísticas são secundárias
+    // Define valores padrão
+    this.statsData = [
+      { number: 0, label: 'Disponíveis', description: 'Gatos prontos para adoção', icon: 'pi-heart', type: 'success' },
+      { number: 0, label: 'Adotados', description: 'Gatos que encontraram um lar', icon: 'pi-home', type: 'warning' },
+      { number: 0, label: 'Total', description: 'Total de gatos cadastrados', icon: 'pi-tag', type: 'primary' }
+    ];
   }
 
   /**
@@ -418,6 +436,7 @@ export class CatsComponent implements OnInit, OnDestroy {
     });
     this.closeAllDialogs();
     this.loadCats();
+    this.loadStats(); // Recarrega as estatísticas
   }
 
   /**
@@ -453,6 +472,7 @@ export class CatsComponent implements OnInit, OnDestroy {
   onCatCreated(): void {
     this.dialogsState.catCreateEdit = { visible: false, cat: null };
     this.loadCats();
+    this.loadStats(); // Recarrega as estatísticas
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -466,6 +486,7 @@ export class CatsComponent implements OnInit, OnDestroy {
   onCatUpdated(): void {
     this.dialogsState.catCreateEdit = { visible: false, cat: null };
     this.loadCats();
+    this.loadStats(); // Recarrega as estatísticas
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',
@@ -479,6 +500,7 @@ export class CatsComponent implements OnInit, OnDestroy {
   adoptCat(cat: Cat): void {
     this.dialogsState.catDetails = { visible: false, cat: null };
     this.loadCats();
+    this.loadStats(); // Recarrega as estatísticas
     this.messageService.add({
       severity: 'success',
       summary: 'Sucesso',

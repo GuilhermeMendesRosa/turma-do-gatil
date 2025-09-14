@@ -140,4 +140,32 @@ public class CatController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/cat-summary")
+    public ResponseEntity<CatSummaryDto> getCatSummary() {
+        try {
+            // Contar gatos disponíveis para adoção
+            Long availableCatsCount = catService.countByAdoptionStatus(CatAdoptionStatus.NAO_ADOTADO);
+            
+            // Contar gatos adotados
+            Long adoptedCatsCount = catService.countByAdoptionStatus(CatAdoptionStatus.ADOTADO);
+            
+            // Contar gatos em processo de adoção
+            Long inProcessCatsCount = catService.countByAdoptionStatus(CatAdoptionStatus.EM_PROCESSO);
+            
+            // Contar total de gatos
+            Long totalCatsCount = catService.countAll();
+
+            CatSummaryDto summary = new CatSummaryDto(
+                    availableCatsCount,
+                    adoptedCatsCount,
+                    inProcessCatsCount,
+                    totalCatsCount
+            );
+
+            return ResponseEntity.ok(summary);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

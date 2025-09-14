@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Cat, CatRequest, CatFilters, Page } from '../models/cat.model';
+import { Cat, CatRequest, CatFilters, Page, CatSummary } from '../models/cat.model';
 import { DashboardSummary } from '../models/dashboard.model';
 import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
@@ -93,6 +93,15 @@ export class CatService {
 
   getDashboardSummary(): Observable<DashboardSummary> {
     return this.http.get<DashboardSummary>(`${this.apiUrl}/dashboard-summary`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
+  }
+
+  getCatSummary(): Observable<CatSummary> {
+    return this.http.get<CatSummary>(`${this.apiUrl}/cat-summary`).pipe(
       catchError(error => {
         this.notificationService.showHttpError(error);
         throw error;
