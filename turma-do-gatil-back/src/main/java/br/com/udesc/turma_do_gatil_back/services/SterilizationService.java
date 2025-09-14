@@ -118,12 +118,7 @@ public class SterilizationService {
 
     private void validateSterilization(Sterilization sterilization) {
         Objects.requireNonNull(sterilization.getCatId(), "Cat ID cannot be null");
-        Objects.requireNonNull(sterilization.getSterilizationDate(), "Sterilization date cannot be null");
         Objects.requireNonNull(sterilization.getStatus(), "Status cannot be null");
-
-        if (sterilization.getSterilizationDate().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Sterilization date cannot be in the future");
-        }
 
         if (sterilization.getNotes() != null && sterilization.getNotes().trim().length() > 1000) {
             throw new IllegalArgumentException("Notes cannot exceed 1000 characters");

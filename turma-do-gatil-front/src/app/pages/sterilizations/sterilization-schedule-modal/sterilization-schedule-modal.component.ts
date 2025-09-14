@@ -145,8 +145,11 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(9, 0, 0, 0);
     
+    // Converter para formato datetime-local (YYYY-MM-DDTHH:mm)
+    const defaultDateTime = tomorrow.toISOString().slice(0, 16);
+    
     this.sterilizationForm = this.fb.group({
-      sterilizationDate: [tomorrow, Validators.required],
+      sterilizationDate: [defaultDateTime, Validators.required],
       notes: ['']
     });
 
@@ -158,11 +161,12 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
     if (this.sterilization) {
       this.isEditMode = true;
       
-      // Converter a data string para objeto Date
+      // Converter a data string para o formato datetime-local (YYYY-MM-DDTHH:mm)
       const sterilizationDate = new Date(this.sterilization.sterilizationDate);
+      const formattedDate = sterilizationDate.toISOString().slice(0, 16);
       
       this.sterilizationForm.patchValue({
-        sterilizationDate: sterilizationDate,
+        sterilizationDate: formattedDate,
         notes: this.sterilization.notes || ''
       });
     } else {
@@ -184,8 +188,11 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(9, 0, 0, 0);
     
+    // Converter para formato datetime-local (YYYY-MM-DDTHH:mm)
+    const defaultDateTime = tomorrow.toISOString().slice(0, 16);
+    
     this.sterilizationForm.patchValue({
-      sterilizationDate: tomorrow
+      sterilizationDate: defaultDateTime
     });
     
     this.loading = false;
@@ -201,7 +208,7 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
       // Preparar dados da castração
       const sterilizationData: SterilizationRequest = {
         catId: this.isEditMode ? this.sterilization!.catId : this.cat!.id,
-        sterilizationDate: formValue.sterilizationDate.toISOString(),
+        sterilizationDate: new Date(formValue.sterilizationDate).toISOString(),
         status: this.isEditMode ? this.sterilization!.status : 'SCHEDULED', // Manter status original na edição ou 'SCHEDULED' para novo
         notes: formValue.notes || undefined
       };
