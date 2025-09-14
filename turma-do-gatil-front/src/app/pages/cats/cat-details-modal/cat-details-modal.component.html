@@ -49,64 +49,203 @@
 
     <p-divider></p-divider>
 
-    <!-- Informações detalhadas -->
-    <div class="cat-profile-details">
-      <h3>
-        <i class="fas fa-info-circle"></i>
-        Informações Detalhadas
-      </h3>
-      
-      <div class="details-grid">
-        <div class="detail-card">
-          <div class="detail-label">
-            <i class="fas fa-birthday-cake"></i>
-            Data de Nascimento
+    <!-- Abas de informações -->
+    <div class="tab-container">
+      <!-- Navegação das abas -->
+      <div class="tab-nav">
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab === 'info'"
+          (click)="activeTab = 'info'">
+          <i class="fas fa-info-circle"></i>
+          Informações
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab === 'notes'"
+          (click)="activeTab = 'notes'">
+          <i class="fas fa-file-edit"></i>
+          Anotações
+        </button>
+      </div>
+
+      <!-- Conteúdo das abas -->
+      <div class="tab-content">
+        <!-- Aba de Informações Detalhadas -->
+        <div *ngIf="activeTab === 'info'" class="tab-pane">
+          <div class="cat-profile-details">
+            <div class="details-grid">
+              <div class="detail-card">
+                <div class="detail-label">
+                  <i class="fas fa-birthday-cake"></i>
+                  Data de Nascimento
+                </div>
+                <div class="detail-value">{{ formatDate(cat.birthDate) }}</div>
+              </div>
+
+              <div class="detail-card">
+                <div class="detail-label">
+                  <i class="fas fa-calendar-plus"></i>
+                  Entrada no Abrigo
+                </div>
+                <div class="detail-value">{{ formatDate(cat.shelterEntryDate) }}</div>
+              </div>
+
+              <div class="detail-card">
+                <div class="detail-label">
+                  <i class="fas fa-clock"></i>
+                  Tempo no Abrigo
+                </div>
+                <div class="detail-value">{{ getDaysInShelter(cat.shelterEntryDate) }} dias</div>
+              </div>
+
+              <div class="detail-card">
+                <div class="detail-label">
+                  <i class="fas fa-palette"></i>
+                  Cor
+                </div>
+                <div class="detail-value">{{ getColorLabel(cat.color) }}</div>
+              </div>
+
+              <div class="detail-card">
+                <div class="detail-label">
+                  <i class="fas" [class.fa-mars]="cat.sex === 'MALE'" [class.fa-venus]="cat.sex === 'FEMALE'"></i>
+                  Sexo
+                </div>
+                <div class="detail-value">{{ getSexLabel(cat.sex) }}</div>
+              </div>
+
+              <div class="detail-card">
+                <div class="detail-label">
+                  <i class="fas fa-heart"></i>
+                  Status de Adoção
+                </div>
+                <div class="detail-value">
+                  <p-tag 
+                    [value]="getAdoptionTagText(cat.adoptionStatus)" 
+                    [severity]="getAdoptionTagSeverity(cat.adoptionStatus)">
+                  </p-tag>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="detail-value">{{ formatDate(cat.birthDate) }}</div>
         </div>
 
-        <div class="detail-card">
-          <div class="detail-label">
-            <i class="fas fa-calendar-plus"></i>
-            Entrada no Abrigo
-          </div>
-          <div class="detail-value">{{ formatDate(cat.shelterEntryDate) }}</div>
-        </div>
+        <!-- Aba de Anotações -->
+        <div *ngIf="activeTab === 'notes'" class="tab-pane">
+          <div class="notes-container">
+            <!-- Formulário para nova anotação -->
+            <div class="notes-form" *ngIf="showAddNoteForm">
+              <h4><i class="fas fa-plus-circle"></i> Nova Anotação</h4>
+              <div class="form-group">
+                <label for="noteText">Texto da Anotação:</label>
+                <textarea
+                  id="noteText"
+                  [(ngModel)]="newNoteText"
+                  class="note-textarea"
+                  rows="6"
+                  placeholder="Digite sua anotação aqui...">
+                </textarea>
+              </div>
+              <div class="form-actions">
+                <p-button 
+                  label="Salvar" 
+                  icon="pi pi-check"
+                  (onClick)="saveNote()"
+                  [loading]="savingNote">
+                </p-button>
+                <p-button 
+                  label="Cancelar" 
+                  icon="pi pi-times"
+                  severity="secondary"
+                  [outlined]="true"
+                  (onClick)="cancelAddNote()">
+                </p-button>
+              </div>
+            </div>
 
-        <div class="detail-card">
-          <div class="detail-label">
-            <i class="fas fa-clock"></i>
-            Tempo no Abrigo
-          </div>
-          <div class="detail-value">{{ getDaysInShelter(cat.shelterEntryDate) }} dias</div>
-        </div>
+            <!-- Lista de anotações -->
+            <div class="notes-list">
+              <div class="notes-header">
+                <h4><i class="fas fa-file-edit"></i> Histórico de Anotações</h4>
+                <p-button 
+                  *ngIf="!showAddNoteForm"
+                  label="Nova Anotação" 
+                  icon="pi pi-plus"
+                  size="small"
+                  (onClick)="startAddNote()">
+                </p-button>
+              </div>
 
-        <div class="detail-card">
-          <div class="detail-label">
-            <i class="fas fa-palette"></i>
-            Cor
-          </div>
-          <div class="detail-value">{{ getColorLabel(cat.color) }}</div>
-        </div>
+              <div *ngIf="loadingNotes" class="loading-notes">
+                <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
+                <p>Carregando anotações...</p>
+              </div>
 
-        <div class="detail-card">
-          <div class="detail-label">
-            <i class="fas" [class.fa-mars]="cat.sex === 'MALE'" [class.fa-venus]="cat.sex === 'FEMALE'"></i>
-            Sexo
-          </div>
-          <div class="detail-value">{{ getSexLabel(cat.sex) }}</div>
-        </div>
+              <div *ngIf="!loadingNotes && notes.length === 0" class="empty-notes">
+                <i class="fas fa-file" style="font-size: 2rem; color: #6c757d;"></i>
+                <p>Nenhuma anotação encontrada para este gato.</p>
+              </div>
 
-        <div class="detail-card">
-          <div class="detail-label">
-            <i class="fas fa-heart"></i>
-            Status de Adoção
-          </div>
-          <div class="detail-value">
-            <p-tag 
-              [value]="getAdoptionTagText(cat.adoptionStatus)" 
-              [severity]="getAdoptionTagSeverity(cat.adoptionStatus)">
-            </p-tag>
+              <div *ngIf="!loadingNotes && notes.length > 0" class="notes-items">
+                <div 
+                  *ngFor="let note of notes; trackBy: trackByNoteId" 
+                  class="note-item">
+                  
+                  <!-- Modo visualização -->
+                  <div *ngIf="editingNoteId !== note.id" class="note-content">
+                    <div class="note-header">
+                      <span class="note-date">{{ formatDate(note.date) }}</span>
+                      <div class="note-actions">
+                        <button 
+                          type="button"
+                          class="btn-icon"
+                          title="Editar anotação"
+                          (click)="startEditNote(note)">
+                          <i class="fas fa-edit"></i>
+                        </button>
+                        <button 
+                          type="button"
+                          class="btn-icon btn-danger"
+                          title="Excluir anotação"
+                          (click)="confirmDeleteNote(note)">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="note-text">{{ note.text }}</div>
+                  </div>
+
+                  <!-- Modo edição -->
+                  <div *ngIf="editingNoteId === note.id" class="note-edit">
+                    <div class="form-group">
+                      <textarea
+                        [(ngModel)]="editingNoteText"
+                        class="note-textarea"
+                        rows="6">
+                      </textarea>
+                    </div>
+                    <div class="form-actions">
+                      <p-button 
+                        label="Salvar" 
+                        icon="pi pi-check"
+                        size="small"
+                        (onClick)="saveEditNote(note)"
+                        [loading]="savingNote">
+                      </p-button>
+                      <p-button 
+                        label="Cancelar" 
+                        icon="pi pi-times"
+                        size="small"
+                        severity="secondary"
+                        [outlined]="true"
+                        (onClick)="cancelEditNote()">
+                      </p-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

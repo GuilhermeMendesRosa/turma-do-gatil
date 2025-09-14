@@ -1,11 +1,19 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
+// import { TabViewModule } from 'primeng/tabview';
+// import { EditorModule } from 'primeng/editor';
+// import { ProgressSpinnerModule } from 'primeng/progressspinner';
+// import { ConfirmDialogModule } from 'primeng/confirmdialog';
+// import { ConfirmationService, MessageService } from 'primeng/api';
 import { Cat, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
+import { Note, NoteRequest } from '../../../models/note.model';
+import { NoteService } from '../../../services/note.service';
 import { AdoptionModalComponent } from '../adoption-modal/adoption-modal.component';
 
 @Component({
@@ -13,17 +21,22 @@ import { AdoptionModalComponent } from '../adoption-modal/adoption-modal.compone
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     DialogModule,
     DividerModule,
     ButtonModule,
     TagModule,
     TooltipModule,
+    // TabViewModule,
+    // EditorModule,
+    // ProgressSpinnerModule,
+    // ConfirmDialogModule,
     AdoptionModalComponent
   ],
   templateUrl: './cat-details-modal.component.html',
   styleUrl: './cat-details-modal.component.css'
 })
-export class CatDetailsModalComponent {
+export class CatDetailsModalComponent implements OnInit, OnChanges {
   @Input() visible: boolean = false;
   @Input() cat: Cat | null = null;
 
@@ -34,9 +47,48 @@ export class CatDetailsModalComponent {
 
   showAdoptionModal = false;
 
+  // Tab management
+  activeTab: 'info' | 'notes' = 'info';
+
+  // Notes properties
+  notes: Note[] = [];
+  loadingNotes = false;
+  showAddNoteForm = false;
+  newNoteText = '';
+  savingNote = false;
+  editingNoteId: string | null = null;
+  editingNoteText = '';
+
+  constructor(
+    private noteService: NoteService
+    // private confirmationService: ConfirmationService,
+    // private messageService: MessageService
+  ) { }
+
+  ngOnInit(): void {
+    // Carrega as notas quando o componente é inicializado
+    if (this.cat?.id) {
+      this.loadNotes();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Carrega as notas quando o gato muda
+    if (changes['cat'] && this.cat?.id) {
+      this.loadNotes();
+    }
+  }
+
   onHide(): void {
     this.visible = false;
     this.visibleChange.emit(this.visible);
+    
+    // Reset notes form state
+    this.activeTab = 'info';
+    this.showAddNoteForm = false;
+    this.newNoteText = '';
+    this.editingNoteId = null;
+    this.editingNoteText = '';
   }
 
   onAdoptCat(): void {
@@ -167,5 +219,125 @@ export class CatDetailsModalComponent {
       default:
         return 'info';
     }
+  }
+
+  // Notes methods
+  loadNotes(): void {
+    if (!this.cat?.id) return;
+    
+    this.loadingNotes = true;
+    this.noteService.getNotesByCatId(this.cat.id).subscribe({
+      next: (notes) => {
+        this.notes = notes.sort((a, b) => 
+          new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        this.loadingNotes = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar anotações:', error);
+        this.loadingNotes = false;
+      }
+    });
+  }
+
+  startAddNote(): void {
+    this.showAddNoteForm = true;
+    this.newNoteText = '';
+  }
+
+  cancelAddNote(): void {
+    this.showAddNoteForm = false;
+    this.newNoteText = '';
+  }
+
+  saveNote(): void {
+    if (!this.cat?.id || !this.newNoteText.trim()) {
+      alert('Por favor, digite o texto da anotação.');
+      return;
+    }
+
+    this.savingNote = true;
+    const noteRequest: NoteRequest = {
+      catId: this.cat.id,
+      date: new Date().toISOString(),
+      text: this.newNoteText.trim()
+    };
+
+    this.noteService.createNote(noteRequest).subscribe({
+      next: (note) => {
+        this.notes.unshift(note);
+        this.showAddNoteForm = false;
+        this.newNoteText = '';
+        this.savingNote = false;
+        alert('Anotação salva com sucesso!');
+      },
+      error: (error) => {
+        console.error('Erro ao salvar anotação:', error);
+        this.savingNote = false;
+      }
+    });
+  }
+
+  startEditNote(note: Note): void {
+    this.editingNoteId = note.id;
+    this.editingNoteText = note.text;
+  }
+
+  cancelEditNote(): void {
+    this.editingNoteId = null;
+    this.editingNoteText = '';
+  }
+
+  saveEditNote(note: Note): void {
+    if (!this.editingNoteText.trim()) {
+      alert('Por favor, digite o texto da anotação.');
+      return;
+    }
+
+    this.savingNote = true;
+    const noteRequest: NoteRequest = {
+      catId: note.catId,
+      date: note.date,
+      text: this.editingNoteText.trim()
+    };
+
+    this.noteService.updateNote(note.id, noteRequest).subscribe({
+      next: (updatedNote) => {
+        const index = this.notes.findIndex(n => n.id === note.id);
+        if (index !== -1) {
+          this.notes[index] = updatedNote;
+        }
+        this.editingNoteId = null;
+        this.editingNoteText = '';
+        this.savingNote = false;
+        alert('Anotação atualizada com sucesso!');
+      },
+      error: (error) => {
+        console.error('Erro ao atualizar anotação:', error);
+        this.savingNote = false;
+      }
+    });
+  }
+
+  confirmDeleteNote(note: Note): void {
+    if (confirm('Tem certeza que deseja excluir esta anotação? Esta ação não pode ser desfeita.')) {
+      this.deleteNote(note);
+    }
+  }
+
+  deleteNote(note: Note): void {
+    this.noteService.deleteNote(note.id).subscribe({
+      next: () => {
+        this.notes = this.notes.filter(n => n.id !== note.id);
+        alert('Anotação excluída com sucesso!');
+      },
+      error: (error) => {
+        console.error('Erro ao excluir anotação:', error);
+      }
+    });
+  }
+
+  trackByNoteId(index: number, note: Note): string {
+    return note.id;
   }
 }

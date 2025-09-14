@@ -343,6 +343,314 @@
   }
 }
 
+/* ===== ABAS CUSTOMIZADAS ===== */
+.tab-container {
+  margin-top: 1rem;
+}
+
+.tab-nav {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--p-surface-ground);
+  padding: 0.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--p-surface-border);
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--p-text-color-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tab-btn:hover {
+  background: var(--p-surface-hover);
+  color: var(--p-text-color);
+}
+
+.tab-btn.active {
+  background: var(--p-primary-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn i {
+  font-size: 1rem;
+}
+
+.tab-content {
+  min-height: 300px;
+}
+
+.tab-pane {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SEÇÃO DE ANOTAÇÕES ===== */
+.notes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.notes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.notes-header h4 {
+  margin: 0;
+  color: var(--p-text-color);
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notes-header h4 i {
+  color: var(--p-primary-color);
+}
+
+/* Formulário de nova anotação */
+.notes-form {
+  background: var(--p-surface-card);
+  border: 1px solid var(--p-surface-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.notes-form h4 {
+  margin: 0 0 1rem 0;
+  color: var(--p-text-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notes-form h4 i {
+  color: var(--p-primary-color);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--p-text-color);
+}
+
+.note-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 0.75rem;
+  border: 1px solid var(--p-surface-border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: var(--p-surface-card);
+  color: var(--p-text-color);
+  resize: vertical;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.note-textarea:focus {
+  outline: none;
+  border-color: var(--p-primary-color);
+  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+/* Estados de carregamento e vazio */
+.loading-notes,
+.empty-notes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--p-text-color-secondary);
+  background: var(--p-surface-ground);
+  border-radius: 12px;
+  border: 1px solid var(--p-surface-border);
+}
+
+.loading-notes i,
+.empty-notes i {
+  margin-bottom: 1rem;
+  color: var(--p-text-color-secondary);
+}
+
+.loading-notes p,
+.empty-notes p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Lista de anotações */
+.notes-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.note-item {
+  background: var(--p-surface-card);
+  border: 1px solid var(--p-surface-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.note-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.note-content .note-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--p-surface-border);
+}
+
+.note-date {
+  font-size: 0.85rem;
+  color: var(--p-text-color-secondary);
+  font-weight: 500;
+}
+
+.note-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  padding: 0.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--p-text-color-secondary);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background: var(--p-surface-hover);
+  color: var(--p-text-color);
+}
+
+.btn-icon.btn-danger:hover {
+  background: var(--p-red-50);
+  color: var(--p-red-500);
+}
+
+.note-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--p-text-color);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Modo de edição */
+.note-edit .form-group {
+  margin-bottom: 1rem;
+}
+
+.note-edit .form-actions {
+  justify-content: flex-start;
+}
+
+/* ===== RESPONSIVIDADE PARA ABAS ===== */
+@media (max-width: 768px) {
+  .tab-nav {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .tab-btn {
+    justify-content: flex-start;
+    padding: 1rem;
+  }
+  
+  .notes-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .note-content .note-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .note-actions {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .notes-form {
+    padding: 1rem;
+  }
+  
+  .note-item {
+    padding: 1rem;
+  }
+  
+  .form-actions {
+    width: 100%;
+  }
+  
+  .form-actions ::ng-deep p-button {
+    width: 100%;
+  }
+}
+
 /* ===== CORES E TEMAS ===== */
 :host {
   --primary-color: var(--p-primary-color, #F2BBAE);
@@ -351,5 +659,6 @@
   --surface-card: var(--p-surface-card, #ffffff);
   --surface-border: var(--p-surface-border, #e5e7eb);
   --surface-ground: var(--p-surface-ground, #f9fafb);
+  --surface-hover: var(--p-surface-hover, #f3f4f6);
   --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
 }
