@@ -7,7 +7,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
-import { Cat, CatRequest, Color, Sex } from '../../../models/cat.model';
+import { Cat, CatRequest, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
 import { CatService } from '../../../services/cat.service';
 
 @Component({
@@ -167,7 +167,8 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
         birthDate: new Date(formValue.birthDate).toISOString(),
         shelterEntryDate: new Date(formValue.shelterEntryDate).toISOString(),
         photoUrl: this.previewUrl || this.getDefaultImage(),
-        adopted: this.isEditMode ? this.cat?.adopted : false // Manter status atual na edição
+        adopted: this.isEditMode ? this.cat?.adopted : false, // Manter status atual na edição
+        adoptionStatus: this.isEditMode ? this.cat?.adoptionStatus : undefined // Manter status de adoção atual na edição
       };
 
       if (this.isEditMode && this.cat) {
