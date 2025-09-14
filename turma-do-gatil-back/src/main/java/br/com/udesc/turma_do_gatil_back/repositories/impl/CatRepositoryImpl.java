@@ -131,4 +131,11 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
 
         return new PageImpl<>(content, pageable, total);
     }
+
+    @Override
+    public long countByAdoptionStatus(CatAdoptionStatus adoptionStatus) {
+        return queryFactory.selectFrom(qCat)
+                .where(qCat.adoptionStatus.eq(adoptionStatus))
+                .fetchCount();
+    }
 }

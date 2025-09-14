@@ -271,25 +271,23 @@ paths:
         - Cats
       summary: Obter resumo do dashboard
       description: |
-        Retorna um resumo completo para dashboards com as principais informações do sistema:
+        Retorna um resumo otimizado para dashboards com contadores das principais informações do sistema:
         
         **Informações Incluídas:**
-        - `availableCats`: Lista dos primeiros 10 gatos disponíveis para adoção (não adotados)
-        - `pendingSterilizations`: Lista das primeiras 10 castrações pendentes (status SCHEDULED)
-        - `registeredAdopters`: Lista dos primeiros 10 adotantes cadastrados mais recentes
+        - `availableCatsCount`: Quantidade total de gatos disponíveis para adoção (não adotados)
+        - `pendingSterilizationsCount`: Quantidade total de castrações pendentes (status SCHEDULED)
+        - `registeredAdoptersCount`: Quantidade total de adotantes cadastrados no sistema
         
         **Características:**
+        - Performance otimizada com queries de contagem
+        - Sem limitação de paginação nos resultados
+        - Dados em tempo real sem caching
         - Ideal para dashboards e telas de resumo
-        - Fornece uma visão geral rápida do sistema
-        - Dados limitados para performance otimizada
-        - Gatos ordenados por nome (A-Z)
-        - Castrações ordenadas por data agendada (mais próximas primeiro)
-        - Adotantes ordenados por data de registro (mais recentes primeiro)
         
         **Utilidade:**
         - Monitoramento rápido do status do abrigo
-        - Identificação de prioridades de atendimento
-        - Visão consolidada para tomada de decisões
+        - Métricas para tomada de decisões
+        - Visão consolidada e performática do sistema
       responses:
         '200':
           description: Resumo do dashboard retornado com sucesso
@@ -298,41 +296,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/DashboardSummary'
               example:
-                availableCats:
-                  - id: "550e8400-e29b-41d4-a716-446655440000"
-                    name: "Mimi"
-                    color: "ORANGE"
-                    sex: "FEMALE"
-                    birthDate: "2024-01-15T00:00:00"
-                    shelterEntryDate: "2024-02-01T00:00:00"
-                    photoUrl: "https://example.com/photos/mimi.jpg"
-                    adopted: false
-                  - id: "550e8400-e29b-41d4-a716-446655440001"
-                    name: "Felix"
-                    color: "BLACK"
-                    sex: "MALE"
-                    birthDate: "2024-02-10T00:00:00"
-                    shelterEntryDate: "2024-02-15T00:00:00"
-                    photoUrl: "https://example.com/photos/felix.jpg"
-                    adopted: false
-                pendingSterilizations:
-                  - id: "660e8400-e29b-41d4-a716-446655440000"
-                    catId: "550e8400-e29b-41d4-a716-446655440000"
-                    cat: "Mimi"
-                    photoUrl: "https://example.com/photos/mimi.jpg"
-                    sterilizationDate: "2024-03-15T10:30:00"
-                    status: "SCHEDULED"
-                    notes: "Primeira castração do mês"
-                registeredAdopters:
-                  - id: "770e8400-e29b-41d4-a716-446655440000"
-                    firstName: "João"
-                    lastName: "Silva"
-                    birthDate: "1990-05-15T00:00:00"
-                    cpf: "123.456.789-00"
-                    phone: "(11) 99999-9999"
-                    email: "joao@email.com"
-                    address: "Rua das Flores, 123"
-                    registrationDate: "2024-02-15T14:30:00"
+                availableCatsCount: 25
+                pendingSterilizationsCount: 8
+                registeredAdoptersCount: 142
         '500':
           description: Erro interno do servidor ao processar a solicitação
           content:
@@ -1067,50 +1033,23 @@ components:
 
     DashboardSummary:
       type: object
-      description: DTO que contém um resumo do dashboard com gatos disponíveis, castrações pendentes e adotantes
+      description: DTO que contém um resumo do dashboard com contadores de gatos disponíveis, castrações pendentes e adotantes
       properties:
-        availableCats:
-          type: array
-          description: Lista de gatos disponíveis para adoção (máximo 10)
-          items:
-            $ref: '#/components/schemas/Cat'
-          example:
-            - id: "550e8400-e29b-41d4-a716-446655440000"
-              name: "Mimi"
-              color: "ORANGE"
-              sex: "FEMALE"
-              birthDate: "2024-01-15T00:00:00"
-              shelterEntryDate: "2024-02-01T00:00:00"
-              photoUrl: "https://example.com/photos/mimi.jpg"
-              adopted: false
-        pendingSterilizations:
-          type: array
-          description: Lista de castrações pendentes/agendadas (máximo 10)
-          items:
-            $ref: '#/components/schemas/Sterilization'
-          example:
-            - id: "660e8400-e29b-41d4-a716-446655440000"
-              catId: "550e8400-e29b-41d4-a716-446655440000"
-              cat: "Mimi"
-              photoUrl: "https://example.com/photos/mimi.jpg"
-              sterilizationDate: "2024-03-15T10:30:00"
-              status: "SCHEDULED"
-              notes: "Primeira castração do mês"
-        registeredAdopters:
-          type: array
-          description: Lista de adotantes cadastrados mais recentes (máximo 10)
-          items:
-            $ref: '#/components/schemas/Adopter'
-          example:
-            - id: "770e8400-e29b-41d4-a716-446655440000"
-              firstName: "João"
-              lastName: "Silva"
-              birthDate: "1990-05-15T00:00:00"
-              cpf: "123.456.789-00"
-              phone: "(11) 99999-9999"
-              email: "joao@email.com"
-              address: "Rua das Flores, 123"
-              registrationDate: "2024-02-15T14:30:00"
+        availableCatsCount:
+          type: integer
+          format: int64
+          description: Quantidade total de gatos disponíveis para adoção
+          example: 25
+        pendingSterilizationsCount:
+          type: integer
+          format: int64
+          description: Quantidade total de castrações pendentes/agendadas
+          example: 8
+        registeredAdoptersCount:
+          type: integer
+          format: int64
+          description: Quantidade total de adotantes cadastrados no sistema
+          example: 142
 
     SterilizationRequest:
       type: object

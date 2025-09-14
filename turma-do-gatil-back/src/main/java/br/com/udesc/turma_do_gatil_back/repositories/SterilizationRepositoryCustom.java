@@ -30,4 +30,6 @@ public interface SterilizationRepositoryCustom {
     Page<Sterilization> findByStatus(SterilizationStatus status, Pageable pageable);
     
     Page<Sterilization> findBySterilizationDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+    
+    long countByStatus(SterilizationStatus status);
 }

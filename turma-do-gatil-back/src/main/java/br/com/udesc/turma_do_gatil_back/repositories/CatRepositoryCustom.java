@@ -22,4 +22,6 @@ public interface CatRepositoryCustom {
     Page<Cat> findBySex(Sex sex, Pageable pageable);
     
     Page<Cat> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    
+    long countByAdoptionStatus(CatAdoptionStatus adoptionStatus);
 }

@@ -89,6 +89,12 @@ public class SterilizationService {
         return sterilizationRepository.findByStatus(status, pageable);
     }
 
+    public long countByStatus(SterilizationStatus status) {
+        Objects.requireNonNull(status, "Status cannot be null");
+        log.debug("Counting sterilizations by status: {}", status);
+        return sterilizationRepository.countByStatus(status);
+    }
+
     public Page<Sterilization> findByDateRange(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         Objects.requireNonNull(startDate, "Start date cannot be null");
         Objects.requireNonNull(endDate, "End date cannot be null");

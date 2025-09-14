@@ -35,7 +35,7 @@
         </div>
         <div class="card-content">
           <div class="metric">
-            <span class="number">{{ dashboardData.availableCats.length }}</span>
+            <span class="number">{{ dashboardData.availableCatsCount }}</span>
             <span class="label">Disponíveis para adoção</span>
           </div>
         </div>
@@ -48,7 +48,7 @@
         </div>
         <div class="card-content">
           <div class="metric">
-            <span class="number">{{ dashboardData.pendingSterilizations.length }}</span>
+            <span class="number">{{ dashboardData.pendingSterilizationsCount }}</span>
             <span class="label">Agendadas</span>
           </div>
         </div>
@@ -61,96 +61,8 @@
         </div>
         <div class="card-content">
           <div class="metric">
-            <span class="number">{{ dashboardData.registeredAdopters.length }}</span>
-            <span class="label">Cadastrados recentemente</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="dashboard-card clickable" routerLink="/cats">
-        <div class="card-header">
-          <i class="pi pi-eye"></i>
-          <h3>Ver Todos</h3>
-        </div>
-        <div class="card-content">
-          <div class="metric">
-            <span class="action-text">Gerenciar</span>
-            <span class="label">Gatos, Adoções e Castrações</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Details Sections -->
-    <div class="details-grid">
-      <!-- Available Cats -->
-      <div class="detail-section">
-        <h2><i class="pi pi-heart"></i> Gatos Disponíveis</h2>
-        <div *ngIf="dashboardData.availableCats.length === 0" class="empty-state">
-          <i class="pi pi-info-circle"></i>
-          <span>Nenhum gato disponível para adoção no momento.</span>
-        </div>
-        <div *ngIf="dashboardData.availableCats.length > 0" class="items-grid">
-          <div *ngFor="let cat of dashboardData.availableCats" class="item-card">
-            <div class="item-image">
-              <img *ngIf="cat.photoUrl" [src]="cat.photoUrl" [alt]="cat.name">
-              <div *ngIf="!cat.photoUrl" class="no-image">
-                <i class="pi pi-image"></i>
-              </div>
-            </div>
-            <div class="item-content">
-              <h4>{{ cat.name }}</h4>
-              <p><strong>Cor:</strong> {{ getColorDisplayName(cat.color) }}</p>
-              <p><strong>Sexo:</strong> {{ getSexDisplayName(cat.sex) }}</p>
-              <p><strong>Entrada:</strong> {{ formatDate(cat.shelterEntryDate) }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pending Sterilizations -->
-      <div class="detail-section">
-        <h2><i class="pi pi-briefcase"></i> Castrações Agendadas</h2>
-        <div *ngIf="dashboardData.pendingSterilizations.length === 0" class="empty-state">
-          <i class="pi pi-info-circle"></i>
-          <span>Nenhuma castração agendada no momento.</span>
-        </div>
-        <div *ngIf="dashboardData.pendingSterilizations.length > 0" class="items-list">
-          <div *ngFor="let sterilization of dashboardData.pendingSterilizations" class="list-item">
-            <div class="list-image">
-              <img *ngIf="sterilization.photoUrl" [src]="sterilization.photoUrl" [alt]="sterilization.cat">
-              <div *ngIf="!sterilization.photoUrl" class="no-image-small">
-                <i class="pi pi-image"></i>
-              </div>
-            </div>
-            <div class="list-content">
-              <h4>{{ sterilization.cat }}</h4>
-              <p><strong>Data:</strong> {{ formatDate(sterilization.sterilizationDate) }}</p>
-              <p><strong>Status:</strong> {{ getStatusDisplayName(sterilization.status) }}</p>
-              <p *ngIf="sterilization.notes"><strong>Obs:</strong> {{ sterilization.notes }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Recent Adopters -->
-      <div class="detail-section">
-        <h2><i class="pi pi-users"></i> Adotantes Recentes</h2>
-        <div *ngIf="dashboardData.registeredAdopters.length === 0" class="empty-state">
-          <i class="pi pi-info-circle"></i>
-          <span>Nenhum adotante cadastrado recentemente.</span>
-        </div>
-        <div *ngIf="dashboardData.registeredAdopters.length > 0" class="items-list">
-          <div *ngFor="let adopter of dashboardData.registeredAdopters" class="list-item">
-            <div class="list-avatar">
-              <i class="pi pi-user"></i>
-            </div>
-            <div class="list-content">
-              <h4>{{ adopter.firstName }} {{ adopter.lastName }}</h4>
-              <p><strong>Email:</strong> {{ adopter.email }}</p>
-              <p><strong>Telefone:</strong> {{ adopter.phone }}</p>
-              <p><strong>Cadastro:</strong> {{ formatDate(adopter.registrationDate) }}</p>
-            </div>
+            <span class="number">{{ dashboardData.registeredAdoptersCount }}</span>
+            <span class="label">Cadastrados</span>
           </div>
         </div>
       </div>

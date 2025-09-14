@@ -130,6 +130,13 @@ public class CatService {
         return catRepository.findWithFilters(normalizedName, color, sex, adoptionStatus, pageable);
     }
 
+    public long countByAdoptionStatus(CatAdoptionStatus adoptionStatus) {
+        Objects.requireNonNull(adoptionStatus, "Adoption status cannot be null");
+        log.debug("Counting cats by adoption status: {}", adoptionStatus);
+        
+        return catRepository.countByAdoptionStatus(adoptionStatus);
+    }
+
     public List<CatSterilizationStatusDto> findCatsNeedingSterilization() {
         log.debug("Finding cats needing sterilization");
 

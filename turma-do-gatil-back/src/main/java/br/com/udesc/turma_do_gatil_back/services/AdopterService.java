@@ -175,6 +175,11 @@ public class AdopterService {
         return result;
     }
 
+    public long countAll() {
+        log.debug("Counting all adopters");
+        return adopterRepository.count();
+    }
+
     private void validateAdopterExists(UUID id) {
         if (!adopterRepository.existsById(id)) {
             String message = String.format("Adopter not found with id: %s", id);

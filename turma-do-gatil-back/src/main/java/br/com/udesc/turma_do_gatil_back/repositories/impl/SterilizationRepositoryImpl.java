@@ -155,4 +155,11 @@ public class SterilizationRepositoryImpl implements SterilizationRepositoryCusto
     public Page<Sterilization> findBySterilizationDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         return findBySterilizationDateBetweenWithCat(startDate, endDate, pageable);
     }
+
+    @Override
+    public long countByStatus(SterilizationStatus status) {
+        return queryFactory.selectFrom(qSterilization)
+                .where(qSterilization.status.eq(status))
+                .fetchCount();
+    }
 }

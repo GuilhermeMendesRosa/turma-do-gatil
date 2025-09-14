@@ -120,32 +120,19 @@ public class CatController {
     @GetMapping("/dashboard-summary")
     public ResponseEntity<DashboardSummaryDto> getDashboardSummary() {
         try {
-            // Buscar os primeiros 10 gatos disponíveis para adoção
-            Pageable catsPageable = PageRequest.of(0, 10, Sort.by("name").ascending());
-            Page<Cat> availableCatsPage = catService.findWithFilters(null, null, null, CatAdoptionStatus.NAO_ADOTADO, catsPageable);
-            List<CatDto> availableCats = availableCatsPage.getContent()
-                    .stream()
-                    .map(EntityMapper::toCatDto)
-                    .toList();
+            // Contar gatos disponíveis para adoção
+            Long availableCatsCount = catService.countByAdoptionStatus(CatAdoptionStatus.NAO_ADOTADO);
 
-            Pageable sterilizationsPageable = PageRequest.of(0, 10, Sort.by("sterilizationDate").ascending());
-            Page<Sterilization> pendingSterilizationsPage = sterilizationService.findByStatus(SterilizationStatus.SCHEDULED, sterilizationsPageable);
-            List<SterilizationDto> pendingSterilizations = pendingSterilizationsPage.getContent()
-                    .stream()
-                    .map(EntityMapper::toSterilizationDto)
-                    .toList();
+            // Contar castrações pendentes
+            Long pendingSterilizationsCount = sterilizationService.countByStatus(SterilizationStatus.SCHEDULED);
 
-            Pageable adoptersPageable = PageRequest.of(0, 10, Sort.by("registrationDate").descending());
-            Page<Adopter> registeredAdoptersPage = adopterService.findAll(adoptersPageable);
-            List<AdopterDto> registeredAdopters = registeredAdoptersPage.getContent()
-                    .stream()
-                    .map(EntityMapper::toAdopterDto)
-                    .toList();
+            // Contar total de adotantes cadastrados
+            Long registeredAdoptersCount = adopterService.countAll();
 
             DashboardSummaryDto summary = new DashboardSummaryDto(
-                    availableCats,
-                    pendingSterilizations,
-                    registeredAdopters
+                    availableCatsCount,
+                    pendingSterilizationsCount,
+                    registeredAdoptersCount
             );
 
             return ResponseEntity.ok(summary);
