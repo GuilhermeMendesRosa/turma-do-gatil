@@ -100,7 +100,7 @@ export class CatsComponent implements OnInit, OnDestroy {
   //#endregion
 
   //#region Public Properties - State Management
-  loadingState: LoadingState = { isLoading: false };
+  loadingState: LoadingState = { isLoading: false, deleting: false };
   
   dialogsState: DialogsState = {
     catDetails: { visible: false, cat: null },
@@ -277,7 +277,7 @@ export class CatsComponent implements OnInit, OnDestroy {
    * Define o estado de loading
    */
   private setLoadingState(isLoading: boolean, error?: string): void {
-    this.loadingState = { isLoading, error };
+    this.loadingState = { isLoading, deleting: this.loadingState.deleting, error };
   }
   //#endregion
 
@@ -389,11 +389,21 @@ export class CatsComponent implements OnInit, OnDestroy {
     const catToDelete = this.dialogsState.deleteConfirm.cat;
     if (!catToDelete) return;
 
+    // Proteção contra cliques múltiplos
+    if (this.loadingState.deleting) return;
+    this.loadingState.deleting = true;
+
     this.catService.deleteCat(catToDelete.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => this.handleDeleteSuccess(catToDelete),
-        error: (error) => this.handleDeleteError(error)
+        next: () => {
+          this.loadingState.deleting = false;
+          this.handleDeleteSuccess(catToDelete);
+        },
+        error: (error) => {
+          this.loadingState.deleting = false;
+          this.handleDeleteError(error);
+        }
       });
   }
 

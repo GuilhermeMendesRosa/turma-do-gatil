@@ -42,7 +42,6 @@ export interface ModalAction {
           <app-modal-button 
             *ngFor="let action of actions"
             [config]="action"
-            (click)="action.action()"
           ></app-modal-button>
         </div>
       </ng-template>

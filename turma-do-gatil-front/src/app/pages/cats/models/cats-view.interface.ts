@@ -27,6 +27,7 @@ export interface PaginationConfig {
  */
 export interface LoadingState {
   isLoading: boolean;
+  deleting: boolean;
   error?: string;
 }
 
