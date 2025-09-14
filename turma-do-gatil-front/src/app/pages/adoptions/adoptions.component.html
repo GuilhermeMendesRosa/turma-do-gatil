@@ -20,7 +20,8 @@
   <!-- Card principal com dados das adoções -->
   <app-content-card
     title="Lista de Adoções"
-    icon="pi-list">
+    icon="pi-list"
+    [hasFooter]="totalRecords > 0">
     
     <!-- Indicador de carregamento de dados relacionados -->
     <div *ngIf="loadingRelatedData" class="related-data-loading">

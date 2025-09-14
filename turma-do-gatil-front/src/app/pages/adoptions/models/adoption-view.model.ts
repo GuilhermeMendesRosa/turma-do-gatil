@@ -49,7 +49,7 @@ export interface AdoptionTableConfig {
 
 /** Constantes para configuração do componente */
 export const ADOPTION_CONSTANTS = {
-  DEFAULT_PAGE_SIZE: 20,
+  DEFAULT_PAGE_SIZE: 10,
   SORT_FIELD: 'adoptionDate',
   SORT_DIRECTION: 'desc' as const,
   TRACK_BY_PROPERTY: 'id',

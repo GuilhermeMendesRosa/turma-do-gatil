@@ -82,7 +82,7 @@ public class CatController {
 
         Cat cat = EntityMapper.toCatEntity(catDto);
         cat.setId(id);
-        Cat savedCat = catService.save(cat);
+        Cat savedCat = catService.update(id, cat);
         CatDto savedCatDto = EntityMapper.toCatDto(savedCat);
         return ResponseEntity.ok(savedCatDto);
     }
