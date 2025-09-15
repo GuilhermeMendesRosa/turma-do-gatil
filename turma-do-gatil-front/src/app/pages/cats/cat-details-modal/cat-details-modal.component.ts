@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
-import { ButtonModule } from 'primeng/button';
+
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 // import { TabViewModule } from 'primeng/tabview';
@@ -15,6 +15,7 @@ import { Cat, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
 import { Note, NoteRequest } from '../../../models/note.model';
 import { NoteService } from '../../../services/note.service';
 import { AdoptionModalComponent } from '../adoption-modal/adoption-modal.component';
+import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
 
 @Component({
   selector: 'app-cat-details-modal',
@@ -24,14 +25,14 @@ import { AdoptionModalComponent } from '../adoption-modal/adoption-modal.compone
     FormsModule,
     DialogModule,
     DividerModule,
-    ButtonModule,
     TagModule,
     TooltipModule,
     // TabViewModule,
     // EditorModule,
     // ProgressSpinnerModule,
     // ConfirmDialogModule,
-    AdoptionModalComponent
+    AdoptionModalComponent,
+    GenericButtonComponent
   ],
   templateUrl: './cat-details-modal.component.html',
   styleUrl: './cat-details-modal.component.css'
@@ -58,6 +59,57 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
   savingNote = false;
   editingNoteId: string | null = null;
   editingNoteText = '';
+
+  // Button configurations
+  get adoptButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Adotar',
+      icon: 'pi-heart',
+      severity: 'primary'
+    };
+  }
+
+  get editButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Editar',
+      icon: 'pi-pencil',
+      severity: 'secondary'
+    };
+  }
+
+  get deleteButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Deletar',
+      icon: 'pi-trash',
+      severity: 'danger',
+      outlined: true
+    };
+  }
+
+  get saveNoteButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Salvar',
+      icon: 'pi-check',
+      loading: this.savingNote
+    };
+  }
+
+  get cancelButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Cancelar',
+      icon: 'pi-times',
+      severity: 'secondary',
+      outlined: true
+    };
+  }
+
+  get addNoteButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Nova Anotação',
+      icon: 'pi-plus',
+      size: 'small'
+    };
+  }
 
   constructor(
     private noteService: NoteService

@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
+
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
@@ -14,6 +14,7 @@ import { AdoptionService } from '../../../services/adoption.service';
 import { AdopterCreateModalComponent } from '../../adopters/adopter-create-modal/adopter-create-modal.component';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
+import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
 
 @Component({
   selector: 'app-adoption-modal',
@@ -23,11 +24,11 @@ import { Subject, of } from 'rxjs';
     FormsModule,
     ReactiveFormsModule,
     DialogModule,
-    ButtonModule,
     InputTextModule,
     MessageModule,
     DividerModule,
-    AdopterCreateModalComponent
+    AdopterCreateModalComponent,
+    GenericButtonComponent
   ],
   templateUrl: './adoption-modal.component.html',
   styleUrl: './adoption-modal.component.css'
@@ -50,6 +51,33 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
   
   private searchSubject = new Subject<string>();
   private readonly minSearchLength = 2;
+
+  // Button configurations
+  get cancelButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Cancelar',
+      icon: 'pi-times',
+      severity: 'secondary',
+      outlined: true
+    };
+  }
+
+  get saveButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Registrar Adoção',
+      icon: 'pi-heart',
+      loading: this.loading
+    };
+  }
+
+  get createAdopterButtonConfig(): GenericButtonConfig {
+    return {
+      label: '',
+      icon: 'pi-plus',
+      severity: 'secondary',
+      outlined: true
+    };
+  }
 
   constructor(
     private fb: FormBuilder,

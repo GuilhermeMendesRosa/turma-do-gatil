@@ -130,15 +130,10 @@
               </div>
             </div>
             
-            <p-button 
-              type="button"
-              icon="pi pi-plus" 
-              severity="secondary"
-              [outlined]="true"
-              (onClick)="openCreateAdopterModal()"
-              pTooltip="Criar novo adotante"
-              tooltipPosition="top">
-            </p-button>
+            <app-generic-button 
+              [config]="createAdopterButtonConfig"
+              (click)="openCreateAdopterModal()">
+            </app-generic-button>
           </div>
           
           <small class="error-message" *ngIf="getFieldError('adopter')">
@@ -183,20 +178,15 @@
   <ng-template pTemplate="footer">
     <div class="dialog-footer">
       <div class="action-buttons">
-        <p-button 
-          label="Cancelar" 
-          icon="pi pi-times" 
-          severity="secondary"
-          [outlined]="true"
-          (onClick)="onHide()">
-        </p-button>
+        <app-generic-button 
+          [config]="cancelButtonConfig"
+          (click)="onHide()">
+        </app-generic-button>
         
-        <p-button 
-          label="Registrar Adoção" 
-          icon="pi pi-heart" 
-          [loading]="loading"
-          (onClick)="onSubmit()">
-        </p-button>
+        <app-generic-button 
+          [config]="saveButtonConfig"
+          (click)="onSubmit()">
+        </app-generic-button>
       </div>
     </div>
   </ng-template>

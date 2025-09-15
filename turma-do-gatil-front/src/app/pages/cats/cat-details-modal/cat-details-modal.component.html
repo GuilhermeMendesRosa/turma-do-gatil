@@ -148,19 +148,14 @@
                 </textarea>
               </div>
               <div class="form-actions">
-                <p-button 
-                  label="Salvar" 
-                  icon="pi pi-check"
-                  (onClick)="saveNote()"
-                  [loading]="savingNote">
-                </p-button>
-                <p-button 
-                  label="Cancelar" 
-                  icon="pi pi-times"
-                  severity="secondary"
-                  [outlined]="true"
-                  (onClick)="cancelAddNote()">
-                </p-button>
+                <app-generic-button 
+                  [config]="saveNoteButtonConfig"
+                  (click)="saveNote()">
+                </app-generic-button>
+                <app-generic-button 
+                  [config]="cancelButtonConfig"
+                  (click)="cancelAddNote()">
+                </app-generic-button>
               </div>
             </div>
 
@@ -168,13 +163,11 @@
             <div class="notes-list">
               <div class="notes-header">
                 <h4><i class="fas fa-file-edit"></i> Histórico de Anotações</h4>
-                <p-button 
+                <app-generic-button 
                   *ngIf="!showAddNoteForm"
-                  label="Nova Anotação" 
-                  icon="pi pi-plus"
-                  size="small"
-                  (onClick)="startAddNote()">
-                </p-button>
+                  [config]="addNoteButtonConfig"
+                  (click)="startAddNote()">
+                </app-generic-button>
               </div>
 
               <div *ngIf="loadingNotes" class="loading-notes">
@@ -226,21 +219,25 @@
                       </textarea>
                     </div>
                     <div class="form-actions">
-                      <p-button 
-                        label="Salvar" 
-                        icon="pi pi-check"
-                        size="small"
-                        (onClick)="saveEditNote(note)"
-                        [loading]="savingNote">
-                      </p-button>
-                      <p-button 
-                        label="Cancelar" 
-                        icon="pi pi-times"
-                        size="small"
-                        severity="secondary"
-                        [outlined]="true"
-                        (onClick)="cancelEditNote()">
-                      </p-button>
+                      <app-generic-button 
+                        [config]="{
+                          label: 'Salvar',
+                          icon: 'pi-check',
+                          size: 'small',
+                          loading: savingNote
+                        }"
+                        (click)="saveEditNote(note)">
+                      </app-generic-button>
+                      <app-generic-button 
+                        [config]="{
+                          label: 'Cancelar',
+                          icon: 'pi-times',
+                          size: 'small',
+                          severity: 'secondary',
+                          outlined: true
+                        }"
+                        (click)="cancelEditNote()">
+                      </app-generic-button>
                     </div>
                   </div>
                 </div>
@@ -255,30 +252,21 @@
   <ng-template pTemplate="footer">
     <div class="dialog-footer">
       <div class="action-buttons">
-        <p-button 
+        <app-generic-button 
           *ngIf="cat?.adoptionStatus === 'NAO_ADOTADO'"
-          label="Adotar" 
-          icon="pi pi-heart" 
-          (onClick)="onAdoptCat()"
-          pTooltip="Registrar adoção do gato">
-        </p-button>
+          [config]="adoptButtonConfig"
+          (click)="onAdoptCat()">
+        </app-generic-button>
         
-        <p-button 
-          label="Editar" 
-          icon="pi pi-pencil" 
-          severity="secondary"
-          (onClick)="onEditCat()"
-          pTooltip="Editar informações do gato">
-        </p-button>
+        <app-generic-button 
+          [config]="editButtonConfig"
+          (click)="onEditCat()">
+        </app-generic-button>
         
-        <p-button 
-          label="Deletar" 
-          icon="pi pi-trash" 
-          severity="danger"
-          [outlined]="true"
-          (onClick)="onDeleteCat()"
-          pTooltip="Remover gato do sistema">
-        </p-button>
+        <app-generic-button 
+          [config]="deleteButtonConfig"
+          (click)="onDeleteCat()">
+        </app-generic-button>
       </div>
     </div>
   </ng-template>

@@ -2,13 +2,14 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
+
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
 import { Cat, CatRequest, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
 import { CatService } from '../../../services/cat.service';
+import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
 
 @Component({
   selector: 'app-cat-create-modal',
@@ -18,11 +19,11 @@ import { CatService } from '../../../services/cat.service';
     FormsModule,
     ReactiveFormsModule,
     DialogModule,
-    ButtonModule,
     InputTextModule,
     Select,
     MessageModule,
-    DividerModule
+    DividerModule,
+    GenericButtonComponent
   ],
   templateUrl: './cat-create-modal.component.html',
   styleUrl: './cat-create-modal.component.css'
@@ -57,6 +58,25 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
     { label: 'Macho', value: Sex.MALE },
     { label: 'Fêmea', value: Sex.FEMALE }
   ];
+
+  // Button configurations
+  get cancelButtonConfig(): GenericButtonConfig {
+    return {
+      label: 'Cancelar',
+      icon: 'pi-times',
+      severity: 'secondary',
+      outlined: true
+    };
+  }
+
+  get saveButtonConfig(): GenericButtonConfig {
+    return {
+      label: this.isEditMode ? 'Salvar Alterações' : 'Salvar Gato',
+      icon: 'pi-check',
+      loading: this.loading,
+      disabled: !this.catForm?.valid
+    };
+  }
 
   constructor(
     private fb: FormBuilder,
