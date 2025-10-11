@@ -154,12 +154,6 @@ export class AdoptersComponent implements OnInit, OnDestroy {
           this.adopterUtils.getFullName(item.firstName, item.lastName)
       },
       {
-        key: 'email',
-        header: 'Email',
-        type: 'text',
-        sortable: true
-      },
-      {
         key: 'cpf',
         header: 'CPF',
         type: 'text',
@@ -171,6 +165,12 @@ export class AdoptersComponent implements OnInit, OnDestroy {
         header: 'Telefone',
         type: 'text',
         formatter: (value: string) => this.adopterUtils.formatPhone(value)
+      },
+      {
+        key: 'instagram',
+        header: 'Instagram',
+        type: 'text',
+        formatter: (value: string) => value ? `@${value.replace('@', '')}` : '-'
       },
       {
         key: 'registrationDate',
@@ -470,7 +470,8 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       birthDate: ['', Validators.required],
       cpf: ['', [Validators.required]],
       phone: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.email]],
+      instagram: [''],
       address: ['', [Validators.required, Validators.minLength(ADOPTERS_CONFIG.MIN_ADDRESS_LENGTH)]],
       registrationDate: [today, Validators.required]
     });
@@ -521,7 +522,8 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       birthDate: this.adopterUtils.toInputDateFormat(adopter.birthDate),
       cpf: adopter.cpf,
       phone: adopter.phone,
-      email: adopter.email,
+      email: adopter.email || '',
+      instagram: adopter.instagram || '',
       address: adopter.address,
       registrationDate: this.adopterUtils.toInputDateFormat(adopter.registrationDate)
     };
@@ -613,7 +615,8 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       birthDate: new Date(formValue.birthDate).toISOString(),
       cpf: formValue.cpf,
       phone: formValue.phone,
-      email: formValue.email,
+      email: formValue.email || undefined,
+      instagram: formValue.instagram || undefined,
       address: formValue.address,
       registrationDate: new Date(formValue.registrationDate).toISOString()
     };

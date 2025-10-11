@@ -168,12 +168,14 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
     const lowerQuery = query.toLowerCase();
     return this.allAdopters.filter(adopter => {
       const fullName = `${adopter.firstName} ${adopter.lastName}`.toLowerCase();
-      const email = adopter.email.toLowerCase();
+      const email = adopter.email?.toLowerCase() || '';
+      const instagram = adopter.instagram?.toLowerCase() || '';
       const cpf = adopter.cpf.replace(/\D/g, '');
       const queryNumbers = query.replace(/\D/g, '');
       
       return fullName.includes(lowerQuery) || 
              email.includes(lowerQuery) || 
+             instagram.includes(lowerQuery) ||
              (queryNumbers.length > 0 && cpf.includes(queryNumbers));
     });
   }

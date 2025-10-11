@@ -5,7 +5,8 @@ export interface Adopter {
   birthDate: string;
   cpf: string;
   phone: string;
-  email: string;
+  email?: string;
+  instagram?: string;
   address: string;
   registrationDate: string;
 }
@@ -16,7 +17,8 @@ export interface AdopterRequest {
   birthDate: string;
   cpf: string;
   phone: string;
-  email: string;
+  email?: string;
+  instagram?: string;
   address: string;
   registrationDate: string;
 }

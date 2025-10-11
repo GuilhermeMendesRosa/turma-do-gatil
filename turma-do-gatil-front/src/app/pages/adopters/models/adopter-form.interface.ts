@@ -7,7 +7,8 @@ export interface AdopterFormData {
   birthDate: string;
   cpf: string;
   phone: string;
-  email: string;
+  email?: string;
+  instagram?: string;
   address: string;
   registrationDate: string;
 }

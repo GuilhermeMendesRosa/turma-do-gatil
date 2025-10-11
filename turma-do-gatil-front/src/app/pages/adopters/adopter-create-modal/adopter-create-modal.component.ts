@@ -63,7 +63,8 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       birthDate: ['', Validators.required],
       cpf: ['', [Validators.required]],
       phone: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.email]],
+      instagram: [''],
       address: ['', [Validators.required, Validators.minLength(5)]],
       registrationDate: [todayString, Validators.required]
     });
@@ -86,7 +87,8 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
         birthDate: birthDate,
         cpf: this.adopter.cpf,
         phone: this.adopter.phone,
-        email: this.adopter.email,
+        email: this.adopter.email || '',
+        instagram: this.adopter.instagram || '',
         address: this.adopter.address,
         registrationDate: registrationDate
       });
@@ -126,7 +128,8 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
         birthDate: new Date(formValue.birthDate).toISOString(),
         cpf: formValue.cpf,
         phone: formValue.phone,
-        email: formValue.email,
+        email: formValue.email || undefined,
+        instagram: formValue.instagram || undefined,
         address: formValue.address,
         registrationDate: new Date(formValue.registrationDate).toISOString()
       };

@@ -111,7 +111,7 @@
 
         <!-- Email -->
         <div class="form-field">
-          <label for="email">Email *</label>
+          <label for="email">Email</label>
           <input 
             pInputText 
             id="email" 
@@ -123,6 +123,18 @@
           <small class="error-message" *ngIf="getFieldError('email')">
             {{ getFieldError('email') }}
           </small>
+        </div>
+
+        <!-- Instagram -->
+        <div class="form-field">
+          <label for="instagram">Instagram</label>
+          <input 
+            pInputText 
+            id="instagram" 
+            type="text"
+            formControlName="instagram"
+            placeholder="@usuario ou usuario"
+            class="form-input">
         </div>
 
         <!-- Endereço -->
