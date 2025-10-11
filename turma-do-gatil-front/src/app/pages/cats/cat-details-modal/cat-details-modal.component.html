@@ -127,6 +127,39 @@
                   </p-tag>
                 </div>
               </div>
+
+              <div class="detail-card">
+                <div class="detail-label">
+                  <i class="fas fa-cut"></i>
+                  Status de Castração
+                </div>
+                <div class="detail-value">
+                  <p-tag 
+                    *ngIf="!loadingSterilizations"
+                    [value]="getSterilizationStatusText()" 
+                    [severity]="getSterilizationStatusSeverity()">
+                  </p-tag>
+                  <span *ngIf="loadingSterilizations">
+                    <i class="fas fa-spinner fa-spin"></i> Carregando...
+                  </span>
+                </div>
+              </div>
+
+              <div class="detail-card" *ngIf="getSterilizationDate()">
+                <div class="detail-label">
+                  <i class="fas fa-calendar-check"></i>
+                  Data de Castração
+                </div>
+                <div class="detail-value">{{ getSterilizationDate() }}</div>
+              </div>
+
+              <div class="detail-card full-width" *ngIf="hasSterilizationNotes()">
+                <div class="detail-label">
+                  <i class="fas fa-notes-medical"></i>
+                  Observações de Castração
+                </div>
+                <div class="detail-value notes-text">{{ getSterilizationNotes() }}</div>
+              </div>
             </div>
           </div>
         </div>

@@ -139,6 +139,47 @@
         </div>
       </div>
     </div>
+
+    <p-divider></p-divider>
+
+    <!-- Informações de Castração -->
+    <div class="form-section">
+      <h3>
+        <i class="fas fa-syringe"></i>
+        Castração
+      </h3>
+      
+      <div class="form-grid">
+        <!-- Checkbox para indicar se já é castrado -->
+        <div class="form-field full-width">
+          <div class="checkbox-field">
+            <p-checkbox 
+              formControlName="alreadySterilized"
+              [binary]="true"
+              inputId="alreadySterilized">
+            </p-checkbox>
+            <label for="alreadySterilized" class="checkbox-label">
+              Este gato já foi castrado
+            </label>
+          </div>
+        </div>
+
+        <!-- Data da Castração (aparece apenas se marcou como castrado) -->
+        <div class="form-field" *ngIf="catForm.get('alreadySterilized')?.value">
+          <label for="sterilizationDate">Data da Castração</label>
+          <input 
+            type="date" 
+            id="sterilizationDate" 
+            formControlName="sterilizationDate"
+            class="form-input date-input"
+            placeholder="Informe a data da castração">
+          <small class="info-message">
+            <i class="pi pi-info-circle"></i>
+            Deixe em branco se a data for desconhecida
+          </small>
+        </div>
+      </div>
+    </div>
   </form>
 
   <ng-template pTemplate="footer">

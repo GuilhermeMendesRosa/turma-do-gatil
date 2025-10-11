@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
+import { CheckboxModule } from 'primeng/checkbox';
 
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
@@ -9,7 +10,10 @@ import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
 import { Cat, CatRequest, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
 import { CatService } from '../../../services/cat.service';
+import { SterilizationService } from '../../../services/sterilization.service';
+import { SterilizationRequest } from '../../../models/sterilization.model';
 import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-cat-create-modal',
@@ -23,6 +27,7 @@ import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/com
     Select,
     MessageModule,
     DividerModule,
+    CheckboxModule,
     GenericButtonComponent
   ],
   templateUrl: './cat-create-modal.component.html',
@@ -80,7 +85,8 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private catService: CatService
+    private catService: CatService,
+    private sterilizationService: SterilizationService
   ) {}
 
   ngOnInit(): void {
@@ -102,7 +108,9 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
       color: [null, Validators.required],
       sex: [null, Validators.required],
       birthDate: ['', Validators.required],
-      shelterEntryDate: [todayString, Validators.required]
+      shelterEntryDate: [todayString, Validators.required],
+      alreadySterilized: [false], // Novo campo para indicar se o gato já é castrado
+      sterilizationDate: [''] // Data da castração (se já foi castrado)
     });
 
     // Atualizar o formulário se estiver editando
@@ -129,8 +137,31 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
       if (this.cat.photoUrl) {
         this.previewUrl = this.cat.photoUrl;
       }
+
+      // Verificar se o gato já tem castração registrada
+      this.checkExistingSterilization();
     } else {
       this.isEditMode = false;
+    }
+  }
+
+  checkExistingSterilization(): void {
+    if (this.cat?.id) {
+      this.sterilizationService.getSterilizationsByCatId(this.cat.id).subscribe({
+        next: (sterilizations) => {
+          const completedSterilization = sterilizations.find(s => s.status === 'COMPLETED');
+          if (completedSterilization) {
+            const sterilizationDate = new Date(completedSterilization.sterilizationDate).toISOString().split('T')[0];
+            this.catForm.patchValue({
+              alreadySterilized: true,
+              sterilizationDate: sterilizationDate
+            });
+          }
+        },
+        error: (error) => {
+          console.error('Erro ao verificar castração:', error);
+        }
+      });
     }
   }
 
@@ -187,37 +218,45 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
         birthDate: new Date(formValue.birthDate).toISOString(),
         shelterEntryDate: new Date(formValue.shelterEntryDate).toISOString(),
         photoUrl: this.previewUrl || this.getDefaultImage(),
-        adopted: this.isEditMode ? this.cat?.adopted : false, // Manter status atual na edição
-        adoptionStatus: this.isEditMode ? this.cat?.adoptionStatus : undefined // Manter status de adoção atual na edição
+        adopted: this.isEditMode ? this.cat?.adopted : false,
+        adoptionStatus: this.isEditMode ? this.cat?.adoptionStatus : undefined
       };
 
       if (this.isEditMode && this.cat) {
         // Atualizar gato existente
         this.catService.updateCat(this.cat.id, catData).subscribe({
-          next: () => {
-            this.catUpdated.emit();
-            this.onHide();
+          next: (updatedCat) => {
+            // Se marcou como castrado, criar/atualizar castração
+            if (formValue.alreadySterilized) {
+              const sterilizationDate = formValue.sterilizationDate || formValue.shelterEntryDate;
+              this.handleSterilizationForExistingCat(updatedCat.id, sterilizationDate);
+            } else {
+              this.catUpdated.emit();
+              this.onHide();
+              this.loading = false;
+            }
           },
           error: (error) => {
             console.error('Erro ao atualizar gato:', error);
-            this.loading = false;
-          },
-          complete: () => {
             this.loading = false;
           }
         });
       } else {
         // Criar novo gato
         this.catService.createCat(catData).subscribe({
-          next: () => {
-            this.catCreated.emit();
-            this.onHide();
+          next: (newCat) => {
+            // Se marcou como castrado, criar castração
+            if (formValue.alreadySterilized) {
+              const sterilizationDate = formValue.sterilizationDate || formValue.shelterEntryDate;
+              this.createSterilizationForNewCat(newCat.id, sterilizationDate);
+            } else {
+              this.catCreated.emit();
+              this.onHide();
+              this.loading = false;
+            }
           },
           error: (error) => {
             console.error('Erro ao criar gato:', error);
-            this.loading = false;
-          },
-          complete: () => {
             this.loading = false;
           }
         });
@@ -225,6 +264,77 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
     } else {
       this.markFormGroupTouched();
     }
+  }
+
+  private createSterilizationForNewCat(catId: string, sterilizationDate: string): void {
+    // Se não forneceu data de castração, usar a data de entrada no abrigo
+    const finalDate = sterilizationDate || this.catForm.get('shelterEntryDate')?.value;
+    
+    const sterilizationData: SterilizationRequest = {
+      catId: catId,
+      sterilizationDate: new Date(finalDate).toISOString(),
+      status: 'COMPLETED',
+      notes: 'Castração registrada no cadastro do gato'
+    };
+
+    this.sterilizationService.createSterilization(sterilizationData).subscribe({
+      next: () => {
+        this.catCreated.emit();
+        this.onHide();
+      },
+      error: (error) => {
+        console.error('Erro ao criar castração:', error);
+        // Mesmo com erro na castração, emitir evento de criação do gato
+        this.catCreated.emit();
+        this.onHide();
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  private handleSterilizationForExistingCat(catId: string, sterilizationDate: string): void {
+    // Verificar se já existe castração
+    this.sterilizationService.getSterilizationsByCatId(catId).subscribe({
+      next: (sterilizations) => {
+        const completedSterilization = sterilizations.find(s => s.status === 'COMPLETED');
+        
+        if (completedSterilization) {
+          // Atualizar castração existente
+          const sterilizationData: SterilizationRequest = {
+            catId: catId,
+            sterilizationDate: new Date(sterilizationDate).toISOString(),
+            status: 'COMPLETED',
+            notes: completedSterilization.notes || 'Castração registrada no cadastro do gato'
+          };
+
+          this.sterilizationService.updateSterilization(completedSterilization.id!, sterilizationData).subscribe({
+            next: () => {
+              this.catUpdated.emit();
+              this.onHide();
+            },
+            error: (error) => {
+              console.error('Erro ao atualizar castração:', error);
+              this.catUpdated.emit();
+              this.onHide();
+            },
+            complete: () => {
+              this.loading = false;
+            }
+          });
+        } else {
+          // Criar nova castração
+          this.createSterilizationForNewCat(catId, sterilizationDate);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao verificar castrações:', error);
+        this.catUpdated.emit();
+        this.onHide();
+        this.loading = false;
+      }
+    });
   }
 
   private markFormGroupTouched(): void {

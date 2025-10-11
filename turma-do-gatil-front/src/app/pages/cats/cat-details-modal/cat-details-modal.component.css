@@ -210,6 +210,10 @@
   transition: all 0.3s ease;
 }
 
+.detail-card.full-width {
+  grid-column: 1 / -1;
+}
+
 .detail-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -236,6 +240,14 @@
   font-size: 1rem;
   font-weight: 600;
   color: var(--p-text-color);
+}
+
+.detail-value.notes-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--p-text-color-secondary);
 }
 
 /* Footer do diálogo */

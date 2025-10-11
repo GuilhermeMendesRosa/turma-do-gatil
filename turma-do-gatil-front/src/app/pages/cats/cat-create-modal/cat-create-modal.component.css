@@ -173,10 +173,54 @@
   flex-direction: column;
 }
 
+.form-field.full-width {
+  grid-column: 1 / -1;
+}
+
 .form-field label {
   font-weight: 500;
   color: #374151;
   margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Checkbox Field */
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.checkbox-field:hover {
+  background: #f0f9ff;
+  border-color: #6366f1;
+}
+
+.checkbox-label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+  margin: 0 !important;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Info Message */
+.info-message {
+  color: #6366f1;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.info-message i {
   font-size: 0.875rem;
 }
 

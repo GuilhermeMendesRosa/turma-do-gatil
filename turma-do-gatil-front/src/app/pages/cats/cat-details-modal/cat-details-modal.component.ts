@@ -13,7 +13,9 @@ import { TooltipModule } from 'primeng/tooltip';
 // import { ConfirmationService, MessageService } from 'primeng/api';
 import { Cat, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
 import { Note, NoteRequest } from '../../../models/note.model';
+import { SterilizationDto } from '../../../models/sterilization.model';
 import { NoteService } from '../../../services/note.service';
+import { SterilizationService } from '../../../services/sterilization.service';
 import { AdoptionModalComponent } from '../adoption-modal/adoption-modal.component';
 import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
 
@@ -59,6 +61,10 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
   savingNote = false;
   editingNoteId: string | null = null;
   editingNoteText = '';
+
+  // Sterilization properties
+  sterilizations: SterilizationDto[] = [];
+  loadingSterilizations = false;
 
   // Button configurations
   get adoptButtonConfig(): GenericButtonConfig {
@@ -112,7 +118,8 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
   }
 
   constructor(
-    private noteService: NoteService
+    private noteService: NoteService,
+    private sterilizationService: SterilizationService
     // private confirmationService: ConfirmationService,
     // private messageService: MessageService
   ) { }
@@ -121,6 +128,7 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
     // Carrega as notas quando o componente é inicializado
     if (this.cat?.id) {
       this.loadNotes();
+      this.loadSterilizations();
     }
   }
 
@@ -128,6 +136,7 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
     // Carrega as notas quando o gato muda
     if (changes['cat'] && this.cat?.id) {
       this.loadNotes();
+      this.loadSterilizations();
     }
   }
 
@@ -391,5 +400,95 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
 
   trackByNoteId(index: number, note: Note): string {
     return note.id;
+  }
+
+  // Sterilization methods
+  loadSterilizations(): void {
+    if (!this.cat?.id) return;
+    
+    this.loadingSterilizations = true;
+    this.sterilizationService.getSterilizationsByCatId(this.cat.id).subscribe({
+      next: (sterilizations) => {
+        this.sterilizations = sterilizations.sort((a, b) => 
+          new Date(b.sterilizationDate).getTime() - new Date(a.sterilizationDate).getTime()
+        );
+        this.loadingSterilizations = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar informações de castração:', error);
+        this.loadingSterilizations = false;
+      }
+    });
+  }
+
+  getSterilizationStatusText(): string {
+    if (!this.sterilizations || this.sterilizations.length === 0) {
+      return 'Não castrado';
+    }
+
+    const completed = this.sterilizations.find(s => s.status === 'COMPLETED');
+    if (completed) {
+      return 'Castrado';
+    }
+
+    const scheduled = this.sterilizations.find(s => s.status === 'SCHEDULED');
+    if (scheduled) {
+      return 'Castração agendada';
+    }
+
+    return 'Não castrado';
+  }
+
+  getSterilizationStatusSeverity(): string {
+    if (!this.sterilizations || this.sterilizations.length === 0) {
+      return 'warn';
+    }
+
+    const completed = this.sterilizations.find(s => s.status === 'COMPLETED');
+    if (completed) {
+      return 'success';
+    }
+
+    const scheduled = this.sterilizations.find(s => s.status === 'SCHEDULED');
+    if (scheduled) {
+      return 'info';
+    }
+
+    return 'warn';
+  }
+
+  getSterilizationDate(): string | null {
+    if (!this.sterilizations || this.sterilizations.length === 0) {
+      return null;
+    }
+
+    const completed = this.sterilizations.find(s => s.status === 'COMPLETED');
+    if (completed) {
+      return this.formatDate(completed.sterilizationDate);
+    }
+
+    const scheduled = this.sterilizations.find(s => s.status === 'SCHEDULED');
+    if (scheduled) {
+      return this.formatDate(scheduled.sterilizationDate);
+    }
+
+    return null;
+  }
+
+  hasSterilizationNotes(): boolean {
+    if (!this.sterilizations || this.sterilizations.length === 0) {
+      return false;
+    }
+
+    return this.sterilizations.some(s => s.notes && s.notes.trim().length > 0);
+  }
+
+  getSterilizationNotes(): string {
+    if (!this.sterilizations || this.sterilizations.length === 0) {
+      return '';
+    }
+
+    const withNotes = this.sterilizations.filter(s => s.notes && s.notes.trim().length > 0);
+    return withNotes.map(s => `${this.formatDate(s.sterilizationDate)}: ${s.notes}`).join('\n');
   }
 }
