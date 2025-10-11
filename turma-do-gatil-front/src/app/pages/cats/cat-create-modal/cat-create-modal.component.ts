@@ -79,7 +79,7 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
       label: this.isEditMode ? 'Salvar Alterações' : 'Salvar Gato',
       icon: 'pi-check',
       loading: this.loading,
-      disabled: !this.catForm?.valid
+      disabled: !this.catForm?.valid || this.loading
     };
   }
 
@@ -168,6 +168,7 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
   onHide(): void {
     this.visible = false;
     this.visibleChange.emit(this.visible);
+    this.loading = false; // Garantir que loading seja resetado
     this.resetForm();
   }
 
@@ -205,8 +206,12 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
   }
 
   onSubmit(): void {
-    if (this.catForm.valid) {
+    console.log('onSubmit chamado - loading:', this.loading);
+    
+    // Previne submissões duplicadas
+    if (this.catForm.valid && !this.loading) {
       this.loading = true;
+      console.log('Iniciando submit - loading setado para true');
       
       const formValue = this.catForm.value;
       

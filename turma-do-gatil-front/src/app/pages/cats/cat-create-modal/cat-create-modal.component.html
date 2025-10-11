@@ -11,7 +11,7 @@
   [header]="isEditMode ? 'Editar Gato' : 'Adicionar Novo Gato'"
   (onHide)="onHide()">
   
-  <form [formGroup]="catForm" (ngSubmit)="onSubmit()" class="cat-create-form">
+  <form [formGroup]="catForm" class="cat-create-form">
     
     <!-- Upload de Foto -->
     <div class="form-section">
