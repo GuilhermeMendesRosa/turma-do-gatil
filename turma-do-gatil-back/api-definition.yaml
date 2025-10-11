@@ -779,7 +779,10 @@ components:
         email:
           type: string
           format: email
-          description: Email do adotante
+          description: Email do adotante (opcional)
+        instagram:
+          type: string
+          description: Instagram do adotante
         address:
           type: string
           description: Endereço do adotante
@@ -796,7 +799,6 @@ components:
         - birthDate
         - cpf
         - phone
-        - email
         - address
         - registrationDate
       properties:
@@ -819,7 +821,10 @@ components:
         email:
           type: string
           format: email
-          description: Email do adotante (deve ser único)
+          description: Email do adotante (opcional, mas deve ser único se fornecido)
+        instagram:
+          type: string
+          description: Instagram do adotante
         address:
           type: string
           description: Endereço do adotante

@@ -35,8 +35,11 @@ public class Adopter {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
+
+    @Column
+    private String instagram;
 
     @Column(nullable = false)
     private String address;

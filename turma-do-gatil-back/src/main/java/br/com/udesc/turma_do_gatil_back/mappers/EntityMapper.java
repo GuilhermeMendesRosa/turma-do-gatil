@@ -50,6 +50,7 @@ public class EntityMapper {
             adopter.getCpf(),
             adopter.getPhone(),
             adopter.getEmail(),
+            adopter.getInstagram(),
             adopter.getAddress(),
             adopter.getRegistrationDate()
         );
@@ -65,6 +66,7 @@ public class EntityMapper {
         adopter.setCpf(adopterDto.getCpf());
         adopter.setPhone(adopterDto.getPhone());
         adopter.setEmail(adopterDto.getEmail());
+        adopter.setInstagram(adopterDto.getInstagram());
         adopter.setAddress(adopterDto.getAddress());
         adopter.setRegistrationDate(adopterDto.getRegistrationDate());
         return adopter;
