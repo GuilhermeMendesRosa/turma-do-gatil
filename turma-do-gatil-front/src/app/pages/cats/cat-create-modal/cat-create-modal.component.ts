@@ -1,19 +1,32 @@
+// Angular Core
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+// PrimeNG
 import { DialogModule } from 'primeng/dialog';
 import { CheckboxModule } from 'primeng/checkbox';
-
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
-import { Cat, CatRequest, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
+
+// RxJS
+import { Observable, of } from 'rxjs';
+import { switchMap, catchError, finalize } from 'rxjs/operators';
+
+// Models
+import { Cat, CatRequest, Color, Sex } from '../../../models/cat.model';
+import { SterilizationRequest } from '../../../models/sterilization.model';
+
+// Services
 import { CatService } from '../../../services/cat.service';
 import { SterilizationService } from '../../../services/sterilization.service';
-import { SterilizationRequest } from '../../../models/sterilization.model';
+import { UploadService, UploadResponse } from '../../../services/upload.service';
+import { NotificationService } from '../../../services/notification.service';
+
+// Shared Components
 import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-cat-create-modal',
@@ -86,7 +99,9 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     private catService: CatService,
-    private sterilizationService: SterilizationService
+    private sterilizationService: SterilizationService,
+    private uploadService: UploadService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -186,88 +201,171 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
     this.isEditMode = false;
   }
 
+  /**
+   * Manipula a seleção de arquivo de imagem
+   * Valida o arquivo e cria um preview se for válido
+   */
   onFileSelect(event: any): void {
     const file = event.target.files[0];
-    if (file) {
-      this.selectedFile = file;
-      
-      // Criar preview da imagem
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.previewUrl = e.target.result;
-      };
-      reader.readAsDataURL(file);
+    if (!file) {
+      return;
     }
+
+    const validation = this.uploadService.validateImageFile(file);
+    if (!validation.valid) {
+      this.notificationService.showError(
+        'Arquivo Inválido',
+        validation.error || 'O arquivo selecionado não é válido.'
+      );
+      // Limpar o input file
+      event.target.value = '';
+      return;
+    }
+
+    this.selectedFile = file;
+    this.createImagePreview(file);
+  }
+
+  /**
+   * Cria um preview da imagem selecionada
+   */
+  private createImagePreview(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.previewUrl = e.target.result;
+    };
+    reader.readAsDataURL(file);
   }
 
   onFileRemove(): void {
     this.selectedFile = null;
     this.previewUrl = null;
+    // Se estiver editando, restaurar a foto original do gato
+    if (this.isEditMode && this.cat?.photoUrl) {
+      this.previewUrl = this.cat.photoUrl;
+    }
   }
 
+  /**
+   * Submete o formulário para criar ou editar um gato
+   * Gerencia upload de imagem, criação/edição do gato e registro de castração
+   */
   onSubmit(): void {
-    console.log('onSubmit chamado - loading:', this.loading);
-    
-    // Previne submissões duplicadas
-    if (this.catForm.valid && !this.loading) {
-      this.loading = true;
-      console.log('Iniciando submit - loading setado para true');
-      
-      const formValue = this.catForm.value;
-      
-      // Converter datas para string ISO
-      const catData: CatRequest = {
-        name: formValue.name,
-        color: formValue.color,
-        sex: formValue.sex,
-        birthDate: new Date(formValue.birthDate).toISOString(),
-        shelterEntryDate: new Date(formValue.shelterEntryDate).toISOString(),
-        photoUrl: this.previewUrl || this.getDefaultImage(),
-        adopted: this.isEditMode ? this.cat?.adopted : false,
-        adoptionStatus: this.isEditMode ? this.cat?.adoptionStatus : undefined
-      };
-
-      if (this.isEditMode && this.cat) {
-        // Atualizar gato existente
-        this.catService.updateCat(this.cat.id, catData).subscribe({
-          next: (updatedCat) => {
-            // Se marcou como castrado, criar/atualizar castração
-            if (formValue.alreadySterilized) {
-              const sterilizationDate = formValue.sterilizationDate || formValue.shelterEntryDate;
-              this.handleSterilizationForExistingCat(updatedCat.id, sterilizationDate);
-            } else {
-              this.catUpdated.emit();
-              this.onHide();
-              this.loading = false;
-            }
-          },
-          error: (error) => {
-            console.error('Erro ao atualizar gato:', error);
-            this.loading = false;
-          }
-        });
-      } else {
-        // Criar novo gato
-        this.catService.createCat(catData).subscribe({
-          next: (newCat) => {
-            // Se marcou como castrado, criar castração
-            if (formValue.alreadySterilized) {
-              const sterilizationDate = formValue.sterilizationDate || formValue.shelterEntryDate;
-              this.createSterilizationForNewCat(newCat.id, sterilizationDate);
-            } else {
-              this.catCreated.emit();
-              this.onHide();
-              this.loading = false;
-            }
-          },
-          error: (error) => {
-            console.error('Erro ao criar gato:', error);
-            this.loading = false;
-          }
-        });
-      }
-    } else {
+    if (!this.catForm.valid || this.loading) {
       this.markFormGroupTouched();
+      return;
+    }
+
+    this.loading = true;
+    const formValue = this.catForm.value;
+
+    this.handleImageUpload()
+      .pipe(
+        switchMap(photoUrl => this.saveCat(formValue, photoUrl)),
+        switchMap(cat => this.handleSterilization(cat, formValue)),
+        catchError(error => this.handleSubmitError(error)),
+        finalize(() => this.finalizeSubmit(formValue))
+      )
+      .subscribe();
+  }
+
+  /**
+   * Gerencia o upload da imagem se houver arquivo selecionado
+   * @returns Observable com a URL da foto
+   */
+  private handleImageUpload(): Observable<string> {
+    if (this.selectedFile) {
+      return this.uploadService.uploadImage(this.selectedFile).pipe(
+        switchMap(response => {
+          const photoUrl = response.fileUrl || this.getDefaultImage();
+          return of(photoUrl);
+        }),
+        catchError(error => {
+          this.notificationService.showError(
+            'Erro no Upload',
+            'Não foi possível fazer upload da imagem. Usando imagem padrão.'
+          );
+          return of(this.getDefaultImage());
+        })
+      );
+    }
+
+    // Se não tem arquivo selecionado, usar foto existente ou padrão
+    const existingPhotoUrl = this.isEditMode && this.cat?.photoUrl 
+      ? this.cat.photoUrl 
+      : this.getDefaultImage();
+    return of(existingPhotoUrl);
+  }
+
+  /**
+   * Salva o gato (cria ou atualiza)
+   * @returns Observable com o gato salvo
+   */
+  private saveCat(formValue: any, photoUrl: string): Observable<Cat> {
+    const catData: CatRequest = {
+      name: formValue.name,
+      color: formValue.color,
+      sex: formValue.sex,
+      birthDate: new Date(formValue.birthDate).toISOString(),
+      shelterEntryDate: new Date(formValue.shelterEntryDate).toISOString(),
+      photoUrl: photoUrl,
+      adopted: this.isEditMode ? this.cat?.adopted : false,
+      adoptionStatus: this.isEditMode ? this.cat?.adoptionStatus : undefined
+    };
+
+    if (this.isEditMode && this.cat) {
+      return this.catService.updateCat(this.cat.id, catData);
+    }
+    
+    return this.catService.createCat(catData);
+  }
+
+  /**
+   * Gerencia a castração do gato se necessário
+   * @returns Observable que completa após o processamento
+   */
+  private handleSterilization(cat: Cat, formValue: any): Observable<void> {
+    if (!formValue.alreadySterilized) {
+      // Emitir evento apropriado e retornar
+      if (this.isEditMode) {
+        this.catUpdated.emit();
+      } else {
+        this.catCreated.emit();
+      }
+      return of(void 0);
+    }
+
+    const sterilizationDate = formValue.sterilizationDate || formValue.shelterEntryDate;
+    
+    if (this.isEditMode) {
+      this.handleSterilizationForExistingCat(cat.id, sterilizationDate);
+    } else {
+      this.createSterilizationForNewCat(cat.id, sterilizationDate);
+    }
+
+    // Retornar observable vazio já que a castração é tratada separadamente
+    return of(void 0);
+  }
+
+  /**
+   * Trata erros durante o submit
+   */
+  private handleSubmitError(error: any): Observable<never> {
+    console.error('Erro ao processar gato:', error);
+    this.notificationService.showError(
+      'Erro ao Salvar',
+      `Não foi possível ${this.isEditMode ? 'atualizar' : 'criar'} o gato. Tente novamente.`
+    );
+    throw error;
+  }
+
+  /**
+   * Finaliza o processo de submit
+   */
+  private finalizeSubmit(formValue: any): void {
+    if (!formValue.alreadySterilized) {
+      this.loading = false;
+      this.onHide();
     }
   }
 

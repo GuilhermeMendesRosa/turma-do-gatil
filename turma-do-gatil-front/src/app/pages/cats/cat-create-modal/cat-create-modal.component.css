@@ -360,3 +360,34 @@
 :host {
   --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
 }
+
+/* Upload Info */
+.upload-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6366f1;
+  font-size: 0.875rem;
+  margin-right: auto;
+}
+
+.upload-info i {
+  font-size: 1rem;
+}
+
+/* File Info */
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.file-info i {
+  color: #6366f1;
+}
