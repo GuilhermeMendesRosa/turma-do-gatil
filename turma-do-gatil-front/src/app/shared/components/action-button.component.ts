@@ -117,7 +117,7 @@ export class ActionButtonComponent {
     schedule: 'pi-calendar-plus',
     edit: 'pi-pencil',
     complete: 'pi-check',
-    cancel: 'pi-times',
+    cancel: 'pi-trash',
     info: 'pi-info-circle'
   };
 
