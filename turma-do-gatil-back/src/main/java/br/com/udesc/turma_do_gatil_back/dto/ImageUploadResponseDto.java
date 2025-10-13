@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class ImageUploadResponseDto {
     private String fileName;
     private String fileUrl;
-    private String fileKey;
     private Long fileSize;
     private String contentType;
 }
