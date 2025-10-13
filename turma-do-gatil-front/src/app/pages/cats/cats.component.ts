@@ -5,7 +5,6 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
-import { PaginatorModule } from 'primeng/paginator';
 import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
@@ -53,7 +52,9 @@ import {
   GenericModalComponent,
   ModalAction,
   GenericButtonComponent,
-  GenericButtonConfig
+  GenericButtonConfig,
+  PaginationComponent,
+  PaginationInfo
 } from '../../shared/components';
 
 @Component({
@@ -66,7 +67,6 @@ import {
     ButtonModule,
     InputTextModule,
     Select,
-    PaginatorModule,
     TagModule,
     SkeletonModule,
     TooltipModule,
@@ -80,7 +80,8 @@ import {
     StatsGridComponent,
     ContentCardComponent,
     GenericModalComponent,
-    GenericButtonComponent
+    GenericButtonComponent,
+    PaginationComponent
   ],
   providers: [MessageService],
   templateUrl: './cats.component.html',
@@ -98,6 +99,19 @@ export class CatsComponent implements OnInit, OnDestroy {
   catsDisplay: CatDisplayInfo[] = [];
   totalRecords = 0;
   statsData: StatCardData[] = [];
+  //#endregion
+
+  //#region Public Properties - Pagination
+  first = 0;
+  readonly rows = CATS_CONFIG.DEFAULT_PAGE_SIZE;
+  paginationInfo: PaginationInfo = {
+    totalElements: 0,
+    numberOfElements: 0,
+    first: true,
+    last: false,
+    totalPages: 0,
+    currentPage: 0
+  };
   //#endregion
 
   //#region Public Properties - State Management
@@ -226,6 +240,12 @@ export class CatsComponent implements OnInit, OnDestroy {
   loadCats(): void {
     this.setLoadingState(true);
     
+    // Calcula a página atual baseado no first
+    const currentPage = Math.floor(this.first / this.rows);
+    
+    // Atualiza o filtro de página antes de pegar os filtros
+    this.catFiltersService.updatePage(currentPage);
+    
     const cleanFilters = this.catFiltersService.getCleanFiltersForApi();
 
     this.catService.getAllCats(cleanFilters)
@@ -258,11 +278,15 @@ export class CatsComponent implements OnInit, OnDestroy {
     this.cats = response.content;
     this.catsDisplay = this.catDisplayService.transformCatsToDisplayInfo(response.content);
     this.totalRecords = response.totalElements;
+    // Atualiza o first baseado na página retornada pela API
+    this.first = response.number * this.rows;
     this.paginationConfig = {
       ...this.paginationConfig,
       currentPage: response.number,
       totalRecords: response.totalElements
     };
+    // Atualiza a propriedade paginationInfo com uma nova referência
+    this.updatePaginationInfo();
   }
 
   /**
@@ -312,6 +336,7 @@ export class CatsComponent implements OnInit, OnDestroy {
    * Manipula mudanças nos filtros
    */
   onFilterChange(): void {
+    this.first = 0;
     this.catFiltersService.resetPage();
     this.loadCats();
   }
@@ -320,6 +345,7 @@ export class CatsComponent implements OnInit, OnDestroy {
    * Manipula mudanças na ordenação
    */
   onSortChange(): void {
+    this.first = 0;
     const currentFilters = this.getCurrentFilters();
     const { sortBy, sortDir } = this.catFiltersService.processSortValue(currentFilters.sortBy || '');
     
@@ -331,6 +357,7 @@ export class CatsComponent implements OnInit, OnDestroy {
    * Limpa todos os filtros
    */
   clearFilters(): void {
+    this.first = 0;
     this.catFiltersService.clearFilters();
     this.loadCats();
   }
@@ -346,20 +373,55 @@ export class CatsComponent implements OnInit, OnDestroy {
   //#region Pagination Management
 
   /**
-   * Manipula mudanças de página
+   * Atualiza as informações de paginação
    */
-  onPageChange(event: any): void {
-    this.catFiltersService.updatePage(event.page);
-    this.loadCats();
+  private updatePaginationInfo(): void {
+    this.paginationInfo = {
+      totalElements: this.totalRecords,
+      numberOfElements: this.cats.length,
+      first: this.first === 0,
+      last: this.first + this.rows >= this.totalRecords,
+      totalPages: Math.ceil(this.totalRecords / this.rows),
+      currentPage: Math.floor(this.first / this.rows)
+    };
   }
 
   /**
-   * Manipula mudanças no tamanho da página
+   * Obtém informações da paginação atual (compatibilidade)
    */
-  onPageSizeChange(): void {
-    this.catFiltersService.updatePageSize(this.paginationConfig.pageSize);
+  getPaginationInfo(): PaginationInfo {
+    return this.paginationInfo;
+  }
+
+  /**
+   * Navega para página anterior
+   */
+  previousPage(): void {
+    if (this.first > 0) {
+      this.first = Math.max(0, this.first - this.rows);
+      this.loadCats();
+    }
+  }
+
+  /**
+   * Navega para próxima página
+   */
+  nextPage(): void {
+    if (this.first + this.rows < this.totalRecords) {
+      this.first = this.first + this.rows;
+      this.loadCats();
+    }
+  }
+
+  /**
+   * Navega para página específica
+   */
+  goToPage(event: any): void {
+    const page = parseInt(event.target.value);
+    this.first = page * this.rows;
     this.loadCats();
   }
+
   //#endregion
 
   //#region Dialog Management

@@ -31,7 +31,7 @@ export interface PaginationInfo {
           class="page-select" 
           [value]="pagination.currentPage" 
           (change)="onPageChange($event)">
-          <option *ngFor="let page of getPageNumbers()" [value]="page">
+          <option *ngFor="let page of getPageNumbers()" [value]="page" [selected]="page === pagination.currentPage">
             Página {{ page + 1 }}
           </option>
         </select>

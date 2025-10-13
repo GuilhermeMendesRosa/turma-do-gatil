@@ -227,40 +227,14 @@
     </div>
   </div>
 
-  <!-- Resultados e Paginação -->
-  <div class="results-section" *ngIf="!loadingState.isLoading && cats.length > 0">
-    <div class="results-info">
-      <span class="results-text">
-        Mostrando {{ (paginationConfig.currentPage * paginationConfig.pageSize) + 1 }} - {{ Math.min((paginationConfig.currentPage + 1) * paginationConfig.pageSize, paginationConfig.totalRecords) }} 
-        de {{ paginationConfig.totalRecords }} gatos
-      </span>
-      
-      <div class="page-size-selector">
-        <label>Itens por página:</label>
-        <p-select
-          [(ngModel)]="paginationConfig.pageSize"
-          (ngModelChange)="onPageSizeChange()"
-          [options]="pageSizeOptions"
-          optionLabel="label"
-          optionValue="value">
-        </p-select>
-      </div>
-    </div>
-
-    <!-- Paginação -->
-    <div class="pagination-container" *ngIf="paginationConfig.totalRecords > paginationConfig.pageSize">
-      <p-paginator
-        [rows]="paginationConfig.pageSize"
-        [totalRecords]="paginationConfig.totalRecords"
-        [first]="paginationConfig.currentPage * paginationConfig.pageSize"
-        (onPageChange)="onPageChange($event)"
-        [showCurrentPageReport]="true"
-        [showJumpToPageDropdown]="true"
-        [showPageLinks]="true"
-        [pageLinkSize]="5"
-        currentPageReportTemplate="Página {currentPage} de {totalPages}">
-      </p-paginator>
-    </div>
+  <!-- Paginação -->
+  <div *ngIf="!loadingState.isLoading && cats.length > 0">
+    <app-pagination
+      [pagination]="paginationInfo"
+      (pageChange)="goToPage({target: {value: $event}})"
+      (previousPage)="previousPage()"
+      (nextPage)="nextPage()">
+    </app-pagination>
   </div>
 </div>
 

@@ -503,46 +503,8 @@
   flex-wrap: wrap;
 }
 
-/* ===== RESULTADOS E PAGINAÇÃO ===== */
-.results-section {
-  margin-top: 2rem;
-}
-
-.results-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background: var(--p-surface-card);
-  border-radius: 12px;
-  border: 1px solid var(--p-surface-border);
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.results-text {
-  font-weight: 600;
-  color: var(--p-text-color);
-}
-
-.page-size-selector {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.page-size-selector label {
-  color: var(--p-text-color-secondary);
-  font-weight: 500;
-}
-
-.pagination-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-}
+/* ===== PAGINAÇÃO ===== */
+/* Estilos de paginação agora são gerenciados pelo componente app-pagination compartilhado */
 
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 1200px) {
@@ -778,24 +740,7 @@
   color: white !important;
 }
 
-/* Forçar background nos estados específicos - removido para evitar conflitos */
-
-::ng-deep .p-paginator {
-  background: var(--p-surface-card) !important;
-  border: 1px solid var(--p-surface-border) !important;
-  border-radius: 12px !important;
-  padding: 1rem !important;
-}
-
-::ng-deep .p-paginator .p-paginator-pages .p-paginator-page {
-  border-radius: 8px !important;
-  margin: 0 2px !important;
-}
-
-::ng-deep .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-  background: var(--p-primary-color) !important;
-  border-color: var(--p-primary-color) !important;
-}
+/* Estilos específicos do p-paginator removidos - agora usando app-pagination compartilhado */
 
 ::ng-deep .p-button {
   border-radius: 10px !important;
