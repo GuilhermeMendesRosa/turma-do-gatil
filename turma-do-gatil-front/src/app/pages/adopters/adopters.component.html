@@ -248,3 +248,11 @@
     </div>
   </form>
 </app-generic-modal>
+
+<!-- ==================== MODAL DE CONFIRMAÇÃO DE EXCLUSÃO ==================== -->
+<app-confirmation-modal
+  [(visible)]="confirmationModalVisible"
+  [config]="confirmationConfig"
+  (confirmed)="onConfirmationConfirmed()"
+  (cancelled)="onConfirmationCancelled()">
+</app-confirmation-modal>

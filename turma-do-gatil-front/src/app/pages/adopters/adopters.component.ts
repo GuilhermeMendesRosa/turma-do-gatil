@@ -20,7 +20,9 @@ import {
   PaginationInfo,
   GenericModalComponent,
   ModalAction,
-  ModalButtonComponent
+  ModalButtonComponent,
+  ConfirmationModalComponent,
+  ConfirmationConfig
 } from '../../shared/components';
 
 // Imports das novas funcionalidades
@@ -61,7 +63,8 @@ import {
     PageHeaderComponent,
     RefreshButtonComponent,
     PaginationComponent,
-    ModalButtonComponent
+    ModalButtonComponent,
+    ConfirmationModalComponent
   ],
   templateUrl: './adopters.component.html',
   styleUrls: ['./adopters.component.css']
@@ -88,6 +91,14 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   currentModalType: ModalType = ModalType.CREATE;
   adopterForm!: FormGroup<any>;
   modalActions: ModalAction[] = [];
+  
+  // ==================== CONFIRMATION MODAL ====================
+  confirmationModalVisible = false;
+  confirmationConfig: ConfirmationConfig = {
+    title: 'Confirmar',
+    message: 'Tem certeza que deseja continuar?'
+  };
+  private pendingConfirmationAction: (() => void) | null = null;
   
   // ==================== FILTROS ====================
   filters: AdopterFilters = {
@@ -307,9 +318,24 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   private confirmDeleteAdopter(adopter: Adopter): void {
     const fullName = this.adopterUtils.getFullName(adopter.firstName, adopter.lastName);
     
-    if (confirm(`Tem certeza que deseja excluir o adotante ${fullName}?`)) {
+    const config: ConfirmationConfig = {
+      title: 'Excluir Adotante',
+      message: `Confirma a exclusão do adotante ${fullName}?`,
+      confirmLabel: 'Sim, excluir',
+      cancelLabel: 'Cancelar',
+      icon: 'pi pi-trash',
+      severity: 'danger',
+      details: [
+        `CPF: ${this.adopterUtils.formatCpf(adopter.cpf)}`,
+        `Telefone: ${this.adopterUtils.formatPhone(adopter.phone)}`,
+        'Esta ação não pode ser desfeita',
+        'Todas as informações do adotante serão removidas permanentemente'
+      ]
+    };
+
+    this.showConfirmation(config, () => {
       this.deleteAdopter(adopter);
-    }
+    });
   }
 
   /**
@@ -337,6 +363,34 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   private handleDeleteError(error: any): void {
     console.error('Erro ao excluir adotante:', error);
     alert('Erro ao excluir adotante. Tente novamente.');
+  }
+
+  // ==================== CONFIRMATION MODAL METHODS ====================
+  
+  /**
+   * Shows confirmation modal with custom configuration
+   */
+  private showConfirmation(config: ConfirmationConfig, onConfirm: () => void): void {
+    this.confirmationConfig = config;
+    this.pendingConfirmationAction = onConfirm;
+    this.confirmationModalVisible = true;
+  }
+
+  /**
+   * Handles confirmation modal confirmation
+   */
+  onConfirmationConfirmed(): void {
+    if (this.pendingConfirmationAction) {
+      this.pendingConfirmationAction();
+      this.pendingConfirmationAction = null;
+    }
+  }
+
+  /**
+   * Handles confirmation modal cancellation
+   */
+  onConfirmationCancelled(): void {
+    this.pendingConfirmationAction = null;
   }
 
   // ==================== MÉTODOS DE PAGINAÇÃO ====================
