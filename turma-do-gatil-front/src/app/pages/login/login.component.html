@@ -1,0 +1,104 @@
+<div class="login-page">
+  <div class="login-container">
+    <!-- Logo e Título -->
+    <div class="login-header">
+      <img 
+        src="https://www.turmadogatil.com.br/wp-content/themes/website/assets/images/turma-do-gatil-colorido.webp" 
+        alt="Turma do Gatil" 
+        class="logo">
+      <h1 class="login-title">Turma do Gatil</h1>
+      <p class="login-subtitle">Sistema de Gerenciamento de Adoção</p>
+    </div>
+
+    <!-- Card de Login -->
+    <div class="login-card">
+      <div class="card-header">
+        <i class="pi pi-sign-in"></i>
+        <h2>Bem-vindo de volta!</h2>
+        <p>Entre com suas credenciais para continuar</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <!-- Campo Username -->
+        <div class="form-field">
+          <label for="username" class="field-label">
+            <i class="pi pi-user"></i>
+            Usuário
+          </label>
+          <input
+            id="username"
+            type="text"
+            pInputText
+            formControlName="username"
+            placeholder="Digite seu usuário"
+            class="field-input"
+            [class.invalid]="username?.invalid && username?.touched"
+            autofocus
+          />
+          @if (username?.invalid && username?.touched) {
+          <small class="field-error">
+            @if (username?.errors?.['required']) {
+              <i class="pi pi-exclamation-circle"></i>
+              <span>Usuário é obrigatório</span>
+            }
+            @if (username?.errors?.['minlength']) {
+              <i class="pi pi-exclamation-circle"></i>
+              <span>Usuário deve ter no mínimo 3 caracteres</span>
+            }
+          </small>
+          }
+        </div>
+
+        <!-- Campo Password -->
+        <div class="form-field">
+          <label for="password" class="field-label">
+            <i class="pi pi-lock"></i>
+            Senha
+          </label>
+          <p-password
+            id="password"
+            formControlName="password"
+            placeholder="Digite sua senha"
+            [toggleMask]="true"
+            [feedback]="false"
+            styleClass="password-field"
+            inputStyleClass="field-input"
+            [class.invalid]="password?.invalid && password?.touched"
+          ></p-password>
+          @if (password?.invalid && password?.touched) {
+          <small class="field-error">
+            @if (password?.errors?.['required']) {
+              <i class="pi pi-exclamation-circle"></i>
+              <span>Senha é obrigatória</span>
+            }
+            @if (password?.errors?.['minlength']) {
+              <i class="pi pi-exclamation-circle"></i>
+              <span>Senha deve ter no mínimo 6 caracteres</span>
+            }
+          </small>
+          }
+        </div>
+
+        <!-- Botão de Login -->
+        <button 
+          type="submit" 
+          class="login-button"
+          [disabled]="loading || loginForm.invalid"
+          [class.loading]="loading">
+          @if (loading) {
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Entrando...</span>
+          } @else {
+            <i class="pi pi-sign-in"></i>
+            <span>Entrar no Sistema</span>
+          }
+        </button>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>© 2025 Turma do Gatil - Todos os direitos reservados</p>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MenubarModule } from 'primeng/menubar';
@@ -9,6 +9,8 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
 import { MenuItem } from 'primeng/api';
 import { filter } from 'rxjs/operators';
+import { AuthService } from './services/auth.service';
+import { User } from './models/auth.model';
 
 @Component({
   selector: 'app-root',
@@ -17,17 +19,31 @@ import { filter } from 'rxjs/operators';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'turma-do-gatil-front';
   sidebarVisible: boolean = false;
   currentRoute: string = '';
+  currentUser: User | null = null;
+  isLoginPage: boolean = false;
   
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {
     // Detectar mudanças de rota para atualizar o menu ativo
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
       this.currentRoute = event.url;
+      // Verifica se está na página de login (com ou sem query params)
+      this.isLoginPage = event.url.startsWith('/login');
+    });
+  }
+
+  ngOnInit(): void {
+    // Observa mudanças no usuário atual
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
     });
   }
   
@@ -73,7 +89,8 @@ export class AppComponent {
     },
     {
       label: 'Sair',
-      icon: 'pi pi-sign-out'
+      icon: 'pi pi-sign-out',
+      command: () => this.logout()
     }
   ];
 
@@ -84,5 +101,20 @@ export class AppComponent {
   // Verifica se o item do menu está ativo
   isMenuItemActive(routerLink: string): boolean {
     return this.currentRoute === routerLink;
+  }
+
+  // Realiza o logout
+  logout(): void {
+    this.authService.logout();
+  }
+
+  // Retorna as iniciais do usuário para exibir no avatar
+  getUserInitials(): string {
+    if (!this.currentUser) return 'U';
+    const names = this.currentUser.name.split(' ');
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    }
+    return this.currentUser.name[0].toUpperCase();
   }
 }

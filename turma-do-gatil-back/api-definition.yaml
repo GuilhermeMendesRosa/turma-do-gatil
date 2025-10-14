@@ -16,6 +16,8 @@ servers:
     description: Servidor de Desenvolvimento
 
 tags:
+  - name: Authentication
+    description: Operações de autenticação e registro de usuários
   - name: Cats
     description: Operações relacionadas aos gatos
   - name: Adopters
@@ -30,6 +32,66 @@ tags:
     description: Operações relacionadas ao upload de imagens
 
 paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Registra um novo usuário
+      description: Cria um novo usuário no sistema
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Dados inválidos ou username já existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Realiza login
+      description: Autentica um usuário e retorna um token JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /api/cats:
     get:
       tags:
@@ -1272,3 +1334,122 @@ components:
         - fileUrl
         - fileSize
         - contentType
+
+    CreateUserRequest:
+      type: object
+      required:
+        - username
+        - name
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: Nome de usuário único
+          example: "admin"
+        name:
+          type: string
+          description: Nome completo do usuário
+          example: "Administrador"
+        password:
+          type: string
+          minLength: 6
+          format: password
+          description: Senha do usuário (mínimo 6 caracteres)
+          example: "senha123"
+
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: Nome de usuário
+          example: "admin"
+        password:
+          type: string
+          format: password
+          description: Senha do usuário
+          example: "senha123"
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token JWT para autenticação
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        username:
+          type: string
+          description: Nome de usuário autenticado
+          example: "admin"
+        name:
+          type: string
+          description: Nome completo do usuário
+          example: "Administrador"
+      required:
+        - token
+        - username
+        - name
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único do usuário
+        username:
+          type: string
+          description: Nome de usuário
+          example: "admin"
+        name:
+          type: string
+          description: Nome completo do usuário
+          example: "Administrador"
+        createdAt:
+          type: string
+          format: date-time
+          description: Data e hora de criação do usuário
+      required:
+        - id
+        - username
+        - name
+        - createdAt
+
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Data e hora do erro
+        status:
+          type: integer
+          description: Código HTTP do status
+          example: 400
+        message:
+          type: string
+          description: Mensagem de erro
+          example: "Username já existe"
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+          description: Detalhes dos erros de validação (quando aplicável)
+        details:
+          type: string
+          description: Detalhes adicionais do erro
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT obtido através do endpoint de login
+
+security:
+  - bearerAuth: []

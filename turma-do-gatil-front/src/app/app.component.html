@@ -1,4 +1,5 @@
-<!-- Header -->
+<!-- Header - Escondido na página de login -->
+@if (!isLoginPage) {
 <div class="header">
   <div class="header-left">
     <p-button 
@@ -17,20 +18,31 @@
   </div>
   
   <div class="header-right">
+    @if (currentUser) {
+    <div class="user-info">
+      <span class="user-name">{{ currentUser.name }}</span>
+      <p-avatar 
+        [label]="getUserInitials()" 
+        shape="circle" 
+        class="user-avatar"
+        [pTooltip]="currentUser.name"
+        tooltipPosition="bottom">
+      </p-avatar>
+    </div>
+    }
     <p-button 
-      icon="pi pi-cog" 
+      icon="pi pi-sign-out" 
       [text]="true" 
-      class="config-button">
+      (onClick)="logout()"
+      pTooltip="Sair"
+      tooltipPosition="bottom"
+      class="logout-button"
+      severity="danger">
     </p-button>
-    <p-avatar 
-      icon="pi pi-user" 
-      shape="circle" 
-      class="user-avatar">
-    </p-avatar>
   </div>
 </div>
 
-<!-- Sidebar Menu -->
+<!-- Sidebar Menu - Escondido na página de login -->
 <div class="sidebar-overlay" [class.visible]="sidebarVisible" (click)="toggleSidebar()"></div>
 <div class="sidebar" [class.visible]="sidebarVisible">
   <div class="sidebar-header">
@@ -45,7 +57,8 @@
   
   <div class="sidebar-content">
     <ul class="menu-list">
-      <li *ngFor="let item of menuItems" class="menu-item">
+      @for (item of menuItems; track item.label) {
+      <li class="menu-item">
         <a [routerLink]="item.routerLink" 
            class="menu-link" 
            [class.active]="isMenuItemActive(item.routerLink)"
@@ -54,21 +67,25 @@
           <span>{{ item.label }}</span>
         </a>
       </li>
+      }
     </ul>
   </div>
 </div>
+}
 
 <!-- Main Content -->
-<div class="main-content" [class.sidebar-open]="sidebarVisible">
-  <div class="content-wrapper">
+<div class="main-content" [class.sidebar-open]="sidebarVisible" [class.login-page]="isLoginPage">
+  <div class="content-wrapper" [class.login-wrapper]="isLoginPage">
     <router-outlet></router-outlet>
   </div>
 </div>
 
-<!-- Footer -->
+<!-- Footer - Escondido na página de login -->
+@if (!isLoginPage) {
 <footer class="footer">
   Desenvolvido por&nbsp;<a href="https://www.linkedin.com/in/guilherme-mendes-rosa/" target="_blank">Guilherme</a>&nbsp;🌹
 </footer>
+}
 
 <!-- Toast Global para notificações -->
 <p-toast position="top-right" [style]="{'z-index': '9999'}"></p-toast>
