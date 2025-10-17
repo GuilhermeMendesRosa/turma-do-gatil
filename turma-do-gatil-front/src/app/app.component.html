@@ -20,12 +20,10 @@
   <div class="header-right">
     @if (currentUser) {
     <div class="user-info">
-      <span class="user-name">{{ currentUser.name }}</span>
       <p-avatar 
         [label]="getUserInitials()" 
         shape="circle" 
         class="user-avatar"
-        [pTooltip]="currentUser.name"
         tooltipPosition="bottom">
       </p-avatar>
     </div>
@@ -34,7 +32,6 @@
       icon="pi pi-sign-out" 
       [text]="true" 
       (onClick)="logout()"
-      pTooltip="Sair"
       tooltipPosition="bottom"
       class="logout-button"
       severity="danger">
