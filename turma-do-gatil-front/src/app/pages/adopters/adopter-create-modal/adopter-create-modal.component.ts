@@ -121,13 +121,13 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       
       const formValue = this.adopterForm.value;
       
-      // Converter datas para string ISO
+      // Converter datas para string ISO e remover formatação de CPF e telefone
       const adopterData: AdopterRequest = {
         firstName: formValue.firstName,
         lastName: formValue.lastName,
         birthDate: new Date(formValue.birthDate).toISOString(),
-        cpf: formValue.cpf,
-        phone: formValue.phone,
+        cpf: this.cleanCpf(formValue.cpf),
+        phone: this.cleanPhone(formValue.phone),
         email: formValue.email || undefined,
         instagram: formValue.instagram || undefined,
         address: formValue.address,
@@ -196,5 +196,19 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.adopterForm.get(fieldName);
     return !!(field?.invalid && field.touched);
+  }
+
+  /**
+   * Remove a formatação do CPF, mantendo apenas os números
+   */
+  private cleanCpf(cpf: string): string {
+    return cpf.replace(/\D/g, '');
+  }
+
+  /**
+   * Remove a formatação do telefone, mantendo apenas os números
+   */
+  private cleanPhone(phone: string): string {
+    return phone.replace(/\D/g, '');
   }
 }
