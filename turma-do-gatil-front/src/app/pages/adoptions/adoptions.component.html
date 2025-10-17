@@ -23,12 +23,6 @@
     icon="pi-list"
     [hasFooter]="totalRecords > 0">
     
-    <!-- Indicador de carregamento de dados relacionados -->
-    <div *ngIf="loadingRelatedData" class="related-data-loading">
-      <i class="pi pi-spinner loading-icon"></i>
-      <span>Carregando informações complementares...</span>
-    </div>
-    
     <!-- Tabela de dados das adoções -->
     <app-data-table
       [columns]="tableColumns"
