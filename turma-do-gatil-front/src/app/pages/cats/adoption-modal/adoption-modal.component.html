@@ -62,76 +62,24 @@
           </label>
           
           <div class="adopter-selection">
-            <div class="adopter-search-container">
-              <div class="search-input-wrapper">
-                <input
-                  pInputText
-                  type="text"
-                  placeholder="Digite pelo menos 3 caracteres para buscar..."
-                  class="form-input adopter-search-input"
-                  [(ngModel)]="adopterSearchQuery"
-                  [ngModelOptions]="{standalone: true}"
-                  (input)="onAdopterSearch($event)"
-                  (keydown.enter)="$event.preventDefault()"
-                  (focus)="onInputFocus()"
-                  [class.ng-invalid]="isFieldInvalid('adopter')"
-                  [disabled]="searchLoading">
-                
-                <!-- Loading indicator -->
-                <div class="search-loading" *ngIf="searchLoading">
-                  <i class="fas fa-spinner fa-spin"></i>
+            <p-select
+              id="adopter"
+              formControlName="adopter"
+              [options]="allAdopters"
+              optionLabel="firstName"
+              optionValue="id"
+              placeholder="Selecione um adotante"
+              [filter]="true"
+              filterBy="firstName,lastName,email,cpf"
+              [showClear]="true"
+              [styleClass]="isFieldInvalid('adopter') ? 'ng-invalid' : ''">
+              <ng-template let-adopter pTemplate="item">
+                <div class="dropdown-adopter-item">
+                  <div class="adopter-name">{{ adopter.firstName }} {{ adopter.lastName }}</div>
+                  <div class="adopter-contact">{{ adopter.email }} • {{ formatCpf(adopter.cpf) }}</div>
                 </div>
-                
-                <!-- Search icon -->
-                <div class="search-icon" *ngIf="!searchLoading && !selectedAdopter">
-                  <i class="fas fa-search"></i>
-                </div>
-              </div>
-              
-              <!-- Lista de resultados -->
-              <div class="search-results" 
-                *ngIf="filteredAdopters.length > 0 && adopterSearchQuery.length >= 3 && !selectedAdopter && !noResultsFound">
-                <div class="search-results-header">
-                  <span class="results-count">{{ filteredAdopters.length }} adotante(s) encontrado(s)</span>
-                </div>
-                <div 
-                  *ngFor="let adopter of filteredAdopters; let i = index" 
-                  class="search-result-item"
-                  (click)="selectAdopter(adopter)">
-                  <div class="adopter-avatar">
-                    <i class="fas fa-user-circle"></i>
-                  </div>
-                  <div class="adopter-info">
-                    <div class="adopter-name">{{ adopter.firstName }} {{ adopter.lastName }}</div>
-                    <div class="adopter-contact">{{ adopter.email }} • {{ formatCpf(adopter.cpf) }}</div>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Mensagem de nenhum resultado -->
-              <div class="search-results no-results" 
-                *ngIf="noResultsFound && adopterSearchQuery.length >= 3 && !selectedAdopter">
-                <div class="no-results-content">
-                  <i class="fas fa-search"></i>
-                  <p>Nenhum adotante encontrado</p>
-                  <small>Tente buscar por nome, email ou CPF (mínimo 3 caracteres)</small>
-                </div>
-              </div>
-              
-              <!-- Adotante selecionado -->
-              <div *ngIf="selectedAdopter" class="selected-adopter">
-                <div class="selected-adopter-avatar">
-                  <i class="fas fa-user-check"></i>
-                </div>
-                <div class="selected-adopter-info">
-                  <div class="adopter-name">{{ selectedAdopter.firstName }} {{ selectedAdopter.lastName }}</div>
-                  <div class="adopter-contact">{{ selectedAdopter.email }} • {{ formatCpf(selectedAdopter.cpf) }}</div>
-                </div>
-                <button type="button" class="clear-selection" (click)="clearSelection()">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
+              </ng-template>
+            </p-select>
             
             <app-generic-button 
               [config]="createAdopterButtonConfig"
