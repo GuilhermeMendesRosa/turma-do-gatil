@@ -36,14 +36,19 @@ export class AppComponent implements OnInit {
     ).subscribe((event: NavigationEnd) => {
       this.currentRoute = event.url;
       // Verifica se está na página de login (com ou sem query params)
-      this.isLoginPage.set(event.url.startsWith('/login'));
+      const isLogin = event.url.startsWith('/login');
+      console.log('NavigationEnd:', event.url, 'isLogin:', isLogin);
+      this.isLoginPage.set(isLogin);
       // Garante que o sidebar esteja fechado na página de login
       if (this.isLoginPage()) {
         this.sidebarVisible.set(false);
+        console.log('Sidebar fechado na página de login');
       }
     });
     // Inicializar o estado da página de login baseado na rota atual
-    this.isLoginPage.set(this.router.url.startsWith('/login'));
+    const initialIsLogin = this.router.url.startsWith('/login');
+    console.log('Inicial isLogin:', initialIsLogin, 'url:', this.router.url);
+    this.isLoginPage.set(initialIsLogin);
     if (this.isLoginPage()) {
       this.sidebarVisible.set(false);
     }
