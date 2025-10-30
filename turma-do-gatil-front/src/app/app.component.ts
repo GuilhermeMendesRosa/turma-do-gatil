@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
       console.log('Rota atual:', event.url);
       this.currentRoute = event.url;
       // Verifica se está na página de login (com ou sem query params)
-      this.isLoginPage = event.url.startsWith('/login');
+      this.isLoginPage = event.url.startsWith('/login') || event.url === '/';
     });
   }
 
