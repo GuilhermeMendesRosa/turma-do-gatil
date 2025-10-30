@@ -67,13 +67,12 @@
                 <input
                   pInputText
                   type="text"
-                  placeholder="Digite pelo menos 3 caracteres para buscar..."
+                  placeholder="Digite o nome, email ou CPF do adotante..."
                   class="form-input adopter-search-input"
                   [(ngModel)]="adopterSearchQuery"
-                  [ngModelOptions]="{standalone: true}"
                   (input)="onAdopterSearch($event)"
-                  (keydown.enter)="$event.preventDefault()"
                   (focus)="onInputFocus()"
+                  (blur)="onInputBlur()"
                   [class.ng-invalid]="isFieldInvalid('adopter')"
                   [disabled]="searchLoading">
                 
@@ -89,8 +88,7 @@
               </div>
               
               <!-- Lista de resultados -->
-              <div class="search-results" 
-                *ngIf="filteredAdopters.length > 0 && adopterSearchQuery.length >= 3 && !selectedAdopter && !noResultsFound">
+              <div class="search-results" *ngIf="filteredAdopters.length > 0 && adopterSearchQuery.length >= 2 && !selectedAdopter && !noResultsFound">
                 <div class="search-results-header">
                   <span class="results-count">{{ filteredAdopters.length }} adotante(s) encontrado(s)</span>
                 </div>
@@ -109,12 +107,11 @@
               </div>
               
               <!-- Mensagem de nenhum resultado -->
-              <div class="search-results no-results" 
-                *ngIf="noResultsFound && adopterSearchQuery.length >= 3 && !selectedAdopter">
+              <div class="search-results no-results" *ngIf="noResultsFound && adopterSearchQuery.length >= 2 && !selectedAdopter">
                 <div class="no-results-content">
                   <i class="fas fa-search"></i>
                   <p>Nenhum adotante encontrado</p>
-                  <small>Tente buscar por nome, email ou CPF (mínimo 3 caracteres)</small>
+                  <small>Tente buscar por nome, email ou CPF</small>
                 </div>
               </div>
               

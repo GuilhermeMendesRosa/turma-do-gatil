@@ -66,6 +66,7 @@ import {
     CardModule,
     ButtonModule,
     InputTextModule,
+    Select,
     TagModule,
     SkeletonModule,
     TooltipModule,

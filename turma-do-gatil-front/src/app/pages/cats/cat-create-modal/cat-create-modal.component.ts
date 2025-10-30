@@ -37,6 +37,7 @@ import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/com
     ReactiveFormsModule,
     DialogModule,
     InputTextModule,
+    Select,
     MessageModule,
     DividerModule,
     CheckboxModule,

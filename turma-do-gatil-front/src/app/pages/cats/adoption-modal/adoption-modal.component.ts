@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, OnDestroy, HostListener, ElementRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
@@ -50,7 +50,7 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
   adopterSearchQuery = '';
   
   private searchSubject = new Subject<string>();
-  private readonly minSearchLength = 3;
+  private readonly minSearchLength = 2;
 
   // Button configurations
   get cancelButtonConfig(): GenericButtonConfig {
@@ -82,8 +82,7 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private adopterService: AdopterService,
-    private adoptionService: AdoptionService,
-    private elementRef: ElementRef
+    private adoptionService: AdoptionService
   ) {}
 
   ngOnInit(): void {
@@ -94,15 +93,6 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.searchSubject.complete();
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const clickedInside = this.elementRef.nativeElement.contains(event.target);
-    if (!clickedInside && this.filteredAdopters.length > 0) {
-      this.filteredAdopters = [];
-      this.noResultsFound = false;
-    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -212,7 +202,6 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
     this.selectedAdopter = adopter;
     this.adopterSearchQuery = `${adopter.firstName} ${adopter.lastName}`;
     this.filteredAdopters = [];
-    this.noResultsFound = false;
     this.adoptionForm.patchValue({ adopter: adopter });
   }
 
@@ -221,6 +210,13 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
     if (this.adopterSearchQuery && this.adopterSearchQuery.length >= this.minSearchLength && !this.selectedAdopter) {
       this.searchSubject.next(this.adopterSearchQuery);
     }
+  }
+
+  onInputBlur(): void {
+    // Oculta os resultados após um pequeno delay para permitir clique nas opções
+    setTimeout(() => {
+      this.filteredAdopters = [];
+    }, 200);
   }
 
   clearSelection(): void {
