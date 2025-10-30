@@ -42,6 +42,11 @@ export class AppComponent implements OnInit {
         this.sidebarVisible.set(false);
       }
     });
+    // Inicializar o estado da página de login baseado na rota atual
+    this.isLoginPage.set(this.router.url.startsWith('/login'));
+    if (this.isLoginPage()) {
+      this.sidebarVisible.set(false);
+    }
   }
 
   ngOnInit(): void {
