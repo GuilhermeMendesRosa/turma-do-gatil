@@ -648,98 +648,6 @@
 }
 
 /* ===== CUSTOMIZAÇÃO DE COMPONENTES PRIMENG ===== */
-::ng-deep .p-select {
-  width: 100% !important;
-  border-radius: 8px !important;
-  border: 1px solid var(--p-surface-border) !important;
-  background: white !important;
-  background-color: white !important;
-  transition: all 0.3s ease !important;
-  min-height: 45px !important;
-  box-shadow: none !important;
-}
-
-::ng-deep .p-select:not(.p-disabled) {
-  background: white !important;
-  background-color: white !important;
-}
-
-::ng-deep .p-select:not(.p-disabled).p-focus {
-  border-color: var(--p-primary-color) !important;
-  box-shadow: 0 0 0 2px rgba(242, 187, 174, 0.2) !important;
-  background: white !important;
-  background-color: white !important;
-}
-
-::ng-deep .p-select:hover {
-  border-color: var(--p-primary-color) !important;
-  background: white !important;
-  background-color: white !important;
-}
-
-::ng-deep .p-select .p-select-label {
-  padding: 0.75rem 1rem !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  color: var(--p-text-color) !important;
-  border: none !important;
-  line-height: 1.4 !important;
-}
-
-::ng-deep .p-select .p-select-label.p-placeholder {
-  color: var(--p-text-color-secondary) !important;
-}
-
-::ng-deep .p-select .p-select-dropdown {
-  border: none !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  color: var(--p-primary-color) !important;
-  width: 2.5rem !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-::ng-deep .p-select .p-select-clear-icon {
-  color: var(--p-text-color-secondary) !important;
-  right: 2.5rem !important;
-}
-
-::ng-deep .p-select-overlay {
-  border-radius: 8px !important;
-  border: 1px solid var(--p-surface-border) !important;
-  box-shadow: 0 8px 25px rgba(242, 187, 174, 0.15) !important;
-  background: white !important;
-  background-color: white !important;
-}
-
-::ng-deep .p-select-overlay .p-select-items {
-  background: white !important;
-  background-color: white !important;
-  border-radius: 8px !important;
-}
-
-::ng-deep .p-select-overlay .p-select-items .p-select-item {
-  padding: 0.75rem 1rem !important;
-  color: var(--p-text-color) !important;
-  transition: all 0.2s ease !important;
-  background: white !important;
-  background-color: white !important;
-}
-
-::ng-deep .p-select-overlay .p-select-items .p-select-item:hover {
-  background: var(--p-surface-hover) !important;
-  background-color: var(--p-surface-hover) !important;
-  color: var(--p-text-color) !important;
-}
-
-::ng-deep .p-select-overlay .p-select-items .p-select-item.p-selected {
-  background: var(--p-primary-color) !important;
-  background-color: var(--p-primary-color) !important;
-  color: white !important;
-}
-
 /* Estilos específicos do p-paginator removidos - agora usando app-pagination compartilhado */
 
 ::ng-deep .p-button {
@@ -768,11 +676,7 @@
 }
 
 /* ===== CLASSES CUSTOM SELECT ===== */
-.custom-select ::ng-deep .p-select {
-  background: white !important;
-  background-color: white !important;
-  border: 1px solid var(--p-surface-border) !important;
-}
+/* Estilos para select nativo estão no styles.css global */
 
 /* ===== CORES E TEMAS ===== */
 :host {

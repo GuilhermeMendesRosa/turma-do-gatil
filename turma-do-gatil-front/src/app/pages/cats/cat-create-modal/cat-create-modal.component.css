@@ -337,24 +337,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Select Overrides */
-:host ::ng-deep .p-select {
-  border-radius: 6px;
-}
-
-:host ::ng-deep .p-select:not(.p-disabled):hover {
-  border-color: #6366f1;
-}
-
-:host ::ng-deep .p-select:not(.p-disabled).p-focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-:host ::ng-deep .p-select-overlay {
-  border-radius: 8px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-}
+/* Select Overrides - Estilos para select nativo estão no styles.css global */
 
 /* Definir variável do gradiente caso não esteja disponível */
 :host {
