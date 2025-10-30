@@ -121,13 +121,17 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       
       const formValue = this.adopterForm.value;
       
+      // Limpar formatação do CPF e telefone antes de enviar
+      const cleanCpf = formValue.cpf.replace(/\D/g, ''); // Remove tudo que não é dígito
+      const cleanPhone = formValue.phone.replace(/\D/g, ''); // Remove tudo que não é dígito
+      
       // Converter datas para string ISO
       const adopterData: AdopterRequest = {
         firstName: formValue.firstName,
         lastName: formValue.lastName,
         birthDate: new Date(formValue.birthDate).toISOString(),
-        cpf: formValue.cpf,
-        phone: formValue.phone,
+        cpf: cleanCpf,
+        phone: cleanPhone,
         email: formValue.email || undefined,
         instagram: formValue.instagram || undefined,
         address: formValue.address,

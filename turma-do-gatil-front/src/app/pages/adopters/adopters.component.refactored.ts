@@ -620,12 +620,16 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   private buildAdopterRequest(): AdopterRequest {
     const formValue = this.adopterForm.value;
     
+    // Limpar formatação do CPF e telefone antes de enviar
+    const cleanCpf = formValue.cpf.replace(/\D/g, ''); // Remove tudo que não é dígito
+    const cleanPhone = formValue.phone.replace(/\D/g, ''); // Remove tudo que não é dígito
+    
     return {
       firstName: formValue.firstName,
       lastName: formValue.lastName,
       birthDate: new Date(formValue.birthDate).toISOString(),
-      cpf: formValue.cpf,
-      phone: formValue.phone,
+      cpf: cleanCpf,
+      phone: cleanPhone,
       email: formValue.email,
       address: formValue.address,
       registrationDate: new Date(formValue.registrationDate).toISOString()
