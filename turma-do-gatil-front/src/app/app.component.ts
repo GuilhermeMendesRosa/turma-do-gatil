@@ -37,6 +37,10 @@ export class AppComponent implements OnInit {
       this.currentRoute = event.url;
       // Verifica se está na página de login (com ou sem query params)
       this.isLoginPage = event.url.startsWith('/login');
+      // Garante que o sidebar esteja fechado na página de login
+      if (this.isLoginPage) {
+        this.sidebarVisible = false;
+      }
     });
   }
 
