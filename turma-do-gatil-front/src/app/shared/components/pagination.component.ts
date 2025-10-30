@@ -21,7 +21,7 @@ export interface PaginationInfo {
       </div>
       <div class="pagination-controls">
         <button 
-          class="p-button p-button-sm p-button-secondary" 
+          class="pagination-button pagination-button-secondary pagination-button-sm" 
           [disabled]="pagination.first"
           (click)="onPreviousPage()">
           <i class="pi pi-chevron-left"></i>
@@ -36,7 +36,7 @@ export interface PaginationInfo {
           </option>
         </select>
         <button 
-          class="p-button p-button-sm p-button-secondary" 
+          class="pagination-button pagination-button-secondary pagination-button-sm" 
           [disabled]="pagination.last"
           (click)="onNextPage()">
           Próxima
@@ -82,14 +82,14 @@ export interface PaginationInfo {
       box-shadow: 0 0 0 2px rgba(242, 187, 174, 0.2);
     }
 
-    .p-button {
+    .pagination-button {
       background: var(--p-surface-card, #ffffff);
       border: 1px solid var(--p-surface-border, #e5e7eb);
       color: var(--p-text-color, #1f2937);
       padding: 0.5rem 0.75rem;
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
-      font-weight: 500;
+      font-weight: 600;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
@@ -97,25 +97,25 @@ export interface PaginationInfo {
       font-size: 0.875rem;
     }
 
-    .p-button:hover:not(:disabled) {
+    .pagination-button:hover:not(:disabled) {
       background: var(--p-surface-hover, #f3f4f6);
       border-color: var(--p-primary-color, #F2BBAE);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
       box-shadow: 0 2px 8px rgba(242, 187, 174, 0.2);
     }
 
-    .p-button:disabled {
+    .pagination-button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
       transform: none;
     }
 
-    .p-button-sm {
+    .pagination-button-sm {
       font-size: 0.875rem;
       padding: 0.375rem 0.625rem;
     }
 
-    .p-button-secondary {
+    .pagination-button-secondary {
       background: var(--p-surface-100, #f9fafb);
       border-color: var(--p-surface-300, #d1d5db);
     }
