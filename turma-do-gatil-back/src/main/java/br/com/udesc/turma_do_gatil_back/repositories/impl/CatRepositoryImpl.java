@@ -7,19 +7,15 @@ import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
 import br.com.udesc.turma_do_gatil_back.repositories.CatRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -51,12 +47,8 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
         }
 
         JPAQuery<Cat> query = queryFactory.selectFrom(qCat)
-                .where(predicate);
-
-        // Aplicar ordenação do Pageable
-        for (OrderSpecifier<?> order : getOrderSpecifiers(pageable.getSort())) {
-            query.orderBy(order);
-        }
+                .where(predicate)
+                .orderBy(qCat.name.asc());
 
         long total = query.fetchCount();
 
@@ -66,43 +58,6 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
                 .fetch();
 
         return new PageImpl<>(content, pageable, total);
-    }
-
-    private List<OrderSpecifier<?>> getOrderSpecifiers(Sort sort) {
-        List<OrderSpecifier<?>> orders = new ArrayList<>();
-
-        if (sort.isUnsorted()) {
-            orders.add(qCat.name.asc());
-            return orders;
-        }
-
-        for (Sort.Order order : sort) {
-            ComparableExpressionBase<?> path = getPath(order.getProperty());
-            if (path != null) {
-                orders.add(order.isAscending() ? path.desc() : path.asc());
-            }
-        }
-
-        return orders.isEmpty() ? List.of(qCat.name.asc()) : orders;
-    }
-
-    private ComparableExpressionBase<?> getPath(String property) {
-        switch (property) {
-            case "name":
-                return qCat.name;
-            case "birthDate":
-                return qCat.birthDate;
-            case "shelterEntryDate":
-                return qCat.shelterEntryDate;
-            case "color":
-                return qCat.color;
-            case "sex":
-                return qCat.sex;
-            case "adoptionStatus":
-                return qCat.adoptionStatus;
-            default:
-                return qCat.name; // fallback para name
-        }
     }
 
     @Override
