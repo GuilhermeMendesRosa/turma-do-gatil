@@ -34,8 +34,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Processa a requisição e trata erros de autenticação
   return next(req).pipe(
     catchError(error => {
-      // Se receber 401 (Unauthorized) ou 403 (Forbidden), faz logout automático
-      if (error.status === 401 || error.status === 403) {
+      // Se receber 401 (Unauthorized), faz logout automático
+      if (error.status === 401) {
         authService.logout();
       }
       
