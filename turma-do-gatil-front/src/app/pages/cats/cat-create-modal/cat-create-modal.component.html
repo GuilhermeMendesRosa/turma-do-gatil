@@ -84,16 +84,15 @@
         <!-- Cor -->
         <div class="form-field">
           <label for="color">Cor *</label>
-          <select
-            id="color"
+          <p-select 
+            [options]="colorOptions" 
             formControlName="color"
+            placeholder="Selecione a cor"
+            optionLabel="label"
+            optionValue="value"
             [class.ng-invalid]="isFieldInvalid('color')"
             class="form-select">
-            <option [value]="null" disabled>Selecione a cor</option>
-            <option *ngFor="let option of colorOptions" [value]="option.value">
-              {{ option.label }}
-            </option>
-          </select>
+          </p-select>
           <small class="error-message" *ngIf="getFieldError('color')">
             {{ getFieldError('color') }}
           </small>
@@ -102,16 +101,15 @@
         <!-- Sexo -->
         <div class="form-field">
           <label for="sex">Sexo *</label>
-          <select
-            id="sex"
+          <p-select 
+            [options]="sexOptions" 
             formControlName="sex"
+            placeholder="Selecione o sexo"
+            optionLabel="label"
+            optionValue="value"
             [class.ng-invalid]="isFieldInvalid('sex')"
             class="form-select">
-            <option [value]="null" disabled>Selecione o sexo</option>
-            <option *ngFor="let option of sexOptions" [value]="option.value">
-              {{ option.label }}
-            </option>
-          </select>
+          </p-select>
           <small class="error-message" *ngIf="getFieldError('sex')">
             {{ getFieldError('sex') }}
           </small>

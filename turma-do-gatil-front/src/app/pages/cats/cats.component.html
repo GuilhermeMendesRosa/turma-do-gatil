@@ -42,16 +42,17 @@
           <i class="pi pi-palette"></i>
           Cor
         </label>
-        <select
+        <p-select
           id="colorFilter"
           [(ngModel)]="filters.color"
           (ngModelChange)="onFilterChange()"
-          class="filter-select">
-          <option [value]="null">Todas as cores</option>
-          <option *ngFor="let option of colorOptions" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+          [options]="colorOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Todas as cores"
+          [showClear]="true"
+          class="filter-select custom-select">
+        </p-select>
       </div>
 
       <div class="filter-group">
@@ -59,16 +60,17 @@
           <i class="pi pi-user"></i>
           Sexo
         </label>
-        <select
+        <p-select
           id="sexFilter"
           [(ngModel)]="filters.sex"
           (ngModelChange)="onFilterChange()"
-          class="filter-select">
-          <option [value]="null">Todos os sexos</option>
-          <option *ngFor="let option of sexOptions" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+          [options]="sexOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Todos os sexos"
+          [showClear]="true"
+          class="filter-select custom-select">
+        </p-select>
       </div>
 
       <div class="filter-group">
@@ -76,16 +78,17 @@
           <i class="pi pi-heart-fill"></i>
           Status
         </label>
-        <select
+        <p-select
           id="adoptionFilter"
           [(ngModel)]="filters.adoptionStatus"
           (ngModelChange)="onFilterChange()"
-          class="filter-select">
-          <option [value]="null">Disponíveis para adoção</option>
-          <option *ngFor="let option of adoptionStatusOptions" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+          [options]="adoptionStatusOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Disponíveis para adoção"
+          [showClear]="true"
+          class="filter-select custom-select">
+        </p-select>
       </div>
 
       <div class="filter-group">
@@ -93,15 +96,16 @@
           <i class="pi pi-sort"></i>
           Ordenar por
         </label>
-        <select
+        <p-select
           id="sortFilter"
           [(ngModel)]="filters.sortBy"
           (ngModelChange)="onSortChange()"
-          class="filter-select">
-          <option *ngFor="let option of sortOptions" [value]="option.value">
-            {{ option.label }}
-          </option>
-        </select>
+          [options]="sortOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Ordenação"
+          class="filter-select custom-select">
+        </p-select>
       </div>
 
       <div class="filter-actions">
