@@ -192,7 +192,7 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
                     orders.add(isAscending ? qCat.name.asc() : qCat.name.desc());
                     break;
                 case "birthDate":
-                    orders.add(isAscending ? qCat.birthDate.asc() : qCat.birthDate.desc());
+                    orders.add(isAscending ? qCat.birthDate.desc() : qCat.birthDate.asc());
                     break;
                 case "color":
                     orders.add(isAscending ? qCat.color.asc() : qCat.color.desc());
