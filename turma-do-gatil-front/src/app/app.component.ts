@@ -30,10 +30,6 @@ export class AppComponent implements OnInit {
     private router: Router,
     private authService: AuthService
   ) {
-    // Verifica a rota inicial
-    this.currentRoute = this.router.url;
-    this.isLoginPage = this.router.url.startsWith('/login');
-    
     // Detectar mudanças de rota para atualizar o menu ativo
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
