@@ -239,6 +239,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
    */
   private loadAdoptionsData(): void {
     this.setLoadingState(true);
+    this.loadingRelatedData = true;
     
     const params: AdoptionLoadParams = {
       page: Math.floor(this.first / this.rows),
@@ -284,6 +285,11 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
 
     if (hasDataToLoad) {
       this.loadingRelatedData = true;
+      this.cdr.markForCheck();
+    } else {
+      // Se todos os dados já estão no cache, enriquece imediatamente
+      this.enrichAdoptionData();
+      this.loadingRelatedData = false;
       this.cdr.markForCheck();
     }
 
