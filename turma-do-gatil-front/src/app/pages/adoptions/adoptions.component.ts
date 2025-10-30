@@ -91,6 +91,9 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   /** Estado de carregamento do modal */
   modalLoading: boolean = false;
   
+  /** Estado de carregamento de dados relacionados */
+  loadingRelatedData: boolean = false;
+  
   /** Controle de visibilidade do modal */
   showStatusModal: boolean = false;
   
@@ -249,9 +252,9 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         catchError(error => {
           console.error('Erro ao carregar adoções:', error);
-          this.setLoadingState(false);
           return EMPTY;
-        })
+        }),
+        finalize(() => this.setLoadingState(false))
       )
       .subscribe({
         next: (response: Page<Adoption>) => {
@@ -279,16 +282,13 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     const hasDataToLoad = adopterIds.some(id => !this.adoptersMap.has(id)) || 
                          catIds.some(id => !this.catsMap.has(id));
 
-    // Inicia o carregamento dos dados
-    this.loadAdoptersData(adopterIds);
-    this.loadCatsData(catIds);
-
-    // Se não há dados para carregar, enriquece imediatamente e desliga o loading
-    if (!hasDataToLoad) {
-      this.enrichAdoptionData();
-      this.setLoadingState(false);
+    if (hasDataToLoad) {
+      this.loadingRelatedData = true;
       this.cdr.markForCheck();
     }
+
+    this.loadAdoptersData(adopterIds);
+    this.loadCatsData(catIds);
   }
 
   /**
@@ -297,10 +297,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   private loadAdoptersData(adopterIds: string[]): void {
     const missingAdopterIds = adopterIds.filter(id => !this.adoptersMap.has(id));
     
-    if (missingAdopterIds.length === 0) {
-      this.checkRelatedDataLoadingComplete();
-      return;
-    }
+    if (missingAdopterIds.length === 0) return;
 
     const adopterRequests = missingAdopterIds.map(id =>
       this.adopterService.getAdopterById(id).pipe(
@@ -333,10 +330,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   private loadCatsData(catIds: string[]): void {
     const missingCatIds = catIds.filter(id => !this.catsMap.has(id));
     
-    if (missingCatIds.length === 0) {
-      this.checkRelatedDataLoadingComplete();
-      return;
-    }
+    if (missingCatIds.length === 0) return;
 
     const catRequests = missingCatIds.map(id =>
       this.catService.getCatById(id).pipe(
@@ -660,7 +654,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
 
     if (allAdoptersLoaded && allCatsLoaded) {
       this.enrichAdoptionData();
-      this.setLoadingState(false);
+      this.loadingRelatedData = false;
       this.cdr.markForCheck();
     }
   }
