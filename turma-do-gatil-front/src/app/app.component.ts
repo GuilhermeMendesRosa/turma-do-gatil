@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MenubarModule } from 'primeng/menubar';
@@ -21,10 +21,10 @@ import { User } from './models/auth.model';
 })
 export class AppComponent implements OnInit {
   title = 'turma-do-gatil-front';
-  sidebarVisible = signal(false);
+  sidebarVisible: boolean = false;
   currentRoute: string = '';
   currentUser: User | null = null;
-  isLoginPage = signal(false);
+  isLoginPage: boolean = false;
   
   constructor(
     private router: Router,
@@ -36,22 +36,8 @@ export class AppComponent implements OnInit {
     ).subscribe((event: NavigationEnd) => {
       this.currentRoute = event.url;
       // Verifica se está na página de login (com ou sem query params)
-      const isLogin = event.url.startsWith('/login');
-      console.log('NavigationEnd:', event.url, 'isLogin:', isLogin);
-      this.isLoginPage.set(isLogin);
-      // Garante que o sidebar esteja fechado na página de login
-      if (this.isLoginPage()) {
-        this.sidebarVisible.set(false);
-        console.log('Sidebar fechado na página de login');
-      }
+      this.isLoginPage = event.url.startsWith('/login');
     });
-    // Inicializar o estado da página de login baseado na rota atual
-    const initialIsLogin = this.router.url.startsWith('/login');
-    console.log('Inicial isLogin:', initialIsLogin, 'url:', this.router.url);
-    this.isLoginPage.set(initialIsLogin);
-    if (this.isLoginPage()) {
-      this.sidebarVisible.set(false);
-    }
   }
 
   ngOnInit(): void {
@@ -109,7 +95,7 @@ export class AppComponent implements OnInit {
   ];
 
   toggleSidebar() {
-    this.sidebarVisible.set(!this.sidebarVisible());
+    this.sidebarVisible = !this.sidebarVisible;
   }
 
   // Verifica se o item do menu está ativo

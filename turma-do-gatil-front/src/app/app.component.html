@@ -1,5 +1,5 @@
 <!-- Header - Escondido na página de login -->
-<div *ngIf="!isLoginPage()">
+@if (!isLoginPage && currentUser) {
 <div class="header">
   <div class="header-left">
     <p-button 
@@ -43,8 +43,8 @@
 </div>
 
 <!-- Sidebar Menu - Escondido na página de login -->
-<div class="sidebar-overlay" [class.visible]="sidebarVisible()" (click)="toggleSidebar()"></div>
-<div class="sidebar" [class.visible]="sidebarVisible()">
+<div class="sidebar-overlay" [class.visible]="sidebarVisible" (click)="toggleSidebar()"></div>
+<div class="sidebar" [class.visible]="sidebarVisible">
   <div class="sidebar-header">
     <h3>Menu</h3>
     <p-button 
@@ -71,21 +71,21 @@
     </ul>
   </div>
 </div>
-</div>
+}
 
 <!-- Main Content -->
-<div class="main-content" [class.sidebar-open]="sidebarVisible()" [class.login-page]="isLoginPage()">
-  <div class="content-wrapper" [class.login-wrapper]="isLoginPage()">
+<div class="main-content" [class.sidebar-open]="sidebarVisible" [class.login-page]="isLoginPage">
+  <div class="content-wrapper" [class.login-wrapper]="isLoginPage">
     <router-outlet></router-outlet>
   </div>
 </div>
 
 <!-- Footer - Escondido na página de login -->
-<div *ngIf="!isLoginPage()">
+@if (!isLoginPage && currentUser) {
 <footer class="footer">
   Desenvolvido por&nbsp;<a href="https://www.linkedin.com/in/guilherme-mendes-rosa/" target="_blank">Guilherme</a>&nbsp;🌹
 </footer>
-</div>
+}
 
 <!-- Toast Global para notificações -->
 <p-toast position="top-right" [style]="{'z-index': '9999'}"></p-toast>
