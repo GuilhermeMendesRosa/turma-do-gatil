@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { DialogModule } from 'primeng/dialog';
 
 import { InputTextModule } from 'primeng/inputtext';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
 import { Cat, Color } from '../../../models/cat.model';
@@ -12,8 +13,6 @@ import { Adoption, AdoptionRequest, AdoptionStatus } from '../../../models/adopt
 import { AdopterService } from '../../../services/adopter.service';
 import { AdoptionService } from '../../../services/adoption.service';
 import { AdopterCreateModalComponent } from '../../adopters/adopter-create-modal/adopter-create-modal.component';
-import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
-import { Subject, of } from 'rxjs';
 import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
 
 @Component({
@@ -25,6 +24,7 @@ import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/com
     ReactiveFormsModule,
     DialogModule,
     InputTextModule,
+    AutoCompleteModule,
     MessageModule,
     DividerModule,
     AdopterCreateModalComponent,
@@ -33,7 +33,7 @@ import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/com
   templateUrl: './adoption-modal.component.html',
   styleUrl: './adoption-modal.component.css'
 })
-export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
+export class AdoptionModalComponent implements OnInit, OnChanges {
   @Input() visible: boolean = false;
   @Input() cat: Cat | null = null;
   @Output() visibleChange = new EventEmitter<boolean>();
@@ -41,16 +41,10 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
 
   adoptionForm!: FormGroup;
   loading = false;
-  searchLoading = false;
-  noResultsFound = false;
   selectedAdopter: Adopter | null = null;
-  filteredAdopters: Adopter[] = [];
   allAdopters: Adopter[] = [];
   showCreateAdopterModal = false;
-  adopterSearchQuery = '';
-  
-  private searchSubject = new Subject<string>();
-  private readonly minSearchLength = 2;
+  filteredAdopters: Adopter[] = [];
 
   // Button configurations
   get cancelButtonConfig(): GenericButtonConfig {
@@ -70,15 +64,6 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  get createAdopterButtonConfig(): GenericButtonConfig {
-    return {
-      label: '',
-      icon: 'pi-plus',
-      severity: 'secondary',
-      outlined: true
-    };
-  }
-
   constructor(
     private fb: FormBuilder,
     private adopterService: AdopterService,
@@ -88,11 +73,6 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit(): void {
     this.initForm();
     this.loadAdopters();
-    this.initSearch();
-  }
-
-  ngOnDestroy(): void {
-    this.searchSubject.complete();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -122,109 +102,27 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  initSearch(): void {
-    this.searchSubject.pipe(
-      debounceTime(300), // Aguarda 300ms após a última digitação
-      distinctUntilChanged(), // Só faz a busca se o valor mudou
-      switchMap((query: string) => {
-        if (query.length < this.minSearchLength) {
-          this.filteredAdopters = [];
-          this.noResultsFound = false;
-          return of([]);
-        }
-
-        this.searchLoading = true;
-        this.noResultsFound = false;
-
-        // Busca dinâmica com API
-        return this.adopterService.getAllAdopters({ 
-          size: 50,
-          name: query // Busca por nome usando o filtro da API
-        }).pipe(
-          catchError((error) => {
-            console.error('Erro na busca de adotantes:', error);
-            // Fallback para busca local se API falhar
-            return of({ content: this.searchLocal(query) });
-          })
-        );
-      })
-    ).subscribe({
-      next: (response: any) => {
-        this.searchLoading = false;
-        const results = response.content || response;
-        this.filteredAdopters = Array.isArray(results) ? results : [];
-        this.noResultsFound = this.filteredAdopters.length === 0 && this.adopterSearchQuery.length >= this.minSearchLength;
-      },
-      error: (error) => {
-        console.error('Erro na busca:', error);
-        this.searchLoading = false;
-        this.filteredAdopters = [];
-        this.noResultsFound = true;
-      }
-    });
+  selectAdopter(event: any): void {
+    this.selectedAdopter = event.value || event;
+    this.adoptionForm.patchValue({ adopter: this.selectedAdopter });
   }
 
-  private searchLocal(query: string): Adopter[] {
-    const lowerQuery = query.toLowerCase();
-    return this.allAdopters.filter(adopter => {
+  searchAdopters(event: any): void {
+    const query = event.query.toLowerCase();
+    this.filteredAdopters = this.allAdopters.filter(adopter => {
       const fullName = `${adopter.firstName} ${adopter.lastName}`.toLowerCase();
       const email = adopter.email?.toLowerCase() || '';
-      const instagram = adopter.instagram?.toLowerCase() || '';
       const cpf = adopter.cpf.replace(/\D/g, '');
       const queryNumbers = query.replace(/\D/g, '');
       
-      return fullName.includes(lowerQuery) || 
-             email.includes(lowerQuery) || 
-             instagram.includes(lowerQuery) ||
+      return fullName.includes(query) || 
+             email.includes(query) ||
              (queryNumbers.length > 0 && cpf.includes(queryNumbers));
     });
   }
 
-  searchAdopters(event: any): void {
-    this.onAdopterSearch(event);
-  }
-
-  onAdopterSearch(event: any): void {
-    const query = event.target?.value || '';
-    this.adopterSearchQuery = query;
-    
-    // Limpa a seleção atual quando digitar
-    if (this.selectedAdopter && query !== `${this.selectedAdopter.firstName} ${this.selectedAdopter.lastName}`) {
-      this.selectedAdopter = null;
-      this.adoptionForm.patchValue({ adopter: null });
-    }
-    
-    // Dispara a busca através do Subject (com debounce)
-    this.searchSubject.next(query);
-  }
-
-  selectAdopter(adopter: Adopter): void {
-    this.selectedAdopter = adopter;
-    this.adopterSearchQuery = `${adopter.firstName} ${adopter.lastName}`;
-    this.filteredAdopters = [];
-    this.adoptionForm.patchValue({ adopter: adopter });
-  }
-
-  onInputFocus(): void {
-    // Mostra os resultados novamente ao focar, se há texto
-    if (this.adopterSearchQuery && this.adopterSearchQuery.length >= this.minSearchLength && !this.selectedAdopter) {
-      this.searchSubject.next(this.adopterSearchQuery);
-    }
-  }
-
-  onInputBlur(): void {
-    // Oculta os resultados após um pequeno delay para permitir clique nas opções
-    setTimeout(() => {
-      this.filteredAdopters = [];
-    }, 200);
-  }
-
   clearSelection(): void {
     this.selectedAdopter = null;
-    this.adopterSearchQuery = '';
-    this.filteredAdopters = [];
-    this.noResultsFound = false;
-    this.searchLoading = false;
     this.adoptionForm.patchValue({ adopter: null });
   }
 
@@ -285,10 +183,6 @@ export class AdoptionModalComponent implements OnInit, OnChanges, OnDestroy {
       status: AdoptionStatus.PENDING
     });
     this.selectedAdopter = null;
-    this.adopterSearchQuery = '';
-    this.filteredAdopters = [];
-    this.noResultsFound = false;
-    this.searchLoading = false;
     this.loading = false;
   }
 
