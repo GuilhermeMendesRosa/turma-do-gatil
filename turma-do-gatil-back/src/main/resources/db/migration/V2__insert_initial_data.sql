@@ -96,5 +96,3 @@
 --('660e8400-e29b-41d4-a716-446655440029', 'Carolina', 'Machado', '1989-09-20 00:00:00', '90012345678', '(11) 97777-9999', 'carolina.machado@email.com', 'Rua dos Narcisos, 930, São Paulo, SP', '2023-04-28 13:15:00'),
 --('660e8400-e29b-41d4-a716-446655440030', 'Vinícius', 'Cunha', '1986-12-09 00:00:00', '01123456789', '(11) 97777-0000', 'vinicius.cunha@email.com', 'Av. Felicidade, 041, São Paulo, SP', '2022-07-15 10:50:00');
 --
-
-select * from cats;
