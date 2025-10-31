@@ -14,7 +14,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -76,7 +75,7 @@ public class S3Service {
                     .build();
 
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.of(100, ChronoUnit.YEARS))
+                    .signatureDuration(Duration.ofDays(99999))
                     .getObjectRequest(getObjectRequest)
                     .build();
 
