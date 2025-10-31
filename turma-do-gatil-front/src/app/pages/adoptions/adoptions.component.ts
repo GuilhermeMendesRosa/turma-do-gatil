@@ -1,14 +1,16 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, forkJoin, EMPTY } from 'rxjs';
-import { takeUntil, catchError, finalize } from 'rxjs/operators';
+import { Subject, forkJoin, EMPTY, Observable, of } from 'rxjs';
+import { takeUntil, catchError, finalize, switchMap } from 'rxjs/operators';
 
 // Services
 import { AdoptionService } from '../../services/adoption.service';
 import { AdopterService } from '../../services/adopter.service';
 import { CatService } from '../../services/cat.service';
 import { AdoptionUtilsService } from './services/adoption-utils.service';
+import { UploadService } from '../../services/upload.service';
+import { NotificationService } from '../../services/notification.service';
 
 // Models
 import { Adoption, AdoptionStatus, Page, AdoptionRequest } from '../../models/adoption.model';
@@ -102,6 +104,12 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   
   /** Status selecionado no modal */
   selectedStatus: AdoptionStatus | '' = '';
+  
+  /** Arquivo selecionado para upload do termo */
+  selectedFile: File | null = null;
+  
+  /** URL de preview da imagem do termo */
+  previewUrl: string | null = null;
   
   // ==================== PROPRIEDADES DE PAGINAÇÃO ====================
   
@@ -201,6 +209,8 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     private readonly adopterService: AdopterService,
     private readonly catService: CatService,
     private readonly adoptionUtils: AdoptionUtilsService,
+    private readonly uploadService: UploadService,
+    private readonly notificationService: NotificationService,
     private readonly cdr: ChangeDetectorRef
   ) {
     this.initializeTableColumns();
@@ -418,6 +428,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   private openStatusModal(adoption: Adoption): void {
     this.selectedAdoption = adoption;
     this.selectedStatus = adoption.status;
+    this.previewUrl = adoption.adoptionTermPhoto || null;
     this.showStatusModal = true;
     this.cdr.markForCheck();
   }
@@ -429,6 +440,8 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     this.showStatusModal = false;
     this.selectedAdoption = null;
     this.selectedStatus = '';
+    this.selectedFile = null;
+    this.previewUrl = null;
     this.modalLoading = false;
     this.cdr.markForCheck();
   }
@@ -452,21 +465,18 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     this.modalLoading = true;
     this.cdr.markForCheck();
 
-    const updateRequest: AdoptionRequest = {
-      catId: this.selectedAdoption.catId,
-      adopterId: this.selectedAdoption.adopterId,
-      adoptionDate: this.selectedAdoption.adoptionDate,
-      status: this.selectedStatus
-    };
-
-    this.adoptionService.updateAdoption(this.selectedAdoption.id, updateRequest)
+    this.handleImageUpload()
       .pipe(
-        takeUntil(this.destroy$),
+        switchMap(photoUrl => this.updateAdoptionStatus(photoUrl)),
         catchError(error => {
-          console.error('Erro ao atualizar status da adoção:', error);
+          console.error('Erro ao atualizar adoção:', error);
           this.modalLoading = false;
           this.cdr.markForCheck();
           return EMPTY;
+        }),
+        finalize(() => {
+          this.modalLoading = false;
+          this.cdr.markForCheck();
         })
       )
       .subscribe({
@@ -475,6 +485,54 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
           this.loadAdoptionsData();
         }
       });
+  }
+
+  /**
+   * Gerencia o upload da imagem do termo se houver arquivo selecionado
+   * @returns Observable com a URL da foto
+   */
+  private handleImageUpload(): Observable<string> {
+    if (this.selectedFile && this.selectedStatus === AdoptionStatus.COMPLETED) {
+      return this.uploadService.uploadImage(this.selectedFile).pipe(
+        switchMap(response => {
+          console.log('Upload bem-sucedido:', response);
+          const photoUrl = response.fileUrl || '';
+          return of(photoUrl);
+        }),
+        catchError(error => {
+          this.notificationService.showError(
+            'Erro no Upload',
+            'Não foi possível fazer upload da imagem do termo. Tente novamente.'
+          );
+          return of('');
+        })
+      );
+    }
+
+    // Se não tem arquivo selecionado ou não é status COMPLETED, usar foto existente ou vazia
+    const existingPhotoUrl = this.selectedAdoption?.adoptionTermPhoto || '';
+    return of(existingPhotoUrl);
+  }
+
+  /**
+   * Atualiza o status da adoção com a URL da foto do termo
+   * @param photoUrl URL da foto do termo
+   * @returns Observable que completa após a atualização
+   */
+  private updateAdoptionStatus(photoUrl: string): Observable<void> {
+    console.log('Atualizando adoção com status:', this.selectedStatus, 'e foto:', photoUrl);
+    const updateRequest: AdoptionRequest = {
+      catId: this.selectedAdoption!.catId,
+      adopterId: this.selectedAdoption!.adopterId,
+      adoptionDate: this.selectedAdoption!.adoptionDate,
+      status: this.selectedStatus as AdoptionStatus,
+      adoptionTermPhoto: photoUrl
+    };
+
+    console.log('Requisição de atualização:', updateRequest);
+    return this.adoptionService.updateAdoption(this.selectedAdoption!.id, updateRequest).pipe(
+      switchMap(() => of(void 0))
+    );
   }
 
   // ==================== MÉTODOS PÚBLICOS PARA TEMPLATE ====================
@@ -662,6 +720,54 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
       this.enrichAdoptionData();
       this.loadingRelatedData = false;
       this.cdr.markForCheck();
+    }
+  }
+
+  /**
+   * Manipula a seleção de arquivo de imagem do termo
+   * Valida o arquivo e cria um preview se for válido
+   */
+  onFileSelect(event: any): void {
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    const validation = this.uploadService.validateImageFile(file);
+    if (!validation.valid) {
+      this.notificationService.showError(
+        'Arquivo Inválido',
+        validation.error || 'O arquivo selecionado não é válido.'
+      );
+      // Limpar o input file
+      event.target.value = '';
+      return;
+    }
+
+    this.selectedFile = file;
+    this.createImagePreview(file);
+  }
+
+  /**
+   * Cria um preview da imagem selecionada
+   */
+  private createImagePreview(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.previewUrl = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /**
+   * Remove o arquivo selecionado e o preview
+   */
+  onFileRemove(): void {
+    this.selectedFile = null;
+    this.previewUrl = null;
+    // Se houver foto existente, restaurar
+    if (this.selectedAdoption?.adoptionTermPhoto) {
+      this.previewUrl = this.selectedAdoption.adoptionTermPhoto;
     }
   }
 }

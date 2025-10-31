@@ -185,6 +185,120 @@
   border-color: #fca5a5;
 }
 
+/* ==================== UPLOAD DE FOTO DO TERMO ==================== */
+
+.term-photo-upload-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--p-surface-border, #e5e7eb);
+}
+
+.photo-upload-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.photo-preview {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-photo-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-photo-btn:hover {
+  background: rgba(239, 68, 68, 1);
+  transform: scale(1.1);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 200px;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.upload-placeholder:hover {
+  border-color: #6366f1;
+  background: #f0f9ff;
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+}
+
+.upload-placeholder p {
+  color: #6b7280;
+  margin: 0 0 1rem 0;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.file-input {
+  display: none;
+}
+
+.upload-btn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+  background: #4f46e5;
+}
+
+.file-info {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--p-text-color-secondary, #6b7280);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.file-info i {
+  margin-right: 0.25rem;
+}
+
 /* ==================== RESPONSIVIDADE ==================== */
 
 @media (max-width: 768px) {

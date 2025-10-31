@@ -70,6 +70,7 @@ export class AdoptionService {
   }
 
   updateAdoption(id: string, adoption: AdoptionRequest): Observable<Adoption> {
+    console.log('Atualizando adoção ID:', id, 'com dados:', adoption);
     return this.http.put<Adoption>(`${this.apiUrl}/${id}`, adoption).pipe(
       catchError(error => {
         this.notificationService.showHttpError(error);

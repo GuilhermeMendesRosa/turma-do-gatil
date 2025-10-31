@@ -103,6 +103,7 @@ public class EntityMapper {
         adoption.setAdopterId(adoptionDto.getAdopterId());
         adoption.setAdoptionDate(adoptionDto.getAdoptionDate());
         adoption.setStatus(adoptionDto.getStatus());
+        adoption.setAdoptionTermPhoto(adoptionDto.getAdoptionTermPhoto());
         return adoption;
     }
 
