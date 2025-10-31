@@ -4,6 +4,7 @@ export interface Adoption {
   adopterId: string;
   adoptionDate: string;
   status: AdoptionStatus;
+  adoptionTermPhoto?: string;
 }
 
 export interface AdoptionRequest {
@@ -11,6 +12,7 @@ export interface AdoptionRequest {
   adopterId: string;
   adoptionDate: string;
   status: AdoptionStatus;
+  adoptionTermPhoto?: string;
 }
 
 export enum AdoptionStatus {

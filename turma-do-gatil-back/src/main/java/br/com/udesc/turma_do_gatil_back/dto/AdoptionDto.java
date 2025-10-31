@@ -18,6 +18,8 @@ public class AdoptionDto {
     private LocalDateTime adoptionDate;
     private AdoptionStatus status;
 
+    private String adoptionTermPhoto;
+
     private CatDto cat;
     private AdopterDto adopter;
 
@@ -27,5 +29,14 @@ public class AdoptionDto {
         this.adopterId = adopterId;
         this.adoptionDate = adoptionDate;
         this.status = status;
+    }
+
+    public AdoptionDto(UUID id, UUID catId, UUID adopterId, LocalDateTime adoptionDate, AdoptionStatus status, String adoptionTermPhoto) {
+        this.id = id;
+        this.catId = catId;
+        this.adopterId = adopterId;
+        this.adoptionDate = adoptionDate;
+        this.status = status;
+        this.adoptionTermPhoto = adoptionTermPhoto;
     }
 }

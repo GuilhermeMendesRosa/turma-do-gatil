@@ -33,6 +33,9 @@ public class Adoption {
     @Column(nullable = false)
     private AdoptionStatus status;
 
+    @Column(name = "adoption_term_photo")
+    private String adoptionTermPhoto;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cat_id", insertable = false, updatable = false)
     private Cat cat;

@@ -82,6 +82,7 @@ public class EntityMapper {
             adoption.getAdoptionDate(),
             adoption.getStatus()
         );
+        dto.setAdoptionTermPhoto(adoption.getAdoptionTermPhoto());
 
         // Evitar carregamento lazy se não necessário
         if (adoption.getCat() != null) {
