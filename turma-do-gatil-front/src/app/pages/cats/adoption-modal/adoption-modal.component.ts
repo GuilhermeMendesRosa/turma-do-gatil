@@ -187,6 +187,8 @@ export class AdoptionModalComponent implements OnInit, OnChanges {
   }
 
   onSubmit(): void {
+    if (this.loading) return;
+
     if (this.adoptionForm.valid && this.cat && this.selectedAdopter) {
       this.loading = true;
       
