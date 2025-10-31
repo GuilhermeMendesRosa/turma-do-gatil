@@ -5,6 +5,7 @@ import br.com.udesc.turma_do_gatil_back.entities.Cat;
 import br.com.udesc.turma_do_gatil_back.enums.AdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.enums.CatAdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.exceptions.AdoptionNotFoundException;
+import br.com.udesc.turma_do_gatil_back.exceptions.CatAlreadyInAdoptionProcessException;
 import br.com.udesc.turma_do_gatil_back.repositories.AdoptionRepository;
 import br.com.udesc.turma_do_gatil_back.repositories.CatRepository;
 import lombok.RequiredArgsConstructor;
@@ -63,8 +64,17 @@ public class AdoptionService {
         Objects.requireNonNull(adoption.getAdopterId(), "Adopter ID cannot be null");
         Objects.requireNonNull(adoption.getStatus(), "Adoption status cannot be null");
 
-        log.info("Creating new adoption for cat ID: {} and adopter ID: {} with status: {}",
-                adoption.getCatId(), adoption.getAdopterId(), adoption.getStatus());
+        log.info("Creating new adoption for cat ID: {} and adopter ID: {} with status: {}", adoption.getCatId(), adoption.getAdopterId(), adoption.getStatus());
+
+        Optional<Cat> catOptional = catRepository.findById(adoption.getCatId());
+        if (catOptional.isEmpty()) {
+            throw new RuntimeException("Cat not found with id: " + adoption.getCatId());
+        }
+        Cat cat = catOptional.get();
+        if (cat.getAdoptionStatus() == CatAdoptionStatus.EM_PROCESSO || cat.getAdoptionStatus() == CatAdoptionStatus.ADOTADO) {
+            throw new CatAlreadyInAdoptionProcessException("Cat is already in adoption process or adopted");
+        }
+
 
         Adoption savedAdoption = adoptionRepository.save(adoption);
         updateCatAdoptionStatus(adoption.getCatId());
