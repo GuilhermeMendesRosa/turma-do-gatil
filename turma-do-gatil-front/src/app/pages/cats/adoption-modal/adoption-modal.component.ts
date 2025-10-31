@@ -198,7 +198,8 @@ export class AdoptionModalComponent implements OnInit, OnChanges {
         catId: this.cat.id,
         adopterId: this.selectedAdopter.id,
         adoptionDate: new Date(formValue.adoptionDate).toISOString(),
-        status: formValue.status
+        status: formValue.status,
+        adoptionTermPhoto: undefined
       };
 
       this.adoptionService.createAdoption(adoptionData).subscribe({

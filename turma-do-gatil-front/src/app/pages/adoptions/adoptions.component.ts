@@ -111,6 +111,9 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   /** URL de preview da imagem do termo */
   previewUrl: string | null = null;
   
+  /** Flag indicando se a foto foi removida pelo usuário */
+  photoRemoved: boolean = false;
+  
   // ==================== PROPRIEDADES DE PAGINAÇÃO ====================
   
   /** Índice do primeiro registro da página atual */
@@ -429,6 +432,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     this.selectedAdoption = adoption;
     this.selectedStatus = adoption.status;
     this.previewUrl = adoption.adoptionTermPhoto || null;
+    this.photoRemoved = false;
     this.showStatusModal = true;
     this.cdr.markForCheck();
   }
@@ -442,6 +446,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     this.selectedStatus = '';
     this.selectedFile = null;
     this.previewUrl = null;
+    this.photoRemoved = false;
     this.modalLoading = false;
     this.cdr.markForCheck();
   }
@@ -450,11 +455,24 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
    * Salva a alteração de status da adoção
    */
   private saveStatusChange(): void {
-    if (!this.selectedAdoption || !this.selectedStatus || this.modalLoading) {
+    if (!this.selectedAdoption || this.modalLoading) {
       return;
     }
 
-    if (!this.adoptionUtils.isValidStatusTransition(
+    // Verificar se houve mudança de status
+    const statusChanged = this.selectedStatus !== this.selectedAdoption.status;
+    
+    // Verificar se houve mudança na foto
+    const photoChanged = this.selectedFile !== null || this.photoRemoved;
+
+    // Se não houve mudança de status nem de foto, não fazer nada
+    if (!statusChanged && !photoChanged) {
+      this.hideModal();
+      return;
+    }
+
+    // Se houve mudança de status, validar transição
+    if (statusChanged && this.selectedStatus && !this.adoptionUtils.isValidStatusTransition(
       this.selectedAdoption.status, 
       this.selectedStatus
     )) {
@@ -492,7 +510,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
    * @returns Observable com a URL da foto
    */
   private handleImageUpload(): Observable<string> {
-    if (this.selectedFile && this.selectedStatus === AdoptionStatus.COMPLETED) {
+    if (this.selectedFile) {
       return this.uploadService.uploadImage(this.selectedFile).pipe(
         switchMap(response => {
           console.log('Upload bem-sucedido:', response);
@@ -509,7 +527,12 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Se não tem arquivo selecionado ou não é status COMPLETED, usar foto existente ou vazia
+    // Se a foto foi removida, retornar string vazia
+    if (this.photoRemoved) {
+      return of('');
+    }
+
+    // Se não tem arquivo selecionado e não foi removida, usar foto existente
     const existingPhotoUrl = this.selectedAdoption?.adoptionTermPhoto || '';
     return of(existingPhotoUrl);
   }
@@ -765,9 +788,6 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   onFileRemove(): void {
     this.selectedFile = null;
     this.previewUrl = null;
-    // Se houver foto existente, restaurar
-    if (this.selectedAdoption?.adoptionTermPhoto) {
-      this.previewUrl = this.selectedAdoption.adoptionTermPhoto;
-    }
+    this.photoRemoved = true;
   }
 }
