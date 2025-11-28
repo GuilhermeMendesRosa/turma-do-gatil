@@ -2,15 +2,17 @@
  * Serviço utilitário para formatação e transformação de dados de gatos
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Cat, CatAdoptionStatus, Color, Sex } from '../../../models/cat.model';
 import { CatDisplayInfo } from '../models/cats-view.interface';
 import { COLOR_LABELS, SEX_LABELS, ADOPTION_STATUS_CONFIG, DEFAULT_IMAGES } from '../constants/cats.constants';
+import { FormattingUtilsService } from '../../../shared/services/formatting-utils.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CatDisplayService {
+  private readonly formattingUtils = inject(FormattingUtilsService);
 
   /**
    * Converte um objeto Cat em CatDisplayInfo para apresentação na UI
@@ -32,28 +34,14 @@ export class CatDisplayService {
    * Calcula a idade de um gato baseado na data de nascimento
    */
   calculateAge(birthDate: string): string {
-    const birth = new Date(birthDate);
-    const today = new Date();
-    const ageInMonths = (today.getFullYear() - birth.getFullYear()) * 12 + (today.getMonth() - birth.getMonth());
-    
-    if (ageInMonths < 12) {
-      return `${ageInMonths} ${ageInMonths === 1 ? 'mês' : 'meses'}`;
-    } else {
-      const years = Math.floor(ageInMonths / 12);
-      return `${years} ${years === 1 ? 'ano' : 'anos'}`;
-    }
+    return this.formattingUtils.calculateAgeFormatted(birthDate);
   }
 
   /**
    * Formata uma data para o padrão brasileiro
    */
   formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+    return this.formattingUtils.formatDate(dateString);
   }
 
   /**
@@ -88,8 +76,7 @@ export class CatDisplayService {
    * Verifica se uma string de data é válida
    */
   isValidDate(dateString: string): boolean {
-    const date = new Date(dateString);
-    return !isNaN(date.getTime());
+    return this.formattingUtils.isValidDate(dateString);
   }
 
   /**

@@ -2,34 +2,25 @@
  * Serviço utilitário para formatação e transformação de dados de adoção
  */
 
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AdoptionStatus } from '../../../models/adoption.model';
 import { Adopter } from '../../../models/adopter.model';
 import { Cat } from '../../../models/cat.model';
 import { STATUS_OPTIONS } from '../config/adoption.config';
+import { FormattingUtilsService } from '../../../shared/services/formatting-utils.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdoptionUtilsService {
+  private readonly formattingUtils = inject(FormattingUtilsService);
 
   /**
    * Formata uma data para exibição em formato brasileiro
-   * @param dateString - String da data a ser formatada
-   * @returns Data formatada ou '-' se inválida
+   * @deprecated Use FormattingUtilsService.formatDate() diretamente
    */
   formatDate(dateString: string | undefined): string {
-    if (!dateString) return '-';
-    
-    try {
-      return new Date(dateString).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-    } catch {
-      return '-';
-    }
+    return this.formattingUtils.formatDate(dateString);
   }
 
   /**

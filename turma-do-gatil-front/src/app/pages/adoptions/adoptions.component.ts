@@ -11,6 +11,7 @@ import { CatService } from '../../services/cat.service';
 import { AdoptionUtilsService } from './services/adoption-utils.service';
 import { UploadService } from '../../services/upload.service';
 import { NotificationService } from '../../services/notification.service';
+import { FormattingUtilsService } from '../../shared/services/formatting-utils.service';
 
 // Models
 import { Adoption, AdoptionStatus, Page, AdoptionRequest } from '../../models/adoption.model';
@@ -214,6 +215,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     private readonly adoptionUtils: AdoptionUtilsService,
     private readonly uploadService: UploadService,
     private readonly notificationService: NotificationService,
+    private readonly formattingUtils: FormattingUtilsService,
     private readonly cdr: ChangeDetectorRef
   ) {
     this.initializeTableColumns();
@@ -239,7 +241,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     this.tableColumns = createTableColumns(
       (catId: string) => this.getCatName(catId),
       (adopterId: string) => this.getAdopterName(adopterId),
-      (date: string) => this.adoptionUtils.formatDate(date),
+      (date: string) => this.formattingUtils.formatDate(date),
       (status: AdoptionStatus) => this.adoptionUtils.getStatusLabel(status),
       (status: AdoptionStatus) => this.adoptionUtils.getStatusClass(status)
     );
@@ -578,7 +580,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
    * Exibe a data formatada para o template
    */
   displayFormattedDate(dateString: string | undefined): string {
-    return this.adoptionUtils.formatDate(dateString);
+    return this.formattingUtils.formatDate(dateString);
   }
 
   /**
@@ -657,10 +659,10 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * @deprecated Use adoptionUtils.formatDate() instead
+   * @deprecated Use formattingUtils.formatDate() instead
    */
   formatDate(dateString: string | undefined): string {
-    return this.adoptionUtils.formatDate(dateString);
+    return this.formattingUtils.formatDate(dateString);
   }
 
   /**

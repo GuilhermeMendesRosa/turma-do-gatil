@@ -26,44 +26,18 @@ import {
   ConfirmationConfig
 } from '../../shared/components';
 
-/**
- * Constants and Enums
- */
-enum SterilizationStatus {
-  SCHEDULED = 'SCHEDULED',
-  COMPLETED = 'COMPLETED',
-  CANCELED = 'CANCELED'
-}
-
-enum CatColor {
-  WHITE = 'WHITE',
-  BLACK = 'BLACK',
-  GRAY = 'GRAY',
-  ORANGE = 'ORANGE',
-  BROWN = 'BROWN',
-  MIXED = 'MIXED',
-  OTHER = 'OTHER'
-}
-
-enum CatSex {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE'
-}
-
-enum SterilizationStatusType {
-  ELIGIBLE = 'ELIGIBLE',
-  OVERDUE = 'OVERDUE'
-}
-
-/**
- * Configuration constants
- */
-const PAGE_SIZE = 10;
-const TABLE_CONFIG = {
-  CAT_PHOTO_WIDTH: '80px',
-  DEFAULT_SORT_SCHEDULED: { field: 'sterilizationDate', direction: 'asc' as const },
-  DEFAULT_SORT_COMPLETED: { field: 'sterilizationDate', direction: 'desc' as const }
-} as const;
+// Imports das constantes extraídas
+import {
+  SterilizationStatus,
+  SterilizationStatusType,
+  CatColor,
+  CatSex,
+  STERILIZATIONS_CONFIG,
+  STERILIZATION_STATUS_LABELS,
+  STERILIZATION_STATUS_TYPE_LABELS,
+  SEX_LABELS,
+  COLOR_LABELS
+} from './constants/sterilizations.constants';
 
 /**
  * Sterilizations management component
@@ -125,12 +99,12 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   readonly paginationState = {
     scheduled: {
       currentPage: 0,
-      pageSize: PAGE_SIZE,
+      pageSize: STERILIZATIONS_CONFIG.DEFAULT_PAGE_SIZE,
       pagination: {} as Page<SterilizationDto>
     },
     completed: {
       currentPage: 0,
-      pageSize: PAGE_SIZE,
+      pageSize: STERILIZATIONS_CONFIG.DEFAULT_PAGE_SIZE,
       pagination: {} as Page<SterilizationDto>
     }
   };
@@ -157,7 +131,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       key: 'photoUrl',
       header: 'Foto',
       type: 'image',
-      width: TABLE_CONFIG.CAT_PHOTO_WIDTH,
+      width: STERILIZATIONS_CONFIG.CAT_PHOTO_WIDTH,
       imageProperty: 'photoUrl',
       imageAlt: 'name',
       imagePlaceholder: 'pi pi-image'
@@ -312,7 +286,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       pageable: {
         sort: { empty: true, sorted: false, unsorted: true },
         offset: 0,
-        pageSize: PAGE_SIZE,
+        pageSize: STERILIZATIONS_CONFIG.DEFAULT_PAGE_SIZE,
         pageNumber: 0,
         paged: true,
         unpaged: false
@@ -320,7 +294,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       last: true,
       totalPages: 0,
       totalElements: 0,
-      size: PAGE_SIZE,
+      size: STERILIZATIONS_CONFIG.DEFAULT_PAGE_SIZE,
       number: 0,
       sort: { empty: true, sorted: false, unsorted: true },
       first: true,
@@ -403,8 +377,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     const params = {
       page: this.paginationState.scheduled.currentPage,
       size: this.paginationState.scheduled.pageSize,
-      sortBy: TABLE_CONFIG.DEFAULT_SORT_SCHEDULED.field,
-      sortDir: TABLE_CONFIG.DEFAULT_SORT_SCHEDULED.direction
+      sortBy: STERILIZATIONS_CONFIG.DEFAULT_SORT_SCHEDULED.field,
+      sortDir: STERILIZATIONS_CONFIG.DEFAULT_SORT_SCHEDULED.direction
     };
 
     this.sterilizationService.getSterilizationsByStatus(SterilizationStatus.SCHEDULED, params)
@@ -438,8 +412,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     const params = {
       page: this.paginationState.completed.currentPage,
       size: this.paginationState.completed.pageSize,
-      sortBy: TABLE_CONFIG.DEFAULT_SORT_COMPLETED.field,
-      sortDir: TABLE_CONFIG.DEFAULT_SORT_COMPLETED.direction
+      sortBy: STERILIZATIONS_CONFIG.DEFAULT_SORT_COMPLETED.field,
+      sortDir: STERILIZATIONS_CONFIG.DEFAULT_SORT_COMPLETED.direction
     };
 
     this.sterilizationService.getSterilizationsByStatus(SterilizationStatus.COMPLETED, params)
@@ -493,50 +467,28 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
    * Formats sex labels for display
    */
   private formatSexLabel(sex: string): string {
-    const sexLabels: Record<CatSex, string> = {
-      [CatSex.MALE]: 'Macho',
-      [CatSex.FEMALE]: 'Fêmea'
-    };
-    return sexLabels[sex as CatSex] || sex;
+    return SEX_LABELS[sex as CatSex] || sex;
   }
 
   /**
    * Formats color labels for display
    */
   private formatColorLabel(color: string): string {
-    const colorLabels: Record<CatColor, string> = {
-      [CatColor.WHITE]: 'Branco',
-      [CatColor.BLACK]: 'Preto',
-      [CatColor.GRAY]: 'Cinza',
-      [CatColor.ORANGE]: 'Laranja',
-      [CatColor.BROWN]: 'Marrom',
-      [CatColor.MIXED]: 'Misto',
-      [CatColor.OTHER]: 'Outro'
-    };
-    return colorLabels[color as CatColor] || color;
+    return COLOR_LABELS[color as CatColor] || color;
   }
 
   /**
    * Formats sterilization status labels for display
    */
   private formatStatusLabel(status: string): string {
-    const statusLabels: Record<SterilizationStatusType, string> = {
-      [SterilizationStatusType.ELIGIBLE]: 'Elegível',
-      [SterilizationStatusType.OVERDUE]: 'Atrasada'
-    };
-    return statusLabels[status as SterilizationStatusType] || status;
+    return STERILIZATION_STATUS_TYPE_LABELS[status as SterilizationStatusType] || status;
   }
 
   /**
    * Formats sterilization status labels for display
    */
   private formatSterilizationStatusLabel(status: string): string {
-    const statusLabels: Record<SterilizationStatus, string> = {
-      [SterilizationStatus.SCHEDULED]: 'Agendada',
-      [SterilizationStatus.COMPLETED]: 'Realizada',
-      [SterilizationStatus.CANCELED]: 'Cancelada'
-    };
-    return statusLabels[status as SterilizationStatus] || status;
+    return STERILIZATION_STATUS_LABELS[status as SterilizationStatus] || status;
   }
 
   // ===== TABLE ACTION PROVIDERS =====

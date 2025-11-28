@@ -1,134 +1,90 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { FormattingUtilsService } from '../../../shared/services/formatting-utils.service';
 
 /**
  * Serviço para utilidades relacionadas aos adotantes
+ * @deprecated Use FormattingUtilsService diretamente para formatação genérica
  */
 @Injectable({
   providedIn: 'root'
 })
 export class AdopterUtilsService {
+  private readonly formattingUtils = inject(FormattingUtilsService);
 
   /**
-   * Formata CPF para exibição
+   * @deprecated Use FormattingUtilsService.formatCpf()
    */
   formatCpf(cpf: string): string {
-    if (!cpf) return '';
-    const cleanCpf = cpf.replace(/\D/g, '');
-    if (cleanCpf.length !== 11) return cpf;
-    return cleanCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    return this.formattingUtils.formatCpf(cpf);
   }
 
   /**
-   * Formata telefone para exibição
+   * @deprecated Use FormattingUtilsService.formatPhone()
    */
   formatPhone(phone: string): string {
-    if (!phone) return '';
-    const cleanPhone = phone.replace(/\D/g, '');
-    
-    if (cleanPhone.length === 11) {
-      return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-    } else if (cleanPhone.length === 10) {
-      return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-    }
-    
-    return phone;
+    return this.formattingUtils.formatPhone(phone);
   }
 
   /**
-   * Obtém o nome completo do adotante
+   * @deprecated Use FormattingUtilsService.getFullName()
    */
   getFullName(firstName: string, lastName: string): string {
-    return `${firstName} ${lastName}`.trim();
+    return this.formattingUtils.getFullName(firstName, lastName);
   }
 
   /**
-   * Formata data para exibição
+   * @deprecated Use FormattingUtilsService.formatDate()
    */
   formatDate(dateString: string): string {
-    if (!dateString) return '';
-    try {
-      return new Date(dateString).toLocaleDateString('pt-BR');
-    } catch {
-      return dateString;
-    }
+    return this.formattingUtils.formatDateSimple(dateString);
   }
 
   /**
-   * Converte data para formato de input date (YYYY-MM-DD)
+   * @deprecated Use FormattingUtilsService.toInputDateFormat()
    */
   toInputDateFormat(dateString: string): string {
-    if (!dateString) return '';
-    try {
-      return new Date(dateString).toISOString().split('T')[0];
-    } catch {
-      return '';
-    }
+    return this.formattingUtils.toInputDateFormat(dateString);
   }
 
   /**
-   * Obtém a data atual no formato ISO
+   * @deprecated Use FormattingUtilsService.getCurrentDateISO()
    */
   getCurrentDateISO(): string {
-    return new Date().toISOString();
+    return this.formattingUtils.getCurrentDateISO();
   }
 
   /**
-   * Obtém a data atual no formato de input date
+   * @deprecated Use FormattingUtilsService.getCurrentDateForInput()
    */
   getCurrentDateForInput(): string {
-    return new Date().toISOString().split('T')[0];
+    return this.formattingUtils.getCurrentDateForInput();
   }
 
   /**
-   * Valida se o CPF tem formato válido
+   * @deprecated Use FormattingUtilsService.isValidCpfFormat()
    */
   isValidCpfFormat(cpf: string): boolean {
-    if (!cpf) return false;
-    const cleanCpf = cpf.replace(/\D/g, '');
-    return cleanCpf.length === 11;
+    return this.formattingUtils.isValidCpfFormat(cpf);
   }
 
   /**
-   * Valida se o telefone tem formato válido
+   * @deprecated Use FormattingUtilsService.isValidPhoneFormat()
    */
   isValidPhoneFormat(phone: string): boolean {
-    if (!phone) return false;
-    const cleanPhone = phone.replace(/\D/g, '');
-    return cleanPhone.length >= 10 && cleanPhone.length <= 11;
+    return this.formattingUtils.isValidPhoneFormat(phone);
   }
 
   /**
-   * Gera tooltip para ação da tabela
+   * @deprecated Use FormattingUtilsService.generateActionTooltip()
    */
   generateActionTooltip(action: string, firstName: string, lastName: string): string {
-    const fullName = this.getFullName(firstName, lastName);
-    const actionMap: { [key: string]: string } = {
-      'edit': `Editar ${fullName}`,
-      'delete': `Excluir ${fullName}`,
-      'view': `Visualizar ${fullName}`
-    };
-    return actionMap[action] || `${action} ${fullName}`;
+    return this.formattingUtils.generateActionTooltip(action, firstName, lastName);
   }
 
   /**
-   * Calcula a idade com base na data de nascimento
+   * @deprecated Use FormattingUtilsService.calculateAgeInYears()
    */
   calculateAge(birthDate: string): number {
-    if (!birthDate) return 0;
-    
-    try {
-      const birth = new Date(birthDate);
-      const today = new Date();
-      let age = today.getFullYear() - birth.getFullYear();
-      const monthDiff = today.getMonth() - birth.getMonth();
-      
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-        age--;
-      }
-      
-      return age;
-    } catch {
-      return 0;
-    }
+    return this.formattingUtils.calculateAgeInYears(birthDate);
   }
 }

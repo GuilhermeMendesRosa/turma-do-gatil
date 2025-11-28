@@ -24,9 +24,9 @@ import {
   ConfirmationModalComponent,
   ConfirmationConfig
 } from '../../shared/components';
+import { FormattingUtilsService } from '../../shared/services/formatting-utils.service';
 
-// Imports das novas funcionalidades
-import { AdopterUtilsService } from './services/adopter-utils.service';
+// Imports das configurações locais
 import { AdopterFormData } from './models/adopter-form.interface';
 import { 
   AdopterTableAction, 
@@ -73,7 +73,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   // ==================== DEPENDENCY INJECTION ====================
   private readonly adopterService = inject(AdopterService);
   private readonly fb = inject(FormBuilder);
-  private readonly adopterUtils = inject(AdopterUtilsService);
+  private readonly formattingUtils = inject(FormattingUtilsService);
   private readonly destroy$ = new Subject<void>();
 
   // ==================== DADOS E ESTADO ====================
@@ -162,20 +162,20 @@ export class AdoptersComponent implements OnInit, OnDestroy {
         type: 'text',
         sortable: true,
         formatter: (value: string, item: Adopter) => 
-          this.adopterUtils.getFullName(item.firstName, item.lastName)
+          this.formattingUtils.getFullName(item.firstName, item.lastName)
       },
       {
         key: 'cpf',
         header: 'CPF',
         type: 'text',
         sortable: true,
-        formatter: (value: string) => this.adopterUtils.formatCpf(value)
+        formatter: (value: string) => this.formattingUtils.formatCpf(value)
       },
       {
         key: 'phone',
         header: 'Telefone',
         type: 'text',
-        formatter: (value: string) => this.adopterUtils.formatPhone(value)
+        formatter: (value: string) => this.formattingUtils.formatPhone(value)
       },
       {
         key: 'instagram',
@@ -188,7 +188,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
         header: 'Data de Cadastro',
         type: 'date',
         sortable: true,
-        formatter: (value: string) => this.adopterUtils.formatDate(value)
+        formatter: (value: string) => this.formattingUtils.formatDate(value)
       }
     ];
   }
@@ -289,11 +289,11 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     return [
       {
         type: AdopterTableAction.EDIT,
-        tooltip: this.adopterUtils.generateActionTooltip('edit', adopter.firstName, adopter.lastName)
+        tooltip: this.formattingUtils.generateActionTooltip('edit', adopter.firstName, adopter.lastName)
       },
       {
         type: 'cancel',
-        tooltip: this.adopterUtils.generateActionTooltip('delete', adopter.firstName, adopter.lastName)
+        tooltip: this.formattingUtils.generateActionTooltip('delete', adopter.firstName, adopter.lastName)
       }
     ];
   };
@@ -316,7 +316,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    * Confirma exclusão de adotante
    */
   private confirmDeleteAdopter(adopter: Adopter): void {
-    const fullName = this.adopterUtils.getFullName(adopter.firstName, adopter.lastName);
+    const fullName = this.formattingUtils.getFullName(adopter.firstName, adopter.lastName);
     
     const config: ConfirmationConfig = {
       title: 'Excluir Adotante',
@@ -326,8 +326,8 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       icon: 'pi pi-trash',
       severity: 'danger',
       details: [
-        `CPF: ${this.adopterUtils.formatCpf(adopter.cpf)}`,
-        `Telefone: ${this.adopterUtils.formatPhone(adopter.phone)}`,
+        `CPF: ${this.formattingUtils.formatCpf(adopter.cpf)}`,
+        `Telefone: ${this.formattingUtils.formatPhone(adopter.phone)}`,
         'Esta ação não pode ser desfeita',
         'Todas as informações do adotante serão removidas permanentemente'
       ]
@@ -516,7 +516,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    * Inicializa o formulário reativo
    */
   initForm(): void {
-    const today = this.adopterUtils.getCurrentDateForInput();
+    const today = this.formattingUtils.getCurrentDateForInput();
     
     this.adopterForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(ADOPTERS_CONFIG.MIN_NAME_LENGTH)]],
@@ -573,13 +573,13 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     return {
       firstName: adopter.firstName,
       lastName: adopter.lastName,
-      birthDate: this.adopterUtils.toInputDateFormat(adopter.birthDate),
+      birthDate: this.formattingUtils.toInputDateFormat(adopter.birthDate),
       cpf: adopter.cpf,
       phone: adopter.phone,
       email: adopter.email || '',
       instagram: adopter.instagram || '',
       address: adopter.address,
-      registrationDate: this.adopterUtils.toInputDateFormat(adopter.registrationDate)
+      registrationDate: this.formattingUtils.toInputDateFormat(adopter.registrationDate)
     };
   }
 
@@ -588,7 +588,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    */
   resetForm(): void {
     this.adopterForm.reset();
-    const today = this.adopterUtils.getCurrentDateForInput();
+    const today = this.formattingUtils.getCurrentDateForInput();
     
     this.adopterForm.patchValue({
       registrationDate: today
