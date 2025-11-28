@@ -23,7 +23,8 @@ import {
   TableColumn,
   TableEmptyState,
   ConfirmationModalComponent,
-  ConfirmationConfig
+  ConfirmationConfig,
+  LoadingStateComponent
 } from '../../shared/components';
 
 // Imports das constantes extraídas
@@ -61,7 +62,8 @@ import {
     ContentCardComponent,
     PageHeaderComponent,
     DataTableComponent,
-    ConfirmationModalComponent
+    ConfirmationModalComponent,
+    LoadingStateComponent
   ],
   templateUrl: './sterilizations.component.html',
   styleUrls: ['./sterilizations.component.css']

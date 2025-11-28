@@ -354,3 +354,208 @@ select.ng-invalid.ng-touched {
 select.ng-invalid.ng-touched:focus {
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
+
+/* ===== ESTILOS GLOBAIS COMPARTILHADOS ===== */
+
+/* Container de Página */
+.page-container {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: var(--p-surface-ground);
+  min-height: 100vh;
+}
+
+/* Cabeçalho de Página */
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem 0;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.page-title i {
+  font-size: 2.2rem;
+  color: var(--p-primary-color);
+}
+
+.page-subtitle {
+  color: var(--p-text-color-secondary);
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Loading State */
+.loading-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  min-height: 100px;
+}
+
+.loading-message i {
+  font-size: 2rem;
+  color: var(--p-primary-color);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.empty-state,
+.empty-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  color: var(--p-text-color-secondary);
+}
+
+.empty-state i,
+.empty-message i {
+  font-size: 3rem;
+  color: var(--p-primary-color);
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+
+/* Form Styles */
+.form-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--p-surface-border);
+}
+
+.form-section:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.form-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin: 0 0 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-section h3 i {
+  color: var(--p-primary-color);
+  font-size: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-field label {
+  font-weight: 600;
+  color: var(--p-text-color);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-field label i {
+  color: var(--p-primary-color);
+  font-size: 0.85rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--p-surface-border);
+  border-radius: 8px;
+  background: white;
+  color: var(--p-text-color);
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  border-color: var(--p-primary-color);
+  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.2);
+  outline: none;
+}
+
+.form-input::placeholder {
+  color: var(--p-text-color-secondary);
+}
+
+.form-input.ng-invalid.ng-touched {
+  border-color: #ef4444;
+}
+
+.form-input.ng-invalid.ng-touched:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.error-message i {
+  font-size: 0.75rem;
+}
+
+/* Responsive Form */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+
+  .page-title {
+    font-size: 1.8rem;
+  }
+
+  .page-title i {
+    font-size: 1.6rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

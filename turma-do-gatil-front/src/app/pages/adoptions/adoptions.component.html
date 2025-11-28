@@ -118,40 +118,17 @@
     <div class="term-photo-upload-section" *ngIf="selectedStatus === 'COMPLETED'">
       <div class="field-group">
         <label>Termo de Adoção:</label>
-        <div class="photo-upload-section">
-          <div class="photo-preview" *ngIf="previewUrl">
-            <img [src]="previewUrl" alt="Preview do termo" class="preview-image">
-            <button 
-              type="button" 
-              class="remove-photo-btn" 
-              (click)="onFileRemove()"
-              title="Remover termo">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-          
-          <div class="upload-placeholder" *ngIf="!previewUrl">
-            <i class="fas fa-file-image upload-icon"></i>
-            <p>Clique para adicionar o termo de adoção</p>
-            <input 
-              type="file" 
-              accept="image/*" 
-              (change)="onFileSelect($event)"
-              class="file-input"
-              #fileInput>
-            <button 
-              type="button" 
-              class="upload-btn"
-              (click)="fileInput.click()">
-              Escolher Arquivo
-            </button>
-          </div>
-          
-          <small class="file-info" *ngIf="selectedFile">
-            <i class="pi pi-file"></i>
-            Arquivo selecionado: {{ selectedFile.name }} ({{ (selectedFile.size / 1024).toFixed(2) }} KB)
-          </small>
-        </div>
+        <app-photo-upload
+          [previewUrl]="previewUrl"
+          [file]="selectedFile"
+          placeholder="Clique para adicionar o termo de adoção"
+          placeholderIcon="pi-file"
+          buttonLabel="Escolher Arquivo"
+          removeButtonTitle="Remover termo"
+          previewAlt="Preview do termo"
+          (fileSelected)="onPhotoFileSelected($event)"
+          (fileRemoved)="onFileRemove()">
+        </app-photo-upload>
       </div>
     </div>
 

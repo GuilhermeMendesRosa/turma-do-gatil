@@ -22,7 +22,8 @@ import {
   ModalAction,
   ModalButtonComponent,
   ConfirmationModalComponent,
-  ConfirmationConfig
+  ConfirmationConfig,
+  LoadingStateComponent
 } from '../../shared/components';
 import { FormattingUtilsService } from '../../shared/services/formatting-utils.service';
 
@@ -64,7 +65,8 @@ import {
     RefreshButtonComponent,
     PaginationComponent,
     ModalButtonComponent,
-    ConfirmationModalComponent
+    ConfirmationModalComponent,
+    LoadingStateComponent
   ],
   templateUrl: './adopters.component.html',
   styleUrls: ['./adopters.component.css']

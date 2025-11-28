@@ -22,7 +22,7 @@
       </app-refresh-button>
     </div>
     
-    <div *ngIf="!loadingCats; else loadingTemplate">
+    <app-loading-state [loading]="loadingCats" message="Carregando gatos...">
       <app-data-table
         [columns]="catsTableColumns"
         [data]="catsNeedingSterilization"
@@ -32,7 +32,7 @@
         trackByProperty="id"
         (actionClick)="onCatsTableAction($event)">
       </app-data-table>
-    </div>
+    </app-loading-state>
   </app-content-card>
 
   <!-- Scheduled Sterilizations Section -->
@@ -49,7 +49,7 @@
       </app-refresh-button>
     </div>
     
-    <div *ngIf="!loadingSterilizations; else loadingTemplate">
+    <app-loading-state [loading]="loadingSterilizations" message="Carregando castrações agendadas...">
       <app-data-table
         [columns]="scheduledTableColumns"
         [data]="scheduledSterilizations"
@@ -59,7 +59,7 @@
         trackByProperty="id"
         (actionClick)="onScheduledTableAction($event)">
       </app-data-table>
-    </div>
+    </app-loading-state>
 
     <!-- Scheduled Sterilizations Pagination -->
     <div slot="footer">
@@ -86,7 +86,7 @@
       </app-refresh-button>
     </div>
     
-    <div *ngIf="!loadingCompletedSterilizations; else loadingTemplate">
+    <app-loading-state [loading]="loadingCompletedSterilizations" message="Carregando castrações realizadas...">
       <app-data-table
         [columns]="completedTableColumns"
         [data]="completedSterilizations"
@@ -94,7 +94,7 @@
         [emptyState]="completedEmptyState"
         trackByProperty="id">
       </app-data-table>
-    </div>
+    </app-loading-state>
 
     <!-- Completed Sterilizations Pagination -->
     <div slot="footer">
@@ -106,14 +106,6 @@
       </app-pagination>
     </div>
   </app-content-card>
-
-  <!-- Loading Template -->
-  <ng-template #loadingTemplate>
-    <div class="loading-message">
-      <i class="pi pi-spinner" aria-hidden="true"></i>
-      Carregando...
-    </div>
-  </ng-template>
 </div>
 
 <!-- Schedule/Edit Sterilization Modal -->

@@ -50,7 +50,8 @@ import {
   TableColumn,
   TableEmptyState,
   PaginationInfo,
-  ModalAction
+  ModalAction,
+  PhotoUploadComponent
 } from '../../shared/components';
 
 /**
@@ -73,7 +74,8 @@ import {
     ContentCardComponent,
     DataTableComponent,
     PaginationComponent,
-    GenericModalComponent
+    GenericModalComponent,
+    PhotoUploadComponent
   ],
   templateUrl: './adoptions.component.html',
   styleUrls: ['./adoptions.component.css']
@@ -769,6 +771,14 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.selectedFile = file;
+    this.createImagePreview(file);
+  }
+
+  /**
+   * Manipula a seleção de arquivo pelo PhotoUploadComponent
+   */
+  onPhotoFileSelected(file: File): void {
     this.selectedFile = file;
     this.createImagePreview(file);
   }
