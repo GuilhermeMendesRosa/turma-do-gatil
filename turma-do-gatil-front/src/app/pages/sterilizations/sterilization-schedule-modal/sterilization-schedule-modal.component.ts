@@ -63,7 +63,6 @@ import { SterilizationService } from '../../../services/sterilization.service';
           </div>
         </div>
 
-        <p-divider></p-divider>
 
         <!-- Agendamento -->
         <div class="form-section">

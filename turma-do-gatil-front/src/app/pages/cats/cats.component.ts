@@ -174,8 +174,7 @@ export class CatsComponent implements OnInit, OnDestroy {
     return {
       newCat: BUTTON_CONFIGS.NEW_CAT,
       clearFilters: BUTTON_CONFIGS.CLEAR_FILTERS,
-      clearFiltersEmpty: BUTTON_CONFIGS.CLEAR_FILTERS_EMPTY,
-      addFirstCat: BUTTON_CONFIGS.ADD_FIRST_CAT
+      clearFiltersEmpty: BUTTON_CONFIGS.CLEAR_FILTERS_EMPTY
     };
   }
   //#endregion
@@ -730,10 +729,6 @@ export class CatsComponent implements OnInit, OnDestroy {
 
   get clearFiltersEmptyButtonConfig() {
     return this.buttonConfigs.clearFiltersEmpty;
-  }
-
-  get addFirstCatButtonConfig() {
-    return this.buttonConfigs.addFirstCat;
   }
 
   //#endregion

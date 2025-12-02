@@ -7,7 +7,7 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div class="form-field" [class.has-error]="showError">
+    <div class="form-field tdg-form-field" [class.has-error]="showError">
       <label [attr.for]="fieldId">
         @if (icon) {
           <i class="pi" [ngClass]="icon"></i>
@@ -35,6 +35,9 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
     </div>
   `,
   styles: [`
+    /* Estilos locais do form-field - sem ::ng-deep */
+    /* Os estilos de inputs são definidos globalmente via classe .tdg-form-field em primeng-overrides.css */
+
     .form-field {
       display: flex;
       flex-direction: column;
@@ -61,45 +64,6 @@ import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
 
     .field-content {
       width: 100%;
-    }
-
-    .field-content ::ng-deep input,
-    .field-content ::ng-deep select,
-    .field-content ::ng-deep textarea {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--p-surface-border);
-      border-radius: 8px;
-      background: white;
-      color: var(--p-text-color);
-      transition: all 0.3s ease;
-      font-size: 0.95rem;
-      box-sizing: border-box;
-    }
-
-    .field-content ::ng-deep input:focus,
-    .field-content ::ng-deep select:focus,
-    .field-content ::ng-deep textarea:focus {
-      border-color: var(--p-primary-color);
-      box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.2);
-      outline: none;
-    }
-
-    .field-content ::ng-deep input::placeholder,
-    .field-content ::ng-deep textarea::placeholder {
-      color: var(--p-text-color-secondary);
-    }
-
-    .has-error .field-content ::ng-deep input,
-    .has-error .field-content ::ng-deep select,
-    .has-error .field-content ::ng-deep textarea {
-      border-color: #ef4444;
-    }
-
-    .has-error .field-content ::ng-deep input:focus,
-    .has-error .field-content ::ng-deep select:focus,
-    .has-error .field-content ::ng-deep textarea:focus {
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
     }
 
     .error-message {

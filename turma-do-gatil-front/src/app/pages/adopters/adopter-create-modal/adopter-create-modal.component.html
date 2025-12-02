@@ -5,8 +5,8 @@
   [closable]="true"
   [draggable]="false"
   [resizable]="false"
-  styleClass="adopter-create-dialog"
-  maskStyleClass="blur-backdrop"
+  styleClass="tdg-modal"
+  maskStyleClass="tdg-modal-mask"
   [style]="{width: '90vw', maxWidth: '700px'}"
   [header]="isEditMode ? 'Editar Adotante' : 'Adicionar Novo Adotante'"
   (onHide)="onHide()">
@@ -82,8 +82,6 @@
         </div>
       </div>
     </div>
-
-    <p-divider></p-divider>
 
     <!-- Informações de Contato -->
     <div class="form-section">
@@ -172,21 +170,15 @@
   <ng-template pTemplate="footer">
     <div class="dialog-footer">
       <div class="action-buttons">
-        <p-button 
-          label="Cancelar" 
-          icon="pi pi-times" 
-          severity="secondary"
-          [outlined]="true"
-          (onClick)="onHide()">
-        </p-button>
+        <app-generic-button 
+          [config]="cancelButtonConfig"
+          (click)="onHide()">
+        </app-generic-button>
         
-        <p-button 
-          [label]="isEditMode ? 'Salvar Alterações' : 'Salvar Adotante'" 
-          icon="pi pi-check" 
-          [loading]="loading"
-          [disabled]="!adopterForm.valid"
-          (onClick)="onSubmit()">
-        </p-button>
+        <app-generic-button 
+          [config]="dynamicSaveButtonConfig"
+          (click)="onSubmit()">
+        </app-generic-button>
       </div>
     </div>
   </ng-template>

@@ -198,9 +198,7 @@
   <!-- Mensagem quando não há gatos -->
   <div class="empty-state-container" *ngIf="!loadingState.isLoading && cats.length === 0">
     <div class="empty-state">
-      <div class="empty-icon">
         <i class="fas fa-cat"></i>
-      </div>
       <h3>Nenhum gato encontrado</h3>
       <p *ngIf="hasActiveFilters(); else noGatsMessage">
         Não há gatos que correspondam aos filtros selecionados.
@@ -215,10 +213,6 @@
           *ngIf="hasActiveFilters()"
           [config]="clearFiltersEmptyButtonConfig"
           (click)="clearFilters()">
-        </app-generic-button>
-        <app-generic-button 
-          [config]="addFirstCatButtonConfig"
-          (click)="openAddCatDialog()">
         </app-generic-button>
       </div>
     </div>

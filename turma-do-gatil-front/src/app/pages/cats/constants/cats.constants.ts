@@ -149,10 +149,5 @@ export const BUTTON_CONFIGS = {
     icon: 'pi-filter-slash',
     severity: 'secondary' as const,
     outlined: true
-  },
-  ADD_FIRST_CAT: {
-    label: 'Cadastrar Primeiro Gato',
-    icon: 'pi-plus',
-    severity: 'primary' as const
   }
 } as const;

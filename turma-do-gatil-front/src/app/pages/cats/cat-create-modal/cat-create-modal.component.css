@@ -1,39 +1,6 @@
-/* Dialog Styles */
-.cat-create-dialog {
-  border-radius: 12px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Máscara de fundo com desfoque - igual ao modal de detalhes */
-::ng-deep .p-dialog-mask.cat-create-dialog,
-::ng-deep .cat-create-dialog .p-dialog-mask,
-::ng-deep .p-dialog-mask {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  -moz-backdrop-filter: blur(8px) !important;
-  -ms-backdrop-filter: blur(8px) !important;
-}
-
-/* Regra específica para garantir o desfoque */
-:host ::ng-deep .p-dialog-mask {
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-}
-
-/* Fallback caso backdrop-filter não seja suportado */
-@supports not (backdrop-filter: blur(8px)) {
-  ::ng-deep .p-dialog-mask {
-    background-color: rgba(0, 0, 0, 0.6) !important;
-  }
-}
-
-/* Dialog principal */
-::ng-deep .cat-create-dialog .p-dialog {
-  background: var(--p-surface-card) !important;
-  border: 1px solid var(--p-surface-border);
-  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
-}
+/* ===== ESTILOS ESPECÍFICOS DO CAT CREATE MODAL ===== */
+/* Os estilos do dialog (p-dialog) são gerenciados pelo styles/primeng-overrides.css */
+/* Usar styleClass="tdg-modal" no HTML para aplicar estilos globais */
 
 .cat-create-form {
   padding: 0;
@@ -55,7 +22,7 @@
 }
 
 .form-section h3 i {
-  color: #6366f1;
+  color: var(--p-primary-color);
   font-size: 1rem;
 }
 
@@ -118,7 +85,7 @@
 }
 
 .upload-placeholder:hover {
-  border-color: #6366f1;
+  border-color: var(--p-primary-color);
   background: #f0f9ff;
 }
 
@@ -140,7 +107,7 @@
 }
 
 .upload-btn {
-  background: #6366f1;
+  background: var(--p-primary-color);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -151,7 +118,7 @@
 }
 
 .upload-btn:hover {
-  background: #4f46e5;
+  background: var(--p-primary-600);
 }
 
 /* Form Grid */
@@ -198,7 +165,7 @@
 
 .checkbox-field:hover {
   background: #f0f9ff;
-  border-color: #6366f1;
+  border-color: var(--p-primary-color);
 }
 
 .checkbox-label {
@@ -212,7 +179,7 @@
 
 /* Info Message */
 .info-message {
-  color: #6366f1;
+  color: var(--p-primary-color);
   font-size: 0.75rem;
   margin-top: 0.25rem;
   display: flex;
@@ -235,8 +202,8 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: var(--p-primary-color);
+  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.2);
 }
 
 .form-input.ng-invalid.ng-touched {
@@ -279,77 +246,12 @@
   gap: 0.75rem;
 }
 
-/* Blur Backdrop */
-:host ::ng-deep .blur-backdrop {
-  backdrop-filter: blur(8px);
-  background: rgba(0, 0, 0, 0.4);
-}
-
-/* PrimeNG Overrides */
-:host ::ng-deep .p-dialog-header {
-  background: var(--gradient-primary);
-  color: white;
-  border-radius: 12px 12px 0 0;
-  padding: 1rem 1.5rem;
-}
-
-:host ::ng-deep .p-dialog-header .p-dialog-title {
-  font-weight: 600;
-  font-size: 1.125rem;
-  padding: 0;
-  margin: 0;
-}
-
-:host ::ng-deep .p-dialog-header .p-dialog-header-icon {
-  color: white;
-}
-
-:host ::ng-deep .p-dialog-content {
-  padding: 1.5rem;
-  background: var(--p-surface-card);
-}
-
-:host ::ng-deep .p-dialog-footer {
-  padding: 0 1.5rem 1.5rem 1.5rem;
-  border-top: none;
-  background: var(--p-surface-card);
-  border-radius: 0 0 12px 12px;
-}
-
-:host ::ng-deep .p-divider {
-  margin: 1rem 0;
-}
-
-:host ::ng-deep .p-divider .p-divider-content {
-  background: #f9fafb;
-}
-
-/* Button Styles */
-:host ::ng-deep .p-button {
-  border-radius: 6px;
-  font-weight: 500;
-  padding: 0.625rem 1.25rem;
-  transition: all 0.2s ease;
-}
-
-:host ::ng-deep .p-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Select Overrides - Estilos para select nativo estão no styles.css global */
-
-/* Definir variável do gradiente caso não esteja disponível */
-:host {
-  --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
-}
-
 /* Upload Info */
 .upload-info {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #6366f1;
+  color: var(--p-primary-color);
   font-size: 0.875rem;
   margin-right: auto;
 }
@@ -372,5 +274,5 @@
 }
 
 .file-info i {
-  color: #6366f1;
+  color: var(--p-primary-color);
 }

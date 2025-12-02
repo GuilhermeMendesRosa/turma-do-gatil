@@ -648,21 +648,7 @@
 }
 
 /* ===== CUSTOMIZAÇÃO DE COMPONENTES PRIMENG ===== */
-/* Estilos específicos do p-paginator removidos - agora usando app-pagination compartilhado */
-
-::ng-deep .p-button {
-  border-radius: 10px !important;
-  font-weight: 600 !important;
-  transition: all 0.3s ease !important;
-}
-
-::ng-deep .p-button:hover {
-  transform: translateY(-2px) !important;
-}
-
-::ng-deep .p-skeleton {
-  border-radius: 8px !important;
-}
+/* Estilos específicos removidos - agora usando estilos globais de primeng-overrides.css */
 
 /* ===== CORES E TEMAS ===== */
 :host {
@@ -873,10 +859,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Botão de adotar com animação especial */
-::ng-deep .dialog-footer .p-button-success .p-button-icon {
-  animation: heartbeat 1.5s ease-in-out infinite;
-}
+/* Botão de adotar com animação especial - estilos globais de p-button estão em primeng-overrides.css */
 
 @keyframes heartbeat {
   0% { transform: scale(1); }
@@ -884,15 +867,7 @@
   100% { transform: scale(1); }
 }
 
-/* Ajuste da linha divisória */
-::ng-deep .cat-details-dialog .p-divider {
-  margin: 1.5rem 0;
-}
-
-::ng-deep .cat-details-dialog .p-divider .p-divider-content {
-  background: var(--p-surface-border);
-  height: 1px;
-}
+/* Ajuste da linha divisória - estilos de p-divider estão em primeng-overrides.css */
 
 /* Responsividade */
 @media (max-width: 768px) {
@@ -931,10 +906,6 @@
 }
 
 @media (max-width: 480px) {
-  ::ng-deep .cat-details-dialog {
-    width: 95vw !important;
-  }
-  
   .profile-image {
     width: 120px;
     height: 120px;
@@ -1007,36 +978,7 @@
   min-width: 120px;
 }
 
-::ng-deep .delete-confirm-dialog {
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-}
-
-::ng-deep .delete-confirm-dialog .p-dialog-header {
-  background: var(--p-surface-card);
-  border-bottom: 1px solid var(--p-surface-border);
-  padding: 1.25rem 1.5rem;
-}
-
-::ng-deep .delete-confirm-dialog .p-dialog-content {
-  background: var(--p-surface-card);
-  padding: 1.5rem;
-}
-
-::ng-deep .delete-confirm-dialog .p-dialog-footer {
-  background: var(--p-surface-card);
-  border-top: 1px solid var(--p-surface-border);
-  padding: 1.25rem 1.5rem;
-}
-
-::ng-deep .delete-confirm-dialog .p-dialog-header .p-dialog-title {
-  font-weight: 600;
-  color: var(--p-text-color);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+/* Estilos de delete-confirm-dialog - agora usando confirmation-modal global */
 
 /* Responsividade para o dialog de delete */
 @media (max-width: 768px) {
@@ -1057,11 +999,5 @@
   
   .delete-dialog-footer p-button {
     width: 100%;
-  }
-  
-  ::ng-deep .delete-confirm-dialog {
-    margin: 1rem;
-    width: calc(100vw - 2rem) !important;
-    max-width: 450px;
   }
 }

@@ -101,17 +101,7 @@
   height: 40px !important;
 }
 
-.user-avatar::ng-deep .p-avatar {
-  background-color: #F2BBAE !important;
-  color: #2D2D2D !important;
-  width: 40px !important;
-  height: 40px !important;
-}
-
-.user-avatar::ng-deep .p-avatar .p-avatar-icon {
-  color: #2D2D2D !important;
-  font-size: 1.2rem !important;
-}
+/* Avatar estilos via classe customizada - estilos globais de p-avatar já estão em primeng-overrides.css */
 
 .user-avatar:hover {
   transform: scale(1.05);

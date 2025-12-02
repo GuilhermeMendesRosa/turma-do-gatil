@@ -556,16 +556,7 @@
   }
 }
 
-/* ===== CUSTOMIZAÇÕES DE BOTÕES ===== */
-::ng-deep .p-button {
-  border-radius: 10px !important;
-  font-weight: 600 !important;
-  transition: all 0.3s ease !important;
-}
-
-::ng-deep .p-button:hover {
-  transform: translateY(-2px) !important;
-}
+/* ===== CUSTOMIZAÇÕES DE BOTÕES - estilos globais em primeng-overrides.css ===== */
 
 /* ===== CORES E TEMAS ===== */
 :host {

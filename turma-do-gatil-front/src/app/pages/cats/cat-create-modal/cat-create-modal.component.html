@@ -5,8 +5,8 @@
   [closable]="true"
   [draggable]="false"
   [resizable]="false"
-  styleClass="cat-create-dialog"
-  maskStyleClass="blur-backdrop"
+  styleClass="tdg-modal"
+  maskStyleClass="tdg-modal-mask"
   [style]="{width: '90vw', maxWidth: '600px'}"
   [header]="isEditMode ? 'Editar Gato' : 'Adicionar Novo Gato'"
   (onHide)="onHide()">
@@ -55,8 +55,6 @@
         </small>
       </div>
     </div>
-
-    <p-divider></p-divider>
 
     <!-- Informações Básicas -->
     <div class="form-section">
@@ -146,8 +144,6 @@
         </div>
       </div>
     </div>
-
-    <p-divider></p-divider>
 
     <!-- Informações de Castração -->
     <div class="form-section">

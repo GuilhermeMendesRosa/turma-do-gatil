@@ -48,50 +48,9 @@ export interface ModalAction {
     </p-dialog>
   `,
   styles: [`
-    /* ===== DIÁLOGO GENÉRICO ===== */
-    :host ::ng-deep .generic-modal .p-dialog-mask,
-    :host ::ng-deep .generic-modal-mask {
-      background-color: rgba(0, 0, 0, 0.4) !important;
-      backdrop-filter: blur(8px) !important;
-      -webkit-backdrop-filter: blur(8px) !important;
-    }
-
-    :host ::ng-deep .generic-modal .p-dialog {
-      background: #ffffff !important;
-      border: 1px solid var(--p-surface-border, #e5e7eb);
-      box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
-      border-radius: 12px;
-    }
-
-    :host ::ng-deep .generic-modal .p-dialog-header {
-      background: linear-gradient(135deg, #F2BBAE, #E5A693) !important;
-      color: white !important;
-      border-radius: 12px 12px 0 0;
-      padding: 1.5rem 2rem;
-    }
-
-    :host ::ng-deep .generic-modal .p-dialog-header .p-dialog-title {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: white !important;
-    }
-
-    :host ::ng-deep .generic-modal .p-dialog-header .p-dialog-header-icon {
-      color: white !important;
-    }
-
-    :host ::ng-deep .generic-modal .p-dialog-content {
-      padding: 2rem;
-      background: #ffffff !important;
-    }
-
-    :host ::ng-deep .generic-modal .p-dialog-footer {
-      background: #ffffff !important;
-      border-radius: 0 0 12px 12px;
-      border-top: 1px solid var(--p-surface-border, #e5e7eb);
-      padding: 0.75rem 2rem;
-    }
-
+    /* Estilos locais do generic modal - sem ::ng-deep */
+    /* Os estilos do p-dialog estão definidos globalmente em primeng-overrides.css */
+    
     .modal-content-wrapper {
       width: 100%;
     }
@@ -119,14 +78,6 @@ export interface ModalAction {
       display: flex;
       gap: 0.75rem;
       align-items: center;
-    }
-
-    /* Fallback caso backdrop-filter não seja suportado */
-    @supports not (backdrop-filter: blur(8px)) {
-      :host ::ng-deep .generic-modal .p-dialog-mask,
-      :host ::ng-deep .generic-modal-mask {
-        background-color: rgba(0, 0, 0, 0.6) !important;
-      }
     }
   `]
 })
