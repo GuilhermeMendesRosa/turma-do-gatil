@@ -1,75 +1,6 @@
-/* ===== DIÁLOGO DE ADOÇÃO ===== */
-/* Máscara de fundo com desfoque */
-::ng-deep .p-dialog-mask.adoption-modal-dialog,
-::ng-deep .adoption-modal-dialog .p-dialog-mask,
-::ng-deep .p-dialog-mask {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  -moz-backdrop-filter: blur(8px) !important;
-  -ms-backdrop-filter: blur(8px) !important;
-}
-
-/* Regra específica para garantir o desfoque */
-:host ::ng-deep .p-dialog-mask {
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-}
-
-/* Fallback caso backdrop-filter não seja suportado */
-@supports not (backdrop-filter: blur(8px)) {
-  ::ng-deep .p-dialog-mask {
-    background-color: rgba(0, 0, 0, 0.6) !important;
-  }
-}
-
-/* Classe específica para o backdrop desfocado */
-::ng-deep .blur-backdrop {
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  -moz-backdrop-filter: blur(8px) !important;
-  background-color: rgba(0, 0, 0, 0.4) !important;
-}
-
-::ng-deep .adoption-modal-dialog .p-dialog {
-  background: var(--p-surface-card) !important;
-  border: 1px solid var(--p-surface-border);
-  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-}
-
-::ng-deep .adoption-modal-dialog .p-dialog-header {
-  background: var(--gradient-primary);
-  color: white;
-  border-radius: 12px 12px 0 0;
-  padding: 1.5rem 2rem;
-  border-bottom: none;
-}
-
-::ng-deep .adoption-modal-dialog .p-dialog-header .p-dialog-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: white;
-}
-
-::ng-deep .adoption-modal-dialog .p-dialog-header .p-dialog-header-icon {
-  color: white;
-}
-
-::ng-deep .adoption-modal-dialog .p-dialog-content {
-  padding: 2rem;
-  border-radius: 0;
-  background: var(--p-surface-card) !important;
-  margin-bottom: 0;
-}
-
-::ng-deep .adoption-modal-dialog .p-dialog-footer {
-  background: var(--p-surface-card) !important;
-  border-radius: 0 0 12px 12px;
-  border-top: 1px solid var(--p-surface-border);
-  margin-top: 0;
-  padding: 0.75rem 2rem;
-}
+/* ===== ESTILOS ESPECÍFICOS DO ADOPTION MODAL ===== */
+/* Os estilos do dialog (p-dialog) são gerenciados pelo styles/primeng-overrides.css */
+/* Usar styleClass="tdg-modal" no HTML para aplicar estilos globais */
 
 .adoption-form {
   padding: 0;
@@ -91,7 +22,7 @@
 }
 
 .form-section h3 i {
-  color: #6366f1;
+  color: var(--p-primary-color);
   font-size: 1rem;
 }
 
@@ -189,7 +120,7 @@
 }
 
 .form-field label i {
-  color: #6366f1;
+  color: var(--p-primary-color);
   font-size: 1rem;
 }
 
@@ -204,8 +135,8 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  border-color: var(--p-primary-color);
+  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.2);
 }
 
 .form-input.ng-invalid.ng-touched {
@@ -248,8 +179,8 @@
 }
 
 .adopter-search-input:focus {
-  border-color: #6366f1 !important;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+  border-color: var(--p-primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.2) !important;
 }
 
 .adopter-search-input:disabled {
@@ -272,7 +203,7 @@
 }
 
 .search-loading i {
-  color: #6366f1;
+  color: var(--p-primary-color);
   animation: spin 1s linear infinite;
 }
 
@@ -324,7 +255,7 @@
 
 .search-result-item:hover {
   background-color: #f8fafc;
-  border-left: 3px solid #6366f1;
+  border-left: 3px solid var(--p-primary-color);
   padding-left: calc(1rem - 3px);
 }
 
@@ -334,7 +265,7 @@
 }
 
 .adopter-avatar {
-  color: #6366f1;
+  color: var(--p-primary-color);
   font-size: 1.5rem;
   flex-shrink: 0;
 }
@@ -442,17 +373,6 @@
   color: #6b7280;
 }
 
-.dialog-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 1rem;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.75rem;
-}
-
 /* Error Messages */
 .error-message {
   color: #ef4444;
@@ -472,182 +392,6 @@
 .action-buttons {
   display: flex;
   gap: 0.75rem;
-}
-
-/* Button Customizations */
-::ng-deep .p-button {
-  padding: 0.625rem 1.25rem;
-  font-size: 0.875rem;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-::ng-deep .p-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-::ng-deep .p-button.p-button-secondary {
-  background: transparent;
-  border: 1px solid #d1d5db;
-  color: #374151;
-}
-
-::ng-deep .p-button.p-button-secondary:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
-}
-
-::ng-deep .p-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Divider Customization */
-::ng-deep .p-divider {
-  margin: 1.5rem 0;
-}
-
-::ng-deep .p-divider .p-divider-content {
-  background: var(--p-surface-card);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .adopter-selection {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .adopter-search-input {
-    font-size: 16px !important; /* Evita zoom no iOS */
-  }
-  
-  .search-results {
-    max-height: 250px;
-  }
-  
-  .search-result-item,
-  .selected-adopter {
-    padding: 0.875rem;
-  }
-}
-
-@media (max-width: 640px) {
-  ::ng-deep .adoption-modal-dialog .p-dialog {
-    margin: 1rem;
-    width: calc(100vw - 2rem) !important;
-    max-width: none !important;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-  
-  ::ng-deep .p-button {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .cat-profile-card {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .cat-meta-info {
-    justify-content: center;
-  }
-  
-  .adopter-search-input {
-    min-height: 44px;
-  }
-}
-
-/* ===== CORES E TEMAS ===== */
-:host {
-  --primary-color: var(--p-primary-color, #F2BBAE);
-  --text-color: var(--p-text-color, #1f2937);
-  --text-color-secondary: var(--p-text-color-secondary, #6b7280);
-  --surface-card: var(--p-surface-card, #ffffff);
-  --surface-border: var(--p-surface-border, #e5e7eb);
-  --surface-ground: var(--p-surface-ground, #f9fafb);
-  --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
-}
-
-/* Forçar background sólido no painel do autocomplete */
-::ng-deep .p-autocomplete-panel {
-  background: white !important;
-  background-color: white !important;
-  border: 1px solid var(--p-surface-border) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
-  z-index: 1000 !important;
-  max-height: 280px !important;
-  overflow-y: auto !important;
-  margin-top: 4px !important;
-}
-
-/* Garantir que os itens do dropdown tenham background */
-::ng-deep .p-autocomplete-panel .p-autocomplete-item {
-  background: white !important;
-  color: var(--p-text-color) !important;
-  padding: 0 !important;
-  border: none !important;
-  transition: all 0.2s ease !important;
-}
-
-::ng-deep .p-autocomplete-panel .p-autocomplete-item:hover {
-  background: var(--p-surface-ground) !important;
-}
-
-/* Melhorar o input do autocomplete */
-::ng-deep .p-autocomplete {
-  width: 100% !important;
-  border-radius: 8px !important;
-  border: 2px solid var(--p-surface-border) !important;
-  background: white !important;
-  background-color: white !important;
-  transition: all 0.3s ease !important;
-  min-height: 48px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
-}
-
-::ng-deep .p-autocomplete:hover {
-  border-color: var(--p-primary-color) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-}
-
-::ng-deep .p-autocomplete:focus-within {
-  border-color: var(--p-primary-color) !important;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
-  outline: none !important;
-}
-
-::ng-deep .p-autocomplete input {
-  font-size: 1rem !important;
-  padding: 0.75rem 1rem !important;
-  border: none !important;
-  outline: none !important;
-  background: transparent !important;
-  color: var(--p-text-color) !important;
-  width: 100% !important;
-}
-
-::ng-deep .p-autocomplete input::placeholder {
-  color: var(--p-text-color-secondary) !important;
-  opacity: 0.7 !important;
-}
-
-/* Ícone do dropdown */
-::ng-deep .p-autocomplete .p-autocomplete-dropdown {
-  color: var(--p-text-color-secondary) !important;
-  padding: 0.5rem !important;
-  transition: all 0.2s ease !important;
-}
-
-::ng-deep .p-autocomplete:hover .p-autocomplete-dropdown {
-  color: var(--p-primary-color) !important;
 }
 
 /* Estilos para o item selecionado no template */
@@ -680,13 +424,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(99, 102, 241, 0.1);
+  background: rgba(242, 187, 174, 0.1);
   border-radius: 50%;
-}
-
-.adopter-item .adopter-info {
-  flex: 1;
-  min-width: 0;
 }
 
 .adopter-item .adopter-name {
@@ -721,18 +460,6 @@
   position: relative;
 }
 
-.selected-adopter-item::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(135deg, #0ea5e9, #0284c7);
-  border-radius: 12px;
-  z-index: -1;
-}
-
 .selected-adopter-item .adopter-avatar {
   color: #0ea5e9;
   font-size: 1.75rem;
@@ -747,62 +474,16 @@
   border: 2px solid rgba(14, 165, 233, 0.2);
 }
 
-.selected-adopter-item .adopter-info {
-  flex: 1;
-  min-width: 0;
-}
-
 .selected-adopter-item .adopter-name {
   font-weight: 600;
   color: #0c4a6e;
   margin-bottom: 0.25rem;
   font-size: 0.95rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .selected-adopter-item .adopter-contact {
   font-size: 0.8rem;
   color: #0369a1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Melhorar o container do autocomplete */
-.adopter-selection {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  margin-top: 0.5rem;
-}
-
-.adopter-selection ::ng-deep .p-autocomplete {
-  flex: 1;
-  max-width: none !important;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .adopter-selection {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .adopter-item {
-    padding: 0.875rem 1rem;
-    gap: 0.75rem;
-  }
-
-  .selected-adopter-item {
-    padding: 0.875rem 1rem;
-    gap: 0.75rem;
-  }
-
-  ::ng-deep .p-autocomplete input {
-    font-size: 16px !important; /* Evita zoom no iOS */
-  }
 }
 
 /* Botão customizado para criar adotante */
@@ -845,13 +526,6 @@
 .create-adopter-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  border-color: var(--p-primary-600, #D48A7C);
-  background: linear-gradient(135deg, var(--p-primary-600, #E5A693) 0%, var(--p-primary-700, #D48A7C) 100%);
-}
-
-.create-adopter-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .create-adopter-button i {
@@ -871,16 +545,28 @@
   white-space: nowrap;
 }
 
-/* Responsividade para o botão */
+/* Responsive Design */
 @media (max-width: 768px) {
-  .create-adopter-button {
-    height: 60px !important;
-    min-width: 60px;
-    padding: 0 0.75rem;
+  .adopter-selection {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .adopter-search-input {
+    font-size: 16px !important;
+  }
+  
+  .search-results {
+    max-height: 250px;
+  }
+  
+  .search-result-item,
+  .selected-adopter {
+    padding: 0.875rem;
   }
   
   .create-adopter-button .button-text {
-    display: none; /* Esconde o texto em telas pequenas */
+    display: none;
   }
   
   .create-adopter-button {
@@ -889,10 +575,26 @@
   }
 }
 
-@media (max-width: 480px) {
-  .create-adopter-button {
-    height: 50px !important;
-    min-width: 50px;
-    width: 50px;
+@media (max-width: 640px) {
+  .action-buttons {
+    flex-direction: column;
   }
+  
+  .cat-profile-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .cat-meta-info {
+    justify-content: center;
+  }
+  
+  .adopter-search-input {
+    min-height: 44px;
+  }
+}
+
+/* ===== CORES E TEMAS ===== */
+:host {
+  --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
 }

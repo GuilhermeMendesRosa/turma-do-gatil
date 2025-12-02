@@ -344,96 +344,7 @@
 }
 
 /* ==================== CUSTOMIZAÇÕES DE COMPONENTES ==================== */
-
-/* Modal personalizado */
-::ng-deep .generic-modal .p-dialog {
-  border-radius: 12px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
-              0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-::ng-deep .generic-modal .p-dialog-header {
-  background: var(--p-surface-card, #ffffff);
-  border-bottom: 1px solid var(--p-surface-border, #e5e7eb);
-  border-radius: 12px 12px 0 0;
-}
-
-::ng-deep .generic-modal .p-dialog-content {
-  background: var(--p-surface-card, #ffffff);
-  padding: 1.5rem;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-::ng-deep .generic-modal .p-dialog-footer {
-  background: var(--p-surface-card, #ffffff);
-  border-top: 1px solid var(--p-surface-border, #e5e7eb);
-  border-radius: 0 0 12px 12px;
-  padding: 1rem 1.5rem;
-}
-
-/* Botões do modal */
-::ng-deep .generic-modal .p-button {
-  border-radius: 8px;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  transition: all 0.2s ease;
-}
-
-::ng-deep .generic-modal .p-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-::ng-deep .generic-modal .p-button.p-button-secondary {
-  background: var(--p-surface-200, #e5e7eb);
-  border-color: var(--p-surface-300, #d1d5db);
-  color: var(--p-text-color, #1f2937);
-}
-
-::ng-deep .generic-modal .p-button.p-button-secondary:hover {
-  background: var(--p-surface-300, #d1d5db);
-  border-color: var(--p-surface-400, #9ca3af);
-}
-
-/* Tabela personalizada */
-::ng-deep .data-table .p-datatable {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-::ng-deep .data-table .p-datatable-header {
-  background: var(--p-surface-100, #f3f4f6);
-  border-bottom: 2px solid var(--p-surface-border, #e5e7eb);
-  padding: 1rem;
-}
-
-::ng-deep .data-table .p-datatable-tbody > tr {
-  transition: background-color 0.2s ease;
-}
-
-::ng-deep .data-table .p-datatable-tbody > tr:hover {
-  background: var(--p-surface-hover, #f8f9fa);
-}
-
-/* Paginação personalizada */
-::ng-deep .pagination .p-paginator {
-  background: var(--p-surface-card, #ffffff);
-  border: 1px solid var(--p-surface-border, #e5e7eb);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-}
-
-::ng-deep .pagination .p-paginator .p-paginator-pages .p-paginator-page {
-  border-radius: 6px;
-  margin: 0 0.125rem;
-  transition: all 0.2s ease;
-}
-
-::ng-deep .pagination .p-paginator .p-paginator-pages .p-paginator-page:hover {
-  transform: translateY(-1px);
-}
+/* Estilos de modal, tabela e paginação movidos para primeng-overrides.css */
 
 /* ==================== VARIÁVEIS CSS ==================== */
 
@@ -507,13 +418,13 @@
 }
 
 /* Estado vazio personalizado */
-::ng-deep .data-table .empty-message {
+.empty-message {
   text-align: center;
   padding: 3rem 1rem;
   color: var(--p-text-color-secondary, #6b7280);
 }
 
-::ng-deep .data-table .empty-message i {
+.empty-message i {
   font-size: 4rem;
   margin-bottom: 1rem;
   display: block;
@@ -521,25 +432,14 @@
   opacity: 0.6;
 }
 
-::ng-deep .data-table .empty-message i.pi {
-  font-family: 'primeicons' !important;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-::ng-deep .data-table .empty-message p {
+.empty-message p {
   font-size: 1.1rem;
   font-weight: 500;
   margin: 0;
   color: var(--p-text-color, #1f2937);
 }
 
-::ng-deep .data-table .empty-message .empty-submessage {
+.empty-message .empty-submessage {
   font-size: 0.9rem;
   color: var(--p-text-color-muted, #9ca3af);
   margin-top: 0.5rem;

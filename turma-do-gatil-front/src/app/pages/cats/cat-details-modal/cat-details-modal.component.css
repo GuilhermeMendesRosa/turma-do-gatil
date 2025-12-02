@@ -1,73 +1,6 @@
-/* ===== DIÁLOGO DE DETALHES DO GATO ===== */
-/* Máscara de fundo com desfoque */
-::ng-deep .p-dialog-mask.cat-details-dialog,
-::ng-deep .cat-details-dialog .p-dialog-mask,
-::ng-deep .p-dialog-mask {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  -moz-backdrop-filter: blur(8px) !important;
-  -ms-backdrop-filter: blur(8px) !important;
-}
-
-/* Regra específica para garantir o desfoque */
-:host ::ng-deep .p-dialog-mask {
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-}
-
-/* Fallback caso backdrop-filter não seja suportado */
-@supports not (backdrop-filter: blur(8px)) {
-  ::ng-deep .p-dialog-mask {
-    background-color: rgba(0, 0, 0, 0.6) !important;
-  }
-}
-
-/* Classe específica para o backdrop desfocado */
-::ng-deep .blur-backdrop {
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  -moz-backdrop-filter: blur(8px) !important;
-  background-color: rgba(0, 0, 0, 0.4) !important;
-}
-
-::ng-deep .cat-details-dialog .p-dialog {
-  background: var(--p-surface-card) !important;
-  border: 1px solid var(--p-surface-border);
-  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
-}
-
-::ng-deep .cat-details-dialog .p-dialog-header {
-  background: var(--gradient-primary);
-  color: white;
-  border-radius: 12px 12px 0 0;
-  padding: 1.5rem 2rem;
-}
-
-::ng-deep .cat-details-dialog .p-dialog-header .p-dialog-title {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: white;
-}
-
-::ng-deep .cat-details-dialog .p-dialog-header .p-dialog-header-icon {
-  color: white;
-}
-
-::ng-deep .cat-details-dialog .p-dialog-content {
-  padding: 0;
-  border-radius: 0;
-  background: var(--p-surface-card) !important;
-  margin-bottom: 0;
-}
-
-::ng-deep .cat-details-dialog .p-dialog-footer {
-  background: var(--p-surface-card) !important;
-  border-radius: 0 0 12px 12px;
-  border-top: 1px solid var(--p-surface-border);
-  margin-top: 0;
-  padding: 0.75rem 2rem;
-}
+/* ===== ESTILOS ESPECÍFICOS DO CAT DETAILS MODAL ===== */
+/* Os estilos do dialog (p-dialog) são gerenciados pelo styles/primeng-overrides.css */
+/* Usar styleClass="tdg-modal" no HTML para aplicar estilos globais */
 
 .cat-profile-container {
   padding: 2rem 2rem 1rem 2rem;
@@ -103,7 +36,7 @@
 }
 
 .status-badge {
-  background: var(--p-primary-color); /* Verde para disponível */
+  background: var(--p-primary-color);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -117,16 +50,21 @@
 }
 
 .status-badge.adotado {
-  background: var(--p-green-500); /* Verde para adotado */
+  background: var(--p-green-500);
 }
 
 .status-badge.em-processo {
-  background: var(--p-yellow-500); /* Amarelo para em processo */
+  background: var(--p-yellow-500);
   color: #333;
 }
 
 .status-badge.nao-adotado {
-  background: var(--p-primary-color); /* Azul para disponível */
+  background: var(--p-primary-color);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.95; }
 }
 
 .cat-profile-info {
@@ -262,97 +200,6 @@
   display: flex;
   gap: 0.8rem;
   justify-content: center;
-}
-
-/* Estilos específicos para botões de ação */
-.dialog-footer .action-buttons p-button {
-  transition: all 0.3s ease;
-}
-
-.dialog-footer .action-buttons p-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Botão de adotar com animação especial */
-::ng-deep .dialog-footer .p-button-success .p-button-icon {
-  animation: heartbeat 1.5s ease-in-out infinite;
-}
-
-@keyframes heartbeat {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-/* Ajuste da linha divisória */
-::ng-deep .cat-details-dialog .p-divider {
-  margin: 1.5rem 0;
-}
-
-::ng-deep .cat-details-dialog .p-divider .p-divider-content {
-  background: var(--p-surface-border);
-  height: 1px;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .cat-profile-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .profile-image {
-    width: 150px;
-    height: 150px;
-  }
-  
-  .cat-profile-name {
-    font-size: 1.8rem;
-  }
-  
-  .details-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .cat-profile-container {
-    padding: 1rem;
-  }
-  
-  .dialog-footer {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .dialog-footer .action-buttons {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  ::ng-deep .cat-details-dialog {
-    width: 95vw !important;
-  }
-  
-  .profile-image {
-    width: 120px;
-    height: 120px;
-  }
-  
-  .cat-profile-name {
-    font-size: 1.5rem;
-  }
-  
-  .dialog-footer .action-buttons {
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  .dialog-footer .action-buttons p-button {
-    width: 100%;
-  }
 }
 
 /* ===== ABAS CUSTOMIZADAS ===== */
@@ -611,8 +458,41 @@
   justify-content: flex-start;
 }
 
-/* ===== RESPONSIVIDADE PARA ABAS ===== */
+/* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
+  .cat-profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .profile-image {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .cat-profile-name {
+    font-size: 1.8rem;
+  }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .cat-profile-container {
+    padding: 1rem;
+  }
+  
+  .dialog-footer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .dialog-footer .action-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+  
   .tab-nav {
     flex-direction: column;
     gap: 0.5rem;
@@ -646,6 +526,20 @@
 }
 
 @media (max-width: 480px) {
+  .profile-image {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .cat-profile-name {
+    font-size: 1.5rem;
+  }
+  
+  .dialog-footer .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
   .notes-form {
     padding: 1rem;
   }
@@ -653,24 +547,9 @@
   .note-item {
     padding: 1rem;
   }
-  
-  .form-actions {
-    width: 100%;
-  }
-  
-  .form-actions ::ng-deep p-button {
-    width: 100%;
-  }
 }
 
 /* ===== CORES E TEMAS ===== */
 :host {
-  --primary-color: var(--p-primary-color, #F2BBAE);
-  --text-color: var(--p-text-color, #1f2937);
-  --text-color-secondary: var(--p-text-color-secondary, #6b7280);
-  --surface-card: var(--p-surface-card, #ffffff);
-  --surface-border: var(--p-surface-border, #e5e7eb);
-  --surface-ground: var(--p-surface-ground, #f9fafb);
-  --surface-hover: var(--p-surface-hover, #f3f4f6);
   --gradient-primary: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
 }

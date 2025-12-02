@@ -1,0 +1,739 @@
+/* ============================================
+   PRIMENG COMPONENT OVERRIDES
+   Estilos globais para componentes PrimeNG
+   ============================================ */
+
+/* ===== VARIÁVEIS REUTILIZÁVEIS ===== */
+:root {
+  /* Modal/Dialog */
+  --tdg-modal-border-radius: 12px;
+  --tdg-modal-backdrop-blur: blur(8px);
+  --tdg-modal-backdrop-color: rgba(0, 0, 0, 0.4);
+  --tdg-modal-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
+  
+  /* Form controls */
+  --tdg-input-border-radius: 8px;
+  --tdg-input-padding: 0.75rem 1rem;
+  --tdg-input-border: 1px solid var(--p-surface-border);
+  --tdg-input-focus-shadow: 0 0 0 3px rgba(242, 187, 174, 0.2);
+  --tdg-input-error-color: #ef4444;
+  --tdg-input-error-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+  
+  /* Buttons */
+  --tdg-button-border-radius: 8px;
+  --tdg-button-padding: 0.625rem 1.25rem;
+}
+
+/* ===== P-DIALOG / MODAL ===== */
+/* Backdrop com blur */
+.p-dialog-mask.tdg-modal-mask,
+.tdg-modal .p-dialog-mask {
+  background-color: var(--tdg-modal-backdrop-color) !important;
+  backdrop-filter: var(--tdg-modal-backdrop-blur) !important;
+  -webkit-backdrop-filter: var(--tdg-modal-backdrop-blur) !important;
+}
+
+/* Fallback para navegadores sem suporte a backdrop-filter */
+@supports not (backdrop-filter: blur(8px)) {
+  .p-dialog-mask.tdg-modal-mask,
+  .tdg-modal .p-dialog-mask {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+}
+
+/* Container do Dialog */
+.tdg-modal .p-dialog {
+  background: var(--p-surface-card) !important;
+  border: 1px solid var(--p-surface-border);
+  box-shadow: var(--tdg-modal-shadow);
+  border-radius: var(--tdg-modal-border-radius);
+  overflow: hidden;
+}
+
+/* Header do Dialog */
+.tdg-modal .p-dialog-header {
+  background: var(--gradient-primary) !important;
+  color: white !important;
+  border-radius: var(--tdg-modal-border-radius) var(--tdg-modal-border-radius) 0 0;
+  padding: 1.5rem 2rem;
+  border-bottom: none;
+}
+
+.tdg-modal .p-dialog-header .p-dialog-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: white !important;
+}
+
+.tdg-modal .p-dialog-header .p-dialog-header-icon,
+.tdg-modal .p-dialog-header .p-dialog-header-close {
+  color: white !important;
+  transition: opacity 0.2s ease;
+}
+
+.tdg-modal .p-dialog-header .p-dialog-header-icon:hover,
+.tdg-modal .p-dialog-header .p-dialog-header-close:hover {
+  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Conteúdo do Dialog */
+.tdg-modal .p-dialog-content {
+  padding: 2rem;
+  background: var(--p-surface-card) !important;
+  border-radius: 0;
+}
+
+/* Footer do Dialog */
+.tdg-modal .p-dialog-footer {
+  background: var(--p-surface-card) !important;
+  border-radius: 0 0 var(--tdg-modal-border-radius) var(--tdg-modal-border-radius);
+  border-top: 1px solid var(--p-surface-border);
+  padding: 0.75rem 2rem;
+}
+
+/* Footer container para botões */
+.tdg-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ===== P-BUTTON ===== */
+.p-button {
+  padding: var(--tdg-button-padding);
+  font-size: 0.875rem;
+  border-radius: var(--tdg-button-border-radius);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.p-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.p-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Botão Secundário */
+.p-button.p-button-secondary {
+  background: transparent;
+  border: 1px solid var(--p-surface-border);
+  color: var(--p-text-color);
+}
+
+.p-button.p-button-secondary:hover:not(:disabled) {
+  background: var(--p-surface-hover);
+  border-color: var(--p-primary-color);
+}
+
+/* Botão Sucesso */
+.p-button.p-button-success {
+  background: #059669;
+  border: 1px solid #059669;
+}
+
+.p-button.p-button-success:hover:not(:disabled) {
+  background: #047857;
+  border-color: #047857;
+}
+
+/* Botão Danger */
+.p-button.p-button-danger {
+  background: #dc2626;
+  border: 1px solid #dc2626;
+}
+
+.p-button.p-button-danger:hover:not(:disabled) {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+/* Botão Outlined */
+.p-button.p-button-outlined {
+  background: transparent;
+}
+
+/* Loading state */
+.p-button .p-button-loading-icon {
+  margin-right: 0.5rem;
+}
+
+/* ===== P-INPUTTEXT / INPUTS ===== */
+.p-inputtext,
+.p-inputmask .p-inputtext,
+.p-password-input {
+  width: 100%;
+  padding: var(--tdg-input-padding);
+  border: var(--tdg-input-border);
+  border-radius: var(--tdg-input-border-radius);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: white;
+  color: var(--p-text-color);
+}
+
+.p-inputtext:focus,
+.p-inputmask .p-inputtext:focus,
+.p-password-input:focus {
+  border-color: var(--p-primary-color);
+  box-shadow: var(--tdg-input-focus-shadow);
+  outline: none;
+}
+
+.p-inputtext::placeholder,
+.p-password-input::placeholder {
+  color: var(--p-text-color-secondary);
+}
+
+/* Estado de erro */
+.p-inputtext.ng-invalid.ng-touched,
+.p-inputmask.ng-invalid.ng-touched .p-inputtext,
+.p-password.ng-invalid.ng-touched .p-password-input {
+  border-color: var(--tdg-input-error-color);
+}
+
+.p-inputtext.ng-invalid.ng-touched:focus,
+.p-inputmask.ng-invalid.ng-touched .p-inputtext:focus,
+.p-password.ng-invalid.ng-touched .p-password-input:focus {
+  box-shadow: var(--tdg-input-error-shadow);
+}
+
+/* ===== P-INPUTMASK ===== */
+.p-inputmask {
+  width: 100%;
+}
+
+/* ===== P-PASSWORD ===== */
+.p-password {
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.p-password .p-inputwrapper {
+  width: 100%;
+}
+
+.p-password .p-password-input {
+  padding-right: 3rem;
+}
+
+/* Toggle icon */
+.p-password-toggle-mask-icon,
+.p-password .p-icon-wrapper {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--p-primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: color 0.2s ease;
+}
+
+.p-password .p-icon-wrapper:hover {
+  color: var(--p-primary-600);
+}
+
+/* ===== P-SELECT / DROPDOWN ===== */
+.p-select {
+  width: 100%;
+  border: var(--tdg-input-border);
+  border-radius: var(--tdg-input-border-radius);
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.p-select:not(.p-disabled):hover {
+  border-color: var(--p-primary-color);
+}
+
+.p-select:not(.p-disabled).p-focus,
+.p-select:not(.p-disabled):focus {
+  border-color: var(--p-primary-color);
+  box-shadow: var(--tdg-input-focus-shadow);
+}
+
+.p-select .p-inputtext,
+.p-select .p-select-label {
+  padding: var(--tdg-input-padding);
+  font-size: 0.95rem;
+  border: none;
+  background: transparent;
+}
+
+/* Estado de erro */
+.p-select.ng-invalid.ng-touched {
+  border-color: var(--tdg-input-error-color);
+}
+
+.p-select.ng-invalid.ng-touched:focus,
+.p-select.ng-invalid.ng-touched.p-focus {
+  box-shadow: var(--tdg-input-error-shadow);
+}
+
+/* ===== P-AUTOCOMPLETE ===== */
+.p-autocomplete {
+  width: 100%;
+}
+
+.p-autocomplete .p-autocomplete-input {
+  width: 100%;
+  padding: var(--tdg-input-padding);
+  border: var(--tdg-input-border);
+  border-radius: var(--tdg-input-border-radius);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.p-autocomplete .p-autocomplete-input:focus {
+  border-color: var(--p-primary-color);
+  box-shadow: var(--tdg-input-focus-shadow);
+  outline: none;
+}
+
+/* Panel de resultados */
+.p-autocomplete-panel {
+  border: 1px solid var(--p-surface-border);
+  border-radius: var(--tdg-input-border-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+}
+
+.p-autocomplete-items .p-autocomplete-item {
+  padding: 0.75rem 1rem;
+  transition: background 0.2s ease;
+}
+
+.p-autocomplete-items .p-autocomplete-item:hover {
+  background: var(--p-surface-hover);
+}
+
+.p-autocomplete-items .p-autocomplete-item.p-highlight {
+  background: var(--p-surface-selected);
+  color: var(--p-text-color);
+}
+
+/* ===== P-DIVIDER ===== */
+.p-divider {
+  margin: 1.5rem 0;
+}
+
+.p-divider.p-divider-horizontal::before {
+  border-color: var(--p-surface-border);
+}
+
+.p-divider .p-divider-content {
+  background: var(--p-surface-card);
+  padding: 0 1rem;
+  color: var(--p-text-color-secondary);
+  font-size: 0.9rem;
+}
+
+/* ===== P-DATATABLE ===== */
+.p-datatable {
+  border-radius: var(--tdg-input-border-radius);
+  overflow: hidden;
+}
+
+.p-datatable .p-datatable-header {
+  background: var(--p-surface-card);
+  border: none;
+  padding: 1rem;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: var(--p-surface-ground);
+  color: var(--p-text-color);
+  font-weight: 600;
+  border-color: var(--p-surface-border);
+  padding: 1rem;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  border-color: var(--p-surface-border);
+  padding: 1rem;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: var(--p-surface-hover);
+}
+
+/* ===== P-PAGINATOR ===== */
+.p-paginator {
+  background: var(--p-surface-card);
+  border: none;
+  padding: 1rem;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.p-paginator .p-paginator-page,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-last {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--tdg-button-border-radius);
+  border: 1px solid var(--p-surface-border);
+  background: white;
+  color: var(--p-text-color);
+  transition: all 0.2s ease;
+}
+
+.p-paginator .p-paginator-page:hover,
+.p-paginator .p-paginator-next:hover,
+.p-paginator .p-paginator-prev:hover {
+  background: var(--p-surface-hover);
+  border-color: var(--p-primary-color);
+}
+
+.p-paginator .p-paginator-page.p-highlight {
+  background: var(--p-primary-color);
+  border-color: var(--p-primary-color);
+  color: white;
+}
+
+/* ===== P-SKELETON ===== */
+.p-skeleton {
+  background: linear-gradient(90deg, var(--p-surface-ground) 25%, var(--p-surface-hover) 50%, var(--p-surface-ground) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--tdg-input-border-radius);
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===== P-AVATAR ===== */
+.p-avatar {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+.p-avatar.p-avatar-lg {
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.25rem;
+}
+
+.p-avatar.p-avatar-xl {
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.5rem;
+}
+
+/* ===== P-CHECKBOX ===== */
+.p-checkbox .p-checkbox-box {
+  border: 2px solid var(--p-surface-border);
+  border-radius: 4px;
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: all 0.2s ease;
+}
+
+.p-checkbox:not(.p-disabled) .p-checkbox-box:hover {
+  border-color: var(--p-primary-color);
+}
+
+.p-checkbox .p-checkbox-box.p-highlight {
+  background: var(--p-primary-color);
+  border-color: var(--p-primary-color);
+}
+
+/* ===== GENERIC MODAL ===== */
+/* Backdrop com blur para generic modal */
+.p-dialog-mask.generic-modal-mask,
+.generic-modal .p-dialog-mask {
+  background-color: var(--tdg-modal-backdrop-color) !important;
+  backdrop-filter: var(--tdg-modal-backdrop-blur) !important;
+  -webkit-backdrop-filter: var(--tdg-modal-backdrop-blur) !important;
+}
+
+@supports not (backdrop-filter: blur(8px)) {
+  .p-dialog-mask.generic-modal-mask,
+  .generic-modal .p-dialog-mask {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+  }
+}
+
+.generic-modal .p-dialog {
+  background: var(--p-surface-card) !important;
+  border: 1px solid var(--p-surface-border);
+  box-shadow: var(--tdg-modal-shadow);
+  border-radius: var(--tdg-modal-border-radius);
+  overflow: hidden;
+}
+
+.generic-modal .p-dialog-header {
+  background: var(--gradient-primary) !important;
+  color: white !important;
+  border-radius: var(--tdg-modal-border-radius) var(--tdg-modal-border-radius) 0 0;
+  padding: 1.5rem 2rem;
+  border-bottom: none;
+}
+
+.generic-modal .p-dialog-header .p-dialog-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: white !important;
+}
+
+.generic-modal .p-dialog-header .p-dialog-header-icon,
+.generic-modal .p-dialog-header .p-dialog-header-close {
+  color: white !important;
+  transition: opacity 0.2s ease;
+}
+
+.generic-modal .p-dialog-header .p-dialog-header-icon:hover,
+.generic-modal .p-dialog-header .p-dialog-header-close:hover {
+  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.generic-modal .p-dialog-content {
+  padding: 2rem;
+  background: var(--p-surface-card) !important;
+}
+
+.generic-modal .p-dialog-footer {
+  background: var(--p-surface-card) !important;
+  border-radius: 0 0 var(--tdg-modal-border-radius) var(--tdg-modal-border-radius);
+  border-top: 1px solid var(--p-surface-border);
+  padding: 0.75rem 2rem;
+}
+
+/* Footer container para generic modal */
+.generic-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0;
+  border: none;
+  margin: 0;
+}
+
+/* ===== CONFIRMATION MODAL ESPECÍFICO ===== */
+.confirmation-modal .p-dialog {
+  max-width: 500px;
+  width: 90vw;
+  background: var(--p-surface-card) !important;
+  border-radius: var(--tdg-modal-border-radius);
+  box-shadow: var(--tdg-modal-shadow);
+  overflow: hidden;
+}
+
+.confirmation-modal .p-dialog-content {
+  padding: 1.5rem !important;
+  background: var(--p-surface-card) !important;
+}
+
+.confirmation-modal .p-dialog-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%) !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding: 1.5rem 2rem 1.25rem 2rem !important;
+  border-radius: var(--tdg-modal-border-radius) var(--tdg-modal-border-radius) 0 0 !important;
+  position: relative !important;
+}
+
+.confirmation-modal .p-dialog-title {
+  font-size: 1.25rem !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+}
+
+.confirmation-modal .p-dialog-header-close {
+  width: 2rem !important;
+  height: 2rem !important;
+  border-radius: 50% !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  color: #ef4444 !important;
+  transition: all 0.2s ease !important;
+}
+
+.confirmation-modal .p-dialog-header-close:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  transform: scale(1.05) !important;
+}
+
+.confirmation-modal .p-dialog-footer {
+  background: var(--p-surface-card) !important;
+  border-top: 1px solid var(--p-surface-border);
+  padding: 1rem 1.5rem;
+  gap: 0.75rem;
+  border-radius: 0 0 var(--tdg-modal-border-radius) var(--tdg-modal-border-radius);
+}
+
+/* Variantes de cor para confirmation modal - header stripe */
+.confirmation-modal--danger .p-dialog-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.confirmation-modal--warning .p-dialog-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.confirmation-modal--success .p-dialog-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.confirmation-modal--info .p-dialog-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+}
+
+/* ===== FORM FIELD GLOBAL STYLES ===== */
+/* Para uso com app-form-field e inputs nativos */
+.tdg-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tdg-form-field label {
+  font-weight: 600;
+  color: var(--p-text-color);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tdg-form-field label i {
+  color: var(--p-primary-color);
+  font-size: 0.85rem;
+}
+
+.tdg-form-field .required {
+  color: var(--tdg-input-error-color);
+}
+
+.tdg-form-field input,
+.tdg-form-field select,
+.tdg-form-field textarea {
+  width: 100%;
+  padding: var(--tdg-input-padding);
+  border: var(--tdg-input-border);
+  border-radius: var(--tdg-input-border-radius);
+  background: white;
+  color: var(--p-text-color);
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.tdg-form-field input:focus,
+.tdg-form-field select:focus,
+.tdg-form-field textarea:focus {
+  border-color: var(--p-primary-color);
+  box-shadow: var(--tdg-input-focus-shadow);
+  outline: none;
+}
+
+.tdg-form-field input::placeholder,
+.tdg-form-field textarea::placeholder {
+  color: var(--p-text-color-secondary);
+}
+
+.tdg-form-field.has-error input,
+.tdg-form-field.has-error select,
+.tdg-form-field.has-error textarea {
+  border-color: var(--tdg-input-error-color);
+}
+
+.tdg-form-field.has-error input:focus,
+.tdg-form-field.has-error select:focus,
+.tdg-form-field.has-error textarea:focus {
+  box-shadow: var(--tdg-input-error-shadow);
+}
+
+.tdg-form-field .error-message {
+  color: var(--tdg-input-error-color);
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tdg-form-field .error-message i {
+  font-size: 0.75rem;
+}
+
+.tdg-form-field .hint-message {
+  color: var(--p-text-color-secondary);
+  font-size: 0.8rem;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 640px) {
+  .tdg-modal .p-dialog {
+    margin: 1rem;
+    width: calc(100vw - 2rem) !important;
+    max-width: none !important;
+  }
+  
+  .tdg-modal .p-dialog-header {
+    padding: 1rem 1.5rem;
+  }
+  
+  .tdg-modal .p-dialog-header .p-dialog-title {
+    font-size: 1.2rem;
+  }
+  
+  .tdg-modal .p-dialog-content {
+    padding: 1.5rem;
+  }
+  
+  .tdg-modal .p-dialog-footer {
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .tdg-modal-footer {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+  
+  .tdg-modal-footer .p-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

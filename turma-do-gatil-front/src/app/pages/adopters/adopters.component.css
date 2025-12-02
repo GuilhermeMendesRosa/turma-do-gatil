@@ -452,16 +452,7 @@
   }
 }
 
-/* ===== CUSTOMIZAÇÕES DE BOTÕES (igual aos gatos) ===== */
-::ng-deep .p-button {
-  border-radius: 10px !important;
-  font-weight: 600 !important;
-  transition: all 0.3s ease !important;
-}
-
-::ng-deep .p-button:hover {
-  transform: translateY(-2px) !important;
-}
+/* ===== CUSTOMIZAÇÕES DE BOTÕES - estilos globais em primeng-overrides.css ===== */
 
 /* ===== CORES E TEMAS ===== */
 :host {
@@ -561,34 +552,7 @@
   font-weight: 500;
 }
 
-/* ===== CUSTOMIZAÇÃO DO INPUT MASK ===== */
-::ng-deep .p-inputmask {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--p-surface-border);
-  border-radius: 8px;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-  background: var(--p-surface-ground);
-}
-
-::ng-deep .p-inputmask:focus {
-  outline: none;
-  border-color: var(--p-primary-color);
-  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.2);
-  background: #ffffff;
-}
-
-::ng-deep .p-inputmask.ng-invalid.ng-touched {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-}
-
-/* ===== CUSTOMIZAÇÃO DO DIVIDER ===== */
-::ng-deep .p-divider {
-  margin: 1.5rem 0;
-  border-color: var(--p-surface-border);
-}
+/* ===== CUSTOMIZAÇÃO DO INPUT MASK E DIVIDER - estilos globais em primeng-overrides.css ===== */
 
 /* ===== RESPONSIVIDADE DO FORMULÁRIO ===== */
 @media (max-width: 768px) {
@@ -601,11 +565,6 @@
   }
   
   .form-input {
-    padding: 0.625rem;
-    font-size: 0.85rem;
-  }
-  
-  ::ng-deep .p-inputmask {
     padding: 0.625rem;
     font-size: 0.85rem;
   }
@@ -622,10 +581,6 @@
   }
   
   .form-input {
-    padding: 0.5rem;
-  }
-  
-  ::ng-deep .p-inputmask {
     padding: 0.5rem;
   }
 }

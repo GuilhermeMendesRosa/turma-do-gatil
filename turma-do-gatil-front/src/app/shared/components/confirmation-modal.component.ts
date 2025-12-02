@@ -46,6 +46,9 @@ export interface ConfirmationConfig {
     </app-generic-modal>
   `,
   styles: [`
+    /* Estilos locais do confirmation modal - sem ::ng-deep */
+    /* Os estilos do p-dialog estão definidos globalmente em primeng-overrides.css */
+
     .confirmation-content {
       display: flex;
       align-items: flex-start;
@@ -136,115 +139,6 @@ export interface ConfirmationConfig {
       .confirmation-icon {
         align-self: center;
       }
-    }
-
-    /* Override para modal de confirmação */
-    :host ::ng-deep .confirmation-modal .p-dialog {
-      max-width: 500px;
-      width: 90vw;
-      background-color: var(--p-surface-0, #ffffff) !important;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15) !important;
-    }
-
-    :host ::ng-deep .confirmation-modal .p-dialog-content {
-      padding: 1.5rem !important;
-      background-color: var(--p-surface-0, #ffffff) !important;
-    }
-
-    :host ::ng-deep .confirmation-modal .p-dialog-header {
-      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%) !important;
-      border-bottom: 2px solid #e2e8f0 !important;
-      padding: 1.5rem 2rem 1.25rem 2rem !important;
-      border-radius: 12px 12px 0 0 !important;
-      position: relative !important;
-    }
-
-    /* Headers específicos por severidade */
-    :host ::ng-deep .confirmation-modal--danger .p-dialog-header::before {
-      content: '' !important;
-      position: absolute !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      height: 3px !important;
-      background: linear-gradient(90deg, #ef4444, #dc2626) !important;
-    }
-
-    :host ::ng-deep .confirmation-modal--warning .p-dialog-header::before {
-      content: '' !important;
-      position: absolute !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      height: 3px !important;
-      background: linear-gradient(90deg, #f59e0b, #d97706) !important;
-    }
-
-    :host ::ng-deep .confirmation-modal--success .p-dialog-header::before {
-      content: '' !important;
-      position: absolute !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      height: 3px !important;
-      background: linear-gradient(90deg, #10b981, #059669) !important;
-    }
-
-    :host ::ng-deep .confirmation-modal--info .p-dialog-header::before {
-      content: '' !important;
-      position: absolute !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      height: 3px !important;
-      background: linear-gradient(90deg, #3b82f6, #2563eb) !important;
-    }
-
-    :host ::ng-deep .confirmation-modal .p-dialog-title {
-      font-size: 1.25rem !important;
-      font-weight: 600 !important;
-      color: #1f2937 !important;
-      display: flex !important;
-      align-items: center !important;
-      gap: 0.75rem !important;
-    }
-
-    :host ::ng-deep .confirmation-modal .p-dialog-header-close {
-      width: 2rem !important;
-      height: 2rem !important;
-      border-radius: 50% !important;
-      background: rgba(239, 68, 68, 0.1) !important;
-      border: 1px solid rgba(239, 68, 68, 0.2) !important;
-      color: #ef4444 !important;
-      transition: all 0.2s ease !important;
-    }
-
-    :host ::ng-deep .confirmation-modal .p-dialog-header-close:hover {
-      background: rgba(239, 68, 68, 0.2) !important;
-      transform: scale(1.05) !important;
-    }
-
-    :host ::ng-deep .confirmation-modal .p-dialog-footer {
-      padding: 1rem 1.5rem !important;
-      gap: 0.75rem !important;
-      background-color: var(--p-surface-0, #ffffff) !important;
-      border-top: 1px solid var(--p-surface-border, #e5e7eb) !important;
-    }
-
-    /* Garantir que o modal tenha background mesmo que as variáveis CSS falhem */
-    :host ::ng-deep .p-dialog .p-dialog-content {
-      background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%) !important;
-      border-radius: 8px !important;
-    }
-
-    :host ::ng-deep .p-dialog {
-      background: #ffffff !important;
-      border-radius: 12px !important;
-      overflow: hidden !important;
-    }
-
-    :host ::ng-deep .confirmation-modal {
-      backdrop-filter: blur(4px) !important;
     }
   `]
 })
