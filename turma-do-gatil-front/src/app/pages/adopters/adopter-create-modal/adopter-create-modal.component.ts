@@ -9,6 +9,7 @@ import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
 import { Adopter, AdopterRequest } from '../../../models/adopter.model';
 import { AdopterService } from '../../../services/adopter.service';
+import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
 
 @Component({
   selector: 'app-adopter-create-modal',
@@ -22,7 +23,8 @@ import { AdopterService } from '../../../services/adopter.service';
     InputTextModule,
     InputMaskModule,
     MessageModule,
-    DividerModule
+    DividerModule,
+    GenericButtonComponent
   ],
   templateUrl: './adopter-create-modal.component.html',
   styleUrl: './adopter-create-modal.component.css'
@@ -37,6 +39,29 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
   adopterForm!: FormGroup;
   loading = false;
   isEditMode = false;
+
+  cancelButtonConfig: GenericButtonConfig = {
+    label: 'Cancelar',
+    icon: 'pi pi-times',
+    severity: 'secondary',
+    outlined: true
+  };
+
+  saveButtonConfig: GenericButtonConfig = {
+    label: 'Salvar Adotante',
+    icon: 'pi pi-check',
+    severity: 'primary',
+    loading: false,
+    disabled: false
+  };
+
+  get dynamicSaveButtonConfig(): GenericButtonConfig {
+    return {
+      ...this.saveButtonConfig,
+      loading: this.loading,
+      disabled: !this.adopterForm.valid
+    };
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -76,6 +101,7 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
   updateFormForEditing(): void {
     if (this.adopter) {
       this.isEditMode = true;
+      this.saveButtonConfig.label = 'Salvar Alterações';
       
       // Formatar datas para input type="date"
       const birthDate = new Date(this.adopter.birthDate).toISOString().split('T')[0];
@@ -94,6 +120,7 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       });
     } else {
       this.isEditMode = false;
+      this.saveButtonConfig.label = 'Salvar Adotante';
     }
   }
 
