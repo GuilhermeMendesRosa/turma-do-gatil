@@ -181,10 +181,44 @@
   color: var(--p-text-color-muted);
 }
 
-/* Password Field - estilos globais de p-password já estão em primeng-overrides.css */
+/* Password Field */
 .password-field {
   width: 100%;
-  display: block;
+  display: flex;
+}
+
+.password-field :deep(.p-password) {
+  width: 100%;
+}
+
+.password-field :deep(.p-password-input) {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--p-surface-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: var(--p-surface-card);
+  color: var(--p-text-color);
+  padding-right: 3rem !important;
+}
+
+.password-field :deep(.p-password-input:focus) {
+  outline: none;
+  border-color: var(--p-primary-color);
+  box-shadow: 0 0 0 3px rgba(242, 187, 174, 0.1);
+}
+
+.password-field :deep(.p-password-input.ng-invalid.ng-touched) {
+  border-color: #ef4444;
+}
+
+.password-field :deep(.p-password-input::placeholder) {
+  color: var(--p-text-color-muted);
+}
+
+.password-field :deep(.p-password-toggle-mask-icon) {
+  color: var(--p-primary-color);
 }
 
 /* Field Error */

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
 import { TagModule } from 'primeng/tag';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
@@ -66,7 +65,6 @@ import {
     CardModule,
     ButtonModule,
     InputTextModule,
-    Select,
     TagModule,
     SkeletonModule,
     TooltipModule,
