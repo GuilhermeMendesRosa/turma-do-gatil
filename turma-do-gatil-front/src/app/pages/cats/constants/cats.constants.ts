@@ -56,9 +56,9 @@ export const SEX_OPTIONS: FilterOption<Sex>[] = [
  */
 export const ADOPTION_STATUS_OPTIONS: FilterOption<CatAdoptionStatus>[] = [
   { label: 'Disponíveis para adoção', value: CatAdoptionStatus.NAO_ADOTADO },
-  { label: 'Todos os gatos', value: null },
   { label: 'Em processo de adoção', value: CatAdoptionStatus.EM_PROCESSO },
-  { label: 'Já adotados', value: CatAdoptionStatus.ADOTADO }
+  { label: 'Já adotados', value: CatAdoptionStatus.ADOTADO },
+  { label: 'Todos os gatos', value: null }
 ];
 
 /**
@@ -69,8 +69,7 @@ export const SORT_OPTIONS: FilterOption<string>[] = [
   { label: 'Nome (Z-A)', value: 'name-desc' },
   { label: 'Idade (Mais novo)', value: 'birthDate' },
   { label: 'Idade (Mais velho)', value: 'birthDate-desc' },
-  { label: 'Data de entrada (Mais recente)', value: 'shelterEntryDate' },
-  { label: 'Data de entrada (Mais antiga)', value: 'shelterEntryDate-desc' }
+  { label: 'Data de entrada', value: 'shelterEntryDate' }
 ];
 
 /**
