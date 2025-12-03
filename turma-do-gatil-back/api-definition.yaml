@@ -374,6 +374,48 @@ paths:
                     type: string
                     example: "Internal server error"
 
+  /api/cats/cat-summary:
+    get:
+      tags:
+        - Cats
+      summary: Obter resumo dos gatos
+      description: |
+        Retorna um resumo dos contadores de gatos agrupados por status de adoção:
+        
+        **Informações Retornadas:**
+        - `availableCatsCount`: Quantidade de gatos disponíveis para adoção (não adotados)
+        - `adoptedCatsCount`: Quantidade de gatos já adotados
+        - `inProcessCatsCount`: Quantidade de gatos em processo de adoção
+        - `totalCatsCount`: Quantidade total de gatos no sistema
+        
+        **Características:**
+        - Performance otimizada com queries de contagem
+        - Sem limitação de paginação nos resultados
+        - Dados em tempo real sem caching
+        - Ideal para dashboards e telas de resumo
+      responses:
+        '200':
+          description: Resumo dos gatos retornado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatSummary'
+              example:
+                availableCatsCount: 15
+                adoptedCatsCount: 8
+                inProcessCatsCount: 2
+                totalCatsCount: 25
+        '500':
+          description: Erro interno do servidor ao processar a solicitação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal server error"
+
   /api/sterilizations:
     get:
       tags:
@@ -680,6 +722,125 @@ paths:
         '400':
           description: Dados inválidos ou CPF/email já cadastrado
 
+  /api/adopters/{id}:
+    get:
+      tags:
+        - Adopters
+      summary: Busca adotante por ID
+      description: Retorna um adotante específico pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único do adotante
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Adotante encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adopter'
+        '404':
+          description: Adotante não encontrado
+    put:
+      tags:
+        - Adopters
+      summary: Atualiza um adotante
+      description: Atualiza os dados de um adotante existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único do adotante
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdopterRequest'
+      responses:
+        '200':
+          description: Adotante atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adopter'
+        '404':
+          description: Adotante não encontrado
+        '400':
+          description: Dados inválidos
+    delete:
+      tags:
+        - Adopters
+      summary: Remove um adotante
+      description: Remove um adotante do sistema
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único do adotante
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Adotante removido com sucesso
+        '404':
+          description: Adotante não encontrado
+
+  /api/adopters/cpf/{cpf}:
+    get:
+      tags:
+        - Adopters
+      summary: Busca adotante por CPF
+      description: Retorna um adotante específico pelo seu CPF
+      parameters:
+        - name: cpf
+          in: path
+          required: true
+          description: CPF do adotante
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Adotante encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adopter'
+        '404':
+          description: Adotante não encontrado
+
+  /api/adopters/email/{email}:
+    get:
+      tags:
+        - Adopters
+      summary: Busca adotante por email
+      description: Retorna um adotante específico pelo seu email
+      parameters:
+        - name: email
+          in: path
+          required: true
+          description: Email do adotante
+          schema:
+            type: string
+            format: email
+      responses:
+        '200':
+          description: Adotante encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adopter'
+        '404':
+          description: Adotante não encontrado
+
   /api/adoptions:
     get:
       tags:
@@ -701,6 +862,21 @@ paths:
           schema:
             type: integer
             default: 10
+        - name: sortBy
+          in: query
+          description: Campo para ordenação
+          required: false
+          schema:
+            type: string
+            default: adoptionDate
+        - name: sortDir
+          in: query
+          description: Direção da ordenação
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
         - name: status
           in: query
           description: Filtro por status da adoção
@@ -721,6 +897,20 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: startDate
+          in: query
+          description: Data inicial para filtro por período
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: Data final para filtro por período
+          required: false
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: Lista de adoções retornada com sucesso
@@ -748,6 +938,369 @@ paths:
                 $ref: '#/components/schemas/Adoption'
         '400':
           description: Dados inválidos
+
+  /api/adoptions/{id}:
+    get:
+      tags:
+        - Adoptions
+      summary: Busca adoção por ID
+      description: Retorna uma adoção específica pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único da adoção
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Adoção encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adoption'
+        '404':
+          description: Adoção não encontrada
+    put:
+      tags:
+        - Adoptions
+      summary: Atualiza uma adoção
+      description: Atualiza os dados de uma adoção existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único da adoção
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdoptionRequest'
+      responses:
+        '200':
+          description: Adoção atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Adoption'
+        '404':
+          description: Adoção não encontrada
+        '400':
+          description: Dados inválidos
+    delete:
+      tags:
+        - Adoptions
+      summary: Remove uma adoção
+      description: Remove uma adoção do sistema
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único da adoção
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Adoção removida com sucesso
+        '404':
+          description: Adoção não encontrada
+
+  /api/adoptions/cat/{catId}:
+    get:
+      tags:
+        - Adoptions
+      summary: Busca adoções por ID do gato
+      description: Retorna todas as adoções de um gato específico
+      parameters:
+        - name: catId
+          in: path
+          required: true
+          description: ID único do gato
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lista de adoções do gato
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Adoption'
+        '404':
+          description: Gato não encontrado
+
+  /api/adoptions/adopter/{adopterId}:
+    get:
+      tags:
+        - Adoptions
+      summary: Busca adoções por ID do adotante
+      description: Retorna todas as adoções de um adotante específico
+      parameters:
+        - name: adopterId
+          in: path
+          required: true
+          description: ID único do adotante
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lista de adoções do adotante
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Adoption'
+        '404':
+          description: Adotante não encontrado
+
+  /api/adoptions/status/{status}:
+    get:
+      tags:
+        - Adoptions
+      summary: Busca adoções por status
+      description: Retorna adoções filtradas por status específico
+      parameters:
+        - name: status
+          in: path
+          required: true
+          description: Status da adoção
+          schema:
+            $ref: '#/components/schemas/AdoptionStatus'
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Quantidade de itens por página
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          description: Campo para ordenação
+          required: false
+          schema:
+            type: string
+            default: adoptionDate
+        - name: sortDir
+          in: query
+          description: Direção da ordenação
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: Lista de adoções por status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageAdoption'
+
+  /api/notes:
+    get:
+      tags:
+        - Notes
+      summary: Lista todas as anotações
+      description: Retorna uma lista paginada de anotações com filtros opcionais
+      parameters:
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Quantidade de itens por página
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          description: Campo para ordenação
+          required: false
+          schema:
+            type: string
+            default: date
+        - name: sortDir
+          in: query
+          description: Direção da ordenação
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - name: catId
+          in: query
+          description: Filtro por ID do gato
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: text
+          in: query
+          description: Filtro por texto da anotação
+          required: false
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Data inicial para filtro por período
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: Data final para filtro por período
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Lista de anotações retornada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageNote'
+    post:
+      tags:
+        - Notes
+      summary: Cria uma nova anotação
+      description: Adiciona uma nova anotação ao sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteRequest'
+      responses:
+        '201':
+          description: Anotação criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '400':
+          description: Dados inválidos
+
+  /api/notes/{id}:
+    get:
+      tags:
+        - Notes
+      summary: Busca anotação por ID
+      description: Retorna uma anotação específica pelo seu ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único da anotação
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Anotação encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '404':
+          description: Anotação não encontrada
+    put:
+      tags:
+        - Notes
+      summary: Atualiza uma anotação
+      description: Atualiza os dados de uma anotação existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único da anotação
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteRequest'
+      responses:
+        '200':
+          description: Anotação atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
+        '404':
+          description: Anotação não encontrada
+        '400':
+          description: Dados inválidos
+    delete:
+      tags:
+        - Notes
+      summary: Remove uma anotação
+      description: Remove uma anotação do sistema
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único da anotação
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Anotação removida com sucesso
+        '404':
+          description: Anotação não encontrada
+
+  /api/notes/cat/{catId}:
+    get:
+      tags:
+        - Notes
+      summary: Busca anotações por ID do gato
+      description: Retorna todas as anotações de um gato específico
+      parameters:
+        - name: catId
+          in: path
+          required: true
+          description: ID único do gato
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Lista de anotações do gato
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Note'
+        '404':
+          description: Gato não encontrado
 
   /api/images/upload:
     post:
@@ -1008,6 +1561,25 @@ components:
           type: string
           description: Conteúdo da anotação
 
+    NoteRequest:
+      type: object
+      required:
+        - catId
+        - date
+        - text
+      properties:
+        catId:
+          type: string
+          format: uuid
+          description: ID do gato relacionado à anotação
+        date:
+          type: string
+          format: date-time
+          description: Data da anotação
+        text:
+          type: string
+          description: Conteúdo da anotação
+
     Sterilization:
       type: object
       properties:
@@ -1167,6 +1739,31 @@ components:
           description: Quantidade total de adotantes cadastrados no sistema
           example: 142
 
+    CatSummary:
+      type: object
+      description: DTO que contém um resumo dos contadores de gatos agrupados por status de adoção
+      properties:
+        availableCatsCount:
+          type: integer
+          format: int64
+          description: Quantidade de gatos disponíveis para adoção (não adotados)
+          example: 15
+        adoptedCatsCount:
+          type: integer
+          format: int64
+          description: Quantidade de gatos já adotados
+          example: 8
+        inProcessCatsCount:
+          type: integer
+          format: int64
+          description: Quantidade de gatos em processo de adoção
+          example: 2
+        totalCatsCount:
+          type: integer
+          format: int64
+          description: Quantidade total de gatos no sistema
+          example: 25
+
     SterilizationRequest:
       type: object
       required:
@@ -1270,6 +1867,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Sterilization'
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+        last:
+          type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+
+    PageNote:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/Note'
         pageable:
           $ref: '#/components/schemas/Pageable'
         totalElements:
