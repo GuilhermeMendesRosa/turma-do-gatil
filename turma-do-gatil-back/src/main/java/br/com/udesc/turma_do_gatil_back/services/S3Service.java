@@ -8,12 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +20,6 @@ import java.util.UUID;
 public class S3Service {
 
     private final S3Client s3Client;
-    private final S3Presigner s3Presigner;
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
@@ -57,34 +52,13 @@ public class S3Service {
 
             log.info("Arquivo {} enviado com sucesso para o S3", key);
             
-            String url = getPresignedUrl(key);
-            log.debug("URL pré-assinada gerada: {}", url);
-            
+            String url = "https://" + bucketName + ".s3.amazonaws.com/" + key;
+            log.debug("URL pública gerada: {}", url);
+
             return url;
         } catch (S3Exception e) {
             log.error("Erro ao fazer upload do arquivo para o S3: {}", e.getMessage(), e);
             throw new RuntimeException("Erro ao fazer upload da imagem: " + e.getMessage());
-        }
-    }
-
-    private String getPresignedUrl(String key) {
-        try {
-            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .build();
-
-            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofDays(7))
-                    .getObjectRequest(getObjectRequest)
-                    .build();
-
-            PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(presignRequest);
-            
-            return presignedRequest.url().toString();
-        } catch (Exception e) {
-            log.error("Erro ao gerar URL pré-assinada: {}", e.getMessage(), e);
-            throw new RuntimeException("Erro ao gerar URL da imagem: " + e.getMessage());
         }
     }
 
