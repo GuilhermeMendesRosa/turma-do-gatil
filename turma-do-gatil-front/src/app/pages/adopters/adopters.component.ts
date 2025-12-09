@@ -523,7 +523,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     this.adopterForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(ADOPTERS_CONFIG.MIN_NAME_LENGTH)]],
       lastName: ['', [Validators.required, Validators.minLength(ADOPTERS_CONFIG.MIN_NAME_LENGTH)]],
-      birthDate: ['', Validators.required],
+      birthDate: [''],
       cpf: ['', [Validators.required]],
       phone: ['', [Validators.required]],
       email: ['', [Validators.email]],
@@ -575,7 +575,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     return {
       firstName: adopter.firstName,
       lastName: adopter.lastName,
-      birthDate: this.formattingUtils.toInputDateFormat(adopter.birthDate),
+      birthDate: adopter.birthDate ? this.formattingUtils.toInputDateFormat(adopter.birthDate) : '',
       cpf: adopter.cpf,
       phone: adopter.phone,
       email: adopter.email || '',
@@ -672,7 +672,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     return {
       firstName: formValue.firstName,
       lastName: formValue.lastName,
-      birthDate: new Date(formValue.birthDate).toISOString(),
+      birthDate: formValue.birthDate ? new Date(formValue.birthDate).toISOString() : undefined,
       cpf: cleanCpf,
       phone: cleanPhone,
       email: formValue.email || undefined,

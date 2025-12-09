@@ -1,0 +1,1 @@
+ALTER TABLE adopters ALTER COLUMN birth_date DROP NOT NULL;

@@ -26,7 +26,7 @@ public class Adopter {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date", nullable = true)
     private LocalDateTime birthDate;
 
     @Column(nullable = false, unique = true)

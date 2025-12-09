@@ -85,7 +85,7 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
     this.adopterForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      birthDate: ['', Validators.required],
+      birthDate: [''],
       cpf: ['', [Validators.required]],
       phone: ['', [Validators.required]],
       email: ['', [Validators.email]],
@@ -104,7 +104,7 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       this.saveButtonConfig.label = 'Salvar Alterações';
       
       // Formatar datas para input type="date"
-      const birthDate = new Date(this.adopter.birthDate).toISOString().split('T')[0];
+      const birthDate = this.adopter.birthDate ? new Date(this.adopter.birthDate).toISOString().split('T')[0] : '';
       const registrationDate = new Date(this.adopter.registrationDate).toISOString().split('T')[0];
       
       this.adopterForm.patchValue({
@@ -156,7 +156,7 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       const adopterData: AdopterRequest = {
         firstName: formValue.firstName,
         lastName: formValue.lastName,
-        birthDate: new Date(formValue.birthDate).toISOString(),
+        birthDate: formValue.birthDate ? new Date(formValue.birthDate).toISOString() : undefined,
         cpf: cleanCpf,
         phone: cleanPhone,
         email: formValue.email || undefined,

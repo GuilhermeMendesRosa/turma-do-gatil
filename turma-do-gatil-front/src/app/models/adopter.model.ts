@@ -2,7 +2,7 @@ export interface Adopter {
   id: string;
   firstName: string;
   lastName: string;
-  birthDate: string;
+  birthDate?: string;
   cpf: string;
   phone: string;
   email?: string;
@@ -14,7 +14,7 @@ export interface Adopter {
 export interface AdopterRequest {
   firstName: string;
   lastName: string;
-  birthDate: string;
+  birthDate?: string;
   cpf: string;
   phone: string;
   email?: string;
