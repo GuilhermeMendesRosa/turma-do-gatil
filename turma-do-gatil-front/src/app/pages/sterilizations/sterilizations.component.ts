@@ -160,7 +160,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       key: 'ageInDays',
       header: 'Idade',
       type: 'text',
-      formatter: (value: number) => `${value} dias`
+      formatter: (value: number) => value < 0 ? '-' : `${value} dias`
     },
     {
       key: 'sterilizationStatus',

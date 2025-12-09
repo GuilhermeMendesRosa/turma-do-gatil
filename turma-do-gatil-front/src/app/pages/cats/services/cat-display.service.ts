@@ -33,7 +33,7 @@ export class CatDisplayService {
   /**
    * Calcula a idade de um gato baseado na data de nascimento
    */
-  calculateAge(birthDate: string): string {
+  calculateAge(birthDate?: string): string {
     return this.formattingUtils.calculateAgeFormatted(birthDate);
   }
 

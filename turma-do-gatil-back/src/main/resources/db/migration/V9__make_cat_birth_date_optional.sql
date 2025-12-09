@@ -1,0 +1,1 @@
+ALTER TABLE cats ALTER COLUMN birth_date DROP NOT NULL;

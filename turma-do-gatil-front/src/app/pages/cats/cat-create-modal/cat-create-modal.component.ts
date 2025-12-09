@@ -121,7 +121,7 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
       name: ['', [Validators.required, Validators.minLength(2)]],
       color: [null, Validators.required],
       sex: [null, Validators.required],
-      birthDate: ['', Validators.required],
+      birthDate: [''],
       shelterEntryDate: [todayString, Validators.required],
       alreadySterilized: [false], // Novo campo para indicar se o gato já é castrado
       sterilizationDate: [''] // Data da castração (se já foi castrado)
@@ -136,7 +136,7 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
       this.isEditMode = true;
       
       // Formatar datas para input type="date"
-      const birthDate = new Date(this.cat.birthDate).toISOString().split('T')[0];
+      const birthDate = this.cat.birthDate ? new Date(this.cat.birthDate).toISOString().split('T')[0] : '';
       const shelterEntryDate = new Date(this.cat.shelterEntryDate).toISOString().split('T')[0];
       
       this.catForm.patchValue({
@@ -305,7 +305,7 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
       name: formValue.name,
       color: formValue.color,
       sex: formValue.sex,
-      birthDate: new Date(formValue.birthDate).toISOString(),
+      birthDate: formValue.birthDate ? new Date(formValue.birthDate).toISOString() : undefined,
       shelterEntryDate: new Date(formValue.shelterEntryDate).toISOString(),
       photoUrl: photoUrl,
       adopted: this.isEditMode ? this.cat?.adopted : false,

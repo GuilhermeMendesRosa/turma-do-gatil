@@ -175,7 +175,7 @@ export class FormattingUtilsService {
   /**
    * Calcula a idade em anos com base na data de nascimento
    */
-  calculateAgeInYears(birthDate: string): number {
+  calculateAgeInYears(birthDate?: string): number {
     if (!birthDate) return 0;
     
     try {
@@ -198,7 +198,7 @@ export class FormattingUtilsService {
    * Calcula a idade formatada (meses ou anos)
    * Ideal para exibição de idade de animais
    */
-  calculateAgeFormatted(birthDate: string): string {
+  calculateAgeFormatted(birthDate?: string): string {
     if (!birthDate) return '-';
     
     try {

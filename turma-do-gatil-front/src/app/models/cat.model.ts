@@ -27,7 +27,7 @@ export interface Cat {
   name: string;
   color: Color;
   sex: Sex;
-  birthDate: string;
+  birthDate?: string;
   shelterEntryDate: string;
   photoUrl?: string;
   adopted: boolean;
@@ -38,7 +38,7 @@ export interface CatRequest {
   name: string;
   color: Color;
   sex: Sex;
-  birthDate: string;
+  birthDate?: string;
   shelterEntryDate: string;
   photoUrl?: string;
   adopted?: boolean;

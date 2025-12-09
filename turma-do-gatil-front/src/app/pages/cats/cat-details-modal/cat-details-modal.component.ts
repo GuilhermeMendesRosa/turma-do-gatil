@@ -193,7 +193,9 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
     return sex === Sex.MALE ? 'Macho' : 'Fêmea';
   }
 
-  getAge(birthDate: string): string {
+  getAge(birthDate?: string): string {
+    if (!birthDate) return '-';
+    
     const birth = new Date(birthDate);
     const today = new Date();
     const ageInMonths = (today.getFullYear() - birth.getFullYear()) * 12 + (today.getMonth() - birth.getMonth());
@@ -206,7 +208,9 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
     }
   }
 
-  formatDate(dateString: string): string {
+  formatDate(dateString?: string): string {
+    if (!dateString) return '-';
+    
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',

@@ -205,6 +205,9 @@ public class CatService {
     }
 
     private int calculateAgeInDays(LocalDateTime birthDate, LocalDateTime referenceDate) {
+        if (birthDate == null) {
+            return -1;
+        }
         return (int) ChronoUnit.DAYS.between(birthDate, referenceDate);
     }
 
@@ -215,6 +218,10 @@ public class CatService {
     }
 
     private boolean needsSterilization(Cat cat) {
+        if (cat.getBirthDate() == null) {
+            return false;
+        }
+
         LocalDateTime now = LocalDateTime.now();
         int ageInDays = calculateAgeInDays(cat.getBirthDate(), now);
 

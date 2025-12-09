@@ -613,7 +613,7 @@ export class CatsComponent implements OnInit, OnDestroy {
   /**
    * Calcula a idade de um gato
    */
-  getAge(birthDate: string): string {
+  getAge(birthDate?: string): string {
     return this.catDisplayService.calculateAge(birthDate);
   }
 

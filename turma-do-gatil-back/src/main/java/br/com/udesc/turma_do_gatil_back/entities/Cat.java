@@ -34,7 +34,7 @@ public class Cat {
     @Column(nullable = false)
     private Sex sex;
 
-    @Column(name = "birth_date", nullable = false)
+    @Column(name = "birth_date", nullable = true)
     private LocalDateTime birthDate;
 
     @Column(name = "shelter_entry_date", nullable = false)
