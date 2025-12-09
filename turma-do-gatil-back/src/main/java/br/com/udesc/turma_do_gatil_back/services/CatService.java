@@ -219,7 +219,7 @@ public class CatService {
 
     private boolean needsSterilization(Cat cat) {
         if (cat.getBirthDate() == null) {
-            return false;
+            return !hasCompletedOrScheduledSterilization(cat);
         }
 
         LocalDateTime now = LocalDateTime.now();
