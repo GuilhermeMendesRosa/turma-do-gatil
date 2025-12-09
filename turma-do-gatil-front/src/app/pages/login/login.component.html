@@ -55,16 +55,15 @@
             <i class="pi pi-lock"></i>
             Senha
           </label>
-          <p-password
+          <input
             id="password"
+            type="password"
+            pInputText
             formControlName="password"
             placeholder="Digite sua senha"
-            [toggleMask]="true"
-            [feedback]="false"
-            styleClass="password-field"
-            inputStyleClass="field-input"
+            class="field-input"
             [class.invalid]="password?.invalid && password?.touched"
-          ></p-password>
+          />
           @if (password?.invalid && password?.touched) {
           <small class="field-error">
             @if (password?.errors?.['required']) {
