@@ -239,10 +239,6 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
   onFileRemove(): void {
     this.selectedFile = null;
     this.previewUrl = null;
-    // Se estiver editando, restaurar a foto original do gato
-    if (this.isEditMode && this.cat?.photoUrl) {
-      this.previewUrl = this.cat.photoUrl;
-    }
   }
 
   /**
@@ -272,7 +268,7 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
    * Gerencia o upload da imagem se houver arquivo selecionado
    * @returns Observable com a URL da foto
    */
-  private handleImageUpload(): Observable<string> {
+  private handleImageUpload(): Observable<string | undefined> {
     if (this.selectedFile) {
       return this.uploadService.uploadImage(this.selectedFile).pipe(
         switchMap(response => {
@@ -289,18 +285,21 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
       );
     }
 
-    // Se não tem arquivo selecionado, usar foto existente ou padrão
-    const existingPhotoUrl = this.isEditMode && this.cat?.photoUrl 
-      ? this.cat.photoUrl 
-      : this.getDefaultImage();
-    return of(existingPhotoUrl);
+    // Se há preview (foto existente ou nova), usar ela
+    if (this.previewUrl) {
+      return of(this.previewUrl);
+    }
+
+    // Sem arquivo selecionado e sem preview - usar undefined para edição (remover foto) ou padrão para criação
+    const photoUrl = this.isEditMode ? undefined : this.getDefaultImage();
+    return of(photoUrl);
   }
 
   /**
    * Salva o gato (cria ou atualiza)
    * @returns Observable com o gato salvo
    */
-  private saveCat(formValue: any, photoUrl: string): Observable<Cat> {
+  private saveCat(formValue: any, photoUrl: string | undefined): Observable<Cat> {
     const catData: CatRequest = {
       name: formValue.name,
       color: formValue.color,
