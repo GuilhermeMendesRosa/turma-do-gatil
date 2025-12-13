@@ -28,6 +28,13 @@
     </div>
     }
     <p-button 
+      icon="pi pi-cog" 
+      [text]="true" 
+      (onClick)="openSettingsModal()"
+      class="settings-button"
+      pTooltip="Configurações">
+    </p-button>
+    <p-button 
       icon="pi pi-sign-out" 
       [text]="true" 
       (onClick)="logout()"
@@ -81,6 +88,54 @@
   Desenvolvido por&nbsp;<a href="https://github.com/GuilhermeMendesRosa/" target="_blank">Guilherme</a>&nbsp;🌹
 </footer>
 }
+
+<!-- Modal de Configurações -->
+<p-dialog 
+  header="Configurações de Castração" 
+  [(visible)]="settingsModalVisible" 
+  [modal]="true" 
+  [style]="{width: '400px'}"
+  [closable]="true"
+  [draggable]="false"
+  styleClass="tdg-modal"
+  maskStyleClass="tdg-modal-mask">
+  <div class="p-fluid">
+    <div class="p-field">
+      <label for="minDays">Dia Mínimo para Castração</label>
+      <p-inputNumber 
+        id="minDays" 
+        [(ngModel)]="minDays" 
+        [min]="1" 
+        [max]="365" 
+        suffix=" dias">
+      </p-inputNumber>
+    </div>
+    <div class="p-field">
+      <label for="maxDays">Dia Máximo para Castração</label>
+      <p-inputNumber 
+        id="maxDays" 
+        [(ngModel)]="maxDays" 
+        [min]="1" 
+        [max]="365" 
+        suffix=" dias">
+      </p-inputNumber>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button 
+      label="Cancelar" 
+      icon="pi pi-times" 
+      (onClick)="closeSettingsModal()" 
+      class="p-button-text">
+    </p-button>
+    <p-button 
+      label="Salvar" 
+      icon="pi pi-check" 
+      (onClick)="saveSettings()" 
+      [loading]="savingSettings">
+    </p-button>
+  </ng-template>
+</p-dialog>
 
 <!-- Toast Global para notificações -->
 <p-toast position="top-right" [style]="{'z-index': '9999'}"></p-toast>

@@ -1,21 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
 import { ToastModule } from 'primeng/toast';
-import { MenuItem } from 'primeng/api';
+import { DialogModule } from 'primeng/dialog';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { MenuItem, MessageService } from 'primeng/api';
 import { filter } from 'rxjs/operators';
 import { AuthService } from './services/auth.service';
+import { SterilizationService } from './services/sterilization.service';
 import { User } from './models/auth.model';
+import { SterilizationDays } from './models/sterilization.model';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, MenubarModule, ButtonModule, AvatarModule, MenuModule, TooltipModule, ToastModule],
+  imports: [RouterOutlet, RouterLink, CommonModule, FormsModule, MenubarModule, ButtonModule, AvatarModule, MenuModule, TooltipModule, ToastModule, DialogModule, InputNumberModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -25,10 +30,16 @@ export class AppComponent implements OnInit {
   currentRoute: string = '';
   currentUser: User | null = null;
   isLoginPage: boolean = false;
+  settingsModalVisible: boolean = false;
+  minDays: number = 90;
+  maxDays: number = 180;
+  savingSettings: boolean = false;
   
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private sterilizationService: SterilizationService,
+    private messageService: MessageService
   ) {
     // Detectar mudanças de rota para atualizar o menu ativo
     this.router.events.pipe(
@@ -116,5 +127,55 @@ export class AppComponent implements OnInit {
       return `${names[0][0]}${names[1][0]}`.toUpperCase();
     }
     return this.currentUser.name[0].toUpperCase();
+  }
+
+  // Abre o modal de configurações
+  openSettingsModal(): void {
+    this.sterilizationService.getSterilizationDays().subscribe({
+      next: (days: SterilizationDays) => {
+        this.minDays = days.minDays;
+        this.maxDays = days.maxDays;
+        this.settingsModalVisible = true;
+      },
+      error: () => {
+        // Se não conseguir buscar, usa valores padrão
+        this.minDays = 90;
+        this.maxDays = 180;
+        this.settingsModalVisible = true;
+      }
+    });
+  }
+
+  // Fecha o modal de configurações
+  closeSettingsModal(): void {
+    this.settingsModalVisible = false;
+  }
+
+  // Salva as configurações
+  saveSettings(): void {
+    this.savingSettings = true;
+    const days: SterilizationDays = {
+      minDays: this.minDays,
+      maxDays: this.maxDays
+    };
+    this.sterilizationService.setSterilizationDays(days).subscribe({
+      next: () => {
+        this.savingSettings = false;
+        this.settingsModalVisible = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sucesso',
+          detail: 'Configurações de castração salvas com sucesso!'
+        });
+      },
+      error: () => {
+        this.savingSettings = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao salvar configurações. Tente novamente.'
+        });
+      }
+    });
   }
 }
