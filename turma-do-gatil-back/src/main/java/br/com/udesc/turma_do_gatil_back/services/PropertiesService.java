@@ -19,4 +19,14 @@ public class PropertiesService {
         Properties prop = new Properties(key, value);
         propertiesRepository.save(prop);
     }
+
+    public int getMinimumSterilizationAgeDays() {
+        String value = getProperty("sterilizationMinDays");
+        return value != null ? Integer.parseInt(value) : 90;
+    }
+
+    public int getOverdueSterilizationAgeDays() {
+        String value = getProperty("sterilizationMaxDays");
+        return value != null ? Integer.parseInt(value) : 180;
+    }
 }

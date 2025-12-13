@@ -238,7 +238,7 @@ export interface GenericButtonConfig {
 })
 export class GenericButtonComponent {
   @Input() config!: GenericButtonConfig;
-  @Output() click = new EventEmitter<void>();
+  @Output() buttonClick = new EventEmitter<void>();
 
   getButtonClasses(): string {
     const classes = [`btn-${this.config.severity || 'primary'}`];
@@ -255,7 +255,7 @@ export class GenericButtonComponent {
 
   onClick(): void {
     if (!this.config.disabled && !this.config.loading) {
-      this.click.emit();
+      this.buttonClick.emit();
     }
   }
 }
