@@ -25,6 +25,8 @@ export class CatFiltersService {
   private getDefaultFilters(): CatFilters {
     return {
       adoptionStatus: CATS_CONFIG.DEFAULT_ADOPTION_STATUS,
+      color: null,
+      sex: null,
       page: 0,
       size: CATS_CONFIG.DEFAULT_PAGE_SIZE,
       sortBy: CATS_CONFIG.DEFAULT_SORT_FIELD,

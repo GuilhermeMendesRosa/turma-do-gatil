@@ -47,8 +47,7 @@
           [(ngModel)]="filters.color"
           (ngModelChange)="onFilterChange()"
           class="filter-input filter-select">
-          <option value="">Todas as cores</option>
-          <option *ngFor="let option of colorOptions" [value]="option.value">
+          <option *ngFor="let option of colorOptions" [ngValue]="option.value">
             {{ option.label }}
           </option>
         </select>
@@ -64,8 +63,7 @@
           [(ngModel)]="filters.sex"
           (ngModelChange)="onFilterChange()"
           class="filter-input filter-select">
-          <option value="">Todos os sexos</option>
-          <option *ngFor="let option of sexOptions" [value]="option.value">
+          <option *ngFor="let option of sexOptions" [ngValue]="option.value">
             {{ option.label }}
           </option>
         </select>
@@ -81,8 +79,7 @@
           [(ngModel)]="filters.adoptionStatus"
           (ngModelChange)="onFilterChange()"
           class="filter-input filter-select">
-          <option value="">Disponíveis para adoção</option>
-          <option *ngFor="let option of adoptionStatusOptions" [value]="option.value">
+          <option *ngFor="let option of adoptionStatusOptions" [ngValue]="option.value">
             {{ option.label }}
           </option>
         </select>
@@ -98,8 +95,7 @@
           [(ngModel)]="filters.sortBy"
           (ngModelChange)="onSortChange()"
           class="filter-input filter-select">
-          <option value="">Ordenação</option>
-          <option *ngFor="let option of sortOptions" [value]="option.value">
+          <option *ngFor="let option of sortOptions" [ngValue]="option.value">
             {{ option.label }}
           </option>
         </select>

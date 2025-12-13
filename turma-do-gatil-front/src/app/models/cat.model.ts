@@ -58,8 +58,8 @@ export interface Page<T> {
 
 export interface CatFilters {
   name?: string;
-  color?: Color;
-  sex?: Sex;
+  color?: Color | null;
+  sex?: Sex | null;
   adoptionStatus?: CatAdoptionStatus;
   page?: number;
   size?: number;
