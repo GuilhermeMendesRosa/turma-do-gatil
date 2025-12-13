@@ -76,6 +76,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   catsNeedingSterilization: CatSterilizationStatusDto[] = [];
   scheduledSterilizations: SterilizationDto[] = [];
   completedSterilizations: SterilizationDto[] = [];
+  sterilizationDays = { minDays: 90, maxDays: 180 }; // Valores padrão, serão atualizados
   
   // ===== LOADING STATES =====
   loadingCats = false;
@@ -311,6 +312,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
    * Loads all data required for the component
    */
   loadAllData(): void {
+    this.loadSterilizationDays();
     this.loadStats();
     this.loadCatsNeedingSterilization();
     this.loadScheduledSterilizations();
@@ -322,6 +324,25 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
    */
   refreshData(): void {
     this.loadAllData();
+  }
+
+  /**
+   * Loads sterilization days configuration
+   */
+  private loadSterilizationDays(): void {
+    this.sterilizationService.getSterilizationDays()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (days) => {
+          this.sterilizationDays = days;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar dias de castração:', error);
+          // Mantém valores padrão em caso de erro
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   /**
@@ -445,18 +466,19 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
    * Gets statistics data for display
    */
   getStatsData(): StatCardData[] {
+    const { minDays, maxDays } = this.sterilizationDays;
     return [
       {
         number: this.stats?.eligibleCount || 0,
         label: 'Gatos Elegíveis',
-        description: '90-179 dias de vida',
+        description: `${minDays}-${maxDays - 1} dias de vida`,
         icon: 'pi-calendar-plus',
         type: 'eligible'
       },
       {
         number: this.stats?.overdueCount || 0,
         label: 'Castrações Atrasadas',
-        description: '180+ dias de vida',
+        description: `${maxDays}+ dias de vida`,
         icon: 'pi-exclamation-triangle',
         type: 'overdue'
       }

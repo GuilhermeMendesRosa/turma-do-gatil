@@ -267,8 +267,8 @@ paths:
         - Apenas gatos **não adotados** são considerados
         
         **Status Retornados:**
-        - `ELIGIBLE`: Gato com 90-179 dias, apto para castração
-        - `OVERDUE`: Gato com 180+ dias, castração atrasada
+        - `ELIGIBLE`
+        - `OVERDUE`
         
         **Informações Retornadas:**
         - Dados básicos do gato (nome, cor, sexo, foto)
