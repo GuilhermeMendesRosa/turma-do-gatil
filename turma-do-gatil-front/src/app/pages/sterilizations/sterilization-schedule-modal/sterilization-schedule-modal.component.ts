@@ -72,16 +72,16 @@ import { SterilizationService } from '../../../services/sterilization.service';
           </h3>
           
           <div class="form-grid">
-            <!-- Data e Hora da Castração -->
+            <!-- Data da Castração -->
             <div class="form-field form-field-full">
-              <label for="sterilizationDate">Data e Hora da Castração *</label>
+              <label for="sterilizationDate">Data da Castração *</label>
               <input 
-                type="datetime-local" 
+                type="date" 
                 id="sterilizationDate" 
                 formControlName="sterilizationDate"
                 [class.ng-invalid]="isFieldInvalid('sterilizationDate')"
-                class="form-input datetime-input"
-                [min]="minDate.toISOString().slice(0, 16)">
+                class="form-input date-input"
+                [min]="minDate.toISOString().slice(0, 10)">
               <small class="error-message" *ngIf="getFieldError('sterilizationDate')">
                 {{ getFieldError('sterilizationDate') }}
               </small>
@@ -126,7 +126,7 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     private sterilizationService: SterilizationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -139,16 +139,15 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
   }
 
   initForm(): void {
-    // Data e hora padrão: amanhã às 09:00
+    // Data padrão: amanhã
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(9, 0, 0, 0);
-    
-    // Converter para formato datetime-local (YYYY-MM-DDTHH:mm)
-    const defaultDateTime = tomorrow.toISOString().slice(0, 16);
-    
+
+    // Converter para formato date (YYYY-MM-DD)
+    const defaultDate = tomorrow.toISOString().slice(0, 10);
+
     this.sterilizationForm = this.fb.group({
-      sterilizationDate: [defaultDateTime, Validators.required],
+      sterilizationDate: [defaultDate, Validators.required],
       notes: ['']
     });
 
@@ -159,11 +158,11 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
   updateFormForEditing(): void {
     if (this.sterilization) {
       this.isEditMode = true;
-      
-      // Converter a data string para o formato datetime-local (YYYY-MM-DDTHH:mm)
+
+      // Converter a data string para o formato date (YYYY-MM-DD)
       const sterilizationDate = new Date(this.sterilization.sterilizationDate);
-      const formattedDate = sterilizationDate.toISOString().slice(0, 16);
-      
+      const formattedDate = sterilizationDate.toISOString().slice(0, 10);
+
       this.sterilizationForm.patchValue({
         sterilizationDate: formattedDate,
         notes: this.sterilization.notes || ''
@@ -181,19 +180,18 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
 
   resetForm(): void {
     this.sterilizationForm.reset();
-    
-    // Data e hora padrão: amanhã às 09:00
+
+    // Data padrão: amanhã
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(9, 0, 0, 0);
-    
-    // Converter para formato datetime-local (YYYY-MM-DDTHH:mm)
-    const defaultDateTime = tomorrow.toISOString().slice(0, 16);
-    
+
+    // Converter para formato date (YYYY-MM-DD)
+    const defaultDate = tomorrow.toISOString().slice(0, 10);
+
     this.sterilizationForm.patchValue({
-      sterilizationDate: defaultDateTime
+      sterilizationDate: defaultDate
     });
-    
+
     this.loading = false;
     this.isEditMode = false;
   }
@@ -201,9 +199,9 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
   onSubmit(): void {
     if (this.sterilizationForm.valid) {
       this.loading = true;
-      
+
       const formValue = this.sterilizationForm.value;
-      
+
       // Preparar dados da castração
       const sterilizationData: SterilizationRequest = {
         catId: this.isEditMode ? this.sterilization!.catId : this.cat!.id,
@@ -288,7 +286,7 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
     // Garantir que o formulário esteja inicializado antes de verificar sua validade
     const isFormValid = this.sterilizationForm ? this.sterilizationForm.valid : false;
     const isDateValid = this.sterilizationForm ? this.isDateValid() : false;
-    
+
     return [
       {
         label: 'Cancelar',
@@ -310,17 +308,17 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
   // Validação de data - não permite datas no passado
   isDateValid(): boolean {
     if (!this.sterilizationForm) return false;
-    
+
     const selectedDate = this.sterilizationForm.get('sterilizationDate')?.value;
     if (!selectedDate) return false;
-    
+
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       const selected = new Date(selectedDate);
       selected.setHours(0, 0, 0, 0);
-      
+
       return selected >= today;
     } catch (error) {
       return false;
