@@ -18,7 +18,7 @@
     <app-generic-button 
       slot="actions"
       [config]="newCatButtonConfig"
-      (click)="openAddCatDialog()">
+      (buttonClick)="openAddCatDialog()">
     </app-generic-button>
     
     <div class="filters-grid">
@@ -104,7 +104,7 @@
       <div class="filter-actions">
         <app-generic-button 
           [config]="clearFiltersButtonConfig"
-          (click)="clearFilters()">
+          (buttonClick)="clearFilters()">
         </app-generic-button>
       </div>
     </div>
@@ -208,7 +208,7 @@
         <app-generic-button 
           *ngIf="hasActiveFilters()"
           [config]="clearFiltersEmptyButtonConfig"
-          (click)="clearFilters()">
+          (buttonClick)="clearFilters()">
         </app-generic-button>
       </div>
     </div>
