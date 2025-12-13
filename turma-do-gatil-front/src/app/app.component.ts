@@ -16,11 +16,12 @@ import { AuthService } from './services/auth.service';
 import { SterilizationService } from './services/sterilization.service';
 import { User } from './models/auth.model';
 import { SterilizationDays } from './models/sterilization.model';
+import { GenericButtonComponent, GenericButtonConfig } from './shared/components/generic-button.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, CommonModule, FormsModule, MenubarModule, ButtonModule, AvatarModule, MenuModule, TooltipModule, ToastModule, DialogModule, InputNumberModule],
+  imports: [RouterOutlet, RouterLink, CommonModule, FormsModule, MenubarModule, ButtonModule, AvatarModule, MenuModule, TooltipModule, ToastModule, DialogModule, InputNumberModule, GenericButtonComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -34,6 +35,21 @@ export class AppComponent implements OnInit {
   minDays: number = 90;
   maxDays: number = 180;
   savingSettings: boolean = false;
+  
+  saveButtonConfig: GenericButtonConfig = {
+    label: 'Salvar Configurações',
+    icon: 'pi pi-check',
+    severity: 'primary',
+    loading: false,
+    disabled: false
+  };
+  
+  get dynamicSaveButtonConfig(): GenericButtonConfig {
+    return {
+      ...this.saveButtonConfig,
+      loading: this.savingSettings
+    };
+  }
   
   constructor(
     private router: Router,
