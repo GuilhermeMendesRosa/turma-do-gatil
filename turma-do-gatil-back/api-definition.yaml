@@ -640,6 +640,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/PageSterilization'
 
+  /api/sterilizations/days:
+    get:
+      tags:
+        - Sterilizations
+      summary: Get sterilization days configuration
+      description: Returns the minimum and maximum days for sterilization
+      responses:
+        '200':
+          description: Sterilization days returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SterilizationDays'
+    post:
+      tags:
+        - Sterilizations
+      summary: Set sterilization days configuration
+      description: Sets the minimum and maximum days for sterilization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SterilizationDays'
+      responses:
+        '200':
+          description: Sterilization days updated
+
   /api/adopters:
     get:
       tags:
@@ -1606,6 +1634,16 @@ components:
         notes:
           type: string
           description: Observações sobre a esterilização
+
+    SterilizationDays:
+      type: object
+      properties:
+        minDays:
+          type: integer
+          description: Minimum days for sterilization
+        maxDays:
+          type: integer
+          description: Maximum days for sterilization
 
     Color:
       type: string
