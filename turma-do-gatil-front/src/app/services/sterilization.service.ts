@@ -8,7 +8,8 @@ import {
   SterilizationDto, 
   SterilizationRequest, 
   SterilizationFilters, 
-  Page 
+  Page,
+  SterilizationDays 
 } from '../models/sterilization.model';
 import { NotificationService } from './notification.service';
 import { environment } from '../../environments/environment';
@@ -149,6 +150,26 @@ export class SterilizationService {
   // Obter castrações de um gato específico
   getSterilizationsByCatId(catId: string): Observable<SterilizationDto[]> {
     return this.http.get<SterilizationDto[]>(`${this.apiUrl}/sterilizations/cat/${catId}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
+  }
+
+  // Obter dias de castração
+  getSterilizationDays(): Observable<SterilizationDays> {
+    return this.http.get<SterilizationDays>(`${this.apiUrl}/sterilizations/days`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
+  }
+
+  // Definir dias de castração
+  setSterilizationDays(days: SterilizationDays): Observable<SterilizationDays> {
+    return this.http.post<SterilizationDays>(`${this.apiUrl}/sterilizations/days`, days).pipe(
       catchError(error => {
         this.notificationService.showHttpError(error);
         throw error;

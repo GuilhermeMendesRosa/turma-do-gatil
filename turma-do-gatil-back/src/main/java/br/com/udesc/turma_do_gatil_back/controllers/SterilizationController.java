@@ -1,5 +1,6 @@
 package br.com.udesc.turma_do_gatil_back.controllers;
 
+import br.com.udesc.turma_do_gatil_back.dto.SterilizationDaysDto;
 import br.com.udesc.turma_do_gatil_back.dto.SterilizationDto;
 import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
 import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
@@ -122,5 +123,16 @@ public class SterilizationController {
         Page<Sterilization> sterilizations = sterilizationService.findByStatus(status, pageable);
         Page<SterilizationDto> sterilizationsDto = EntityMapper.toPage(sterilizations, EntityMapper::toSterilizationDto);
         return ResponseEntity.ok(sterilizationsDto);
+    }
+
+    @GetMapping("/days")
+    public ResponseEntity<SterilizationDaysDto> getSterilizationDays() {
+        return ResponseEntity.ok(sterilizationService.getSterilizationDays());
+    }
+
+    @PostMapping("/days")
+    public ResponseEntity<Void> setSterilizationDays(@RequestBody SterilizationDaysDto dto) {
+        sterilizationService.setSterilizationDays(dto);
+        return ResponseEntity.ok().build();
     }
 }

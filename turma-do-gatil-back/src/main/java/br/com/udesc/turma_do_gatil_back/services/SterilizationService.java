@@ -1,5 +1,6 @@
 package br.com.udesc.turma_do_gatil_back.services;
 
+import br.com.udesc.turma_do_gatil_back.dto.SterilizationDaysDto;
 import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
 import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
 import br.com.udesc.turma_do_gatil_back.exceptions.SterilizationNotFoundException;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class SterilizationService {
 
     private final SterilizationRepository sterilizationRepository;
+    private final PropertiesService propertiesService;
 
     public Page<Sterilization> findAll(Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
@@ -135,5 +137,18 @@ public class SterilizationService {
         if (endDate.isBefore(startDate)) {
             throw new IllegalArgumentException("End date cannot be before start date");
         }
+    }
+
+    public SterilizationDaysDto getSterilizationDays() {
+        String min = propertiesService.getProperty("sterilizationMinDays");
+        String max = propertiesService.getProperty("sterilizationMaxDays");
+        int minDays = Integer.parseInt(min);
+        int maxDays = Integer.parseInt(max);
+        return new SterilizationDaysDto(minDays, maxDays);
+    }
+
+    public void setSterilizationDays(SterilizationDaysDto dto) {
+        propertiesService.setProperty("sterilizationMinDays", String.valueOf(dto.getMinDays()));
+        propertiesService.setProperty("sterilizationMaxDays", String.valueOf(dto.getMaxDays()));
     }
 }

@@ -172,12 +172,12 @@
       <div class="action-buttons">
         <app-generic-button 
           [config]="cancelButtonConfig"
-          (click)="onHide()">
+          (buttonClick)="onHide()">
         </app-generic-button>
         
         <app-generic-button 
           [config]="dynamicSaveButtonConfig"
-          (click)="onSubmit()">
+          (buttonClick)="onSubmit()">
         </app-generic-button>
       </div>
     </div>

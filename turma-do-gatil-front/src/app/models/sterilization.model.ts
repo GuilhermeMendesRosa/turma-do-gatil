@@ -72,3 +72,8 @@ export interface Page<T> {
   numberOfElements: number;
   empty: boolean;
 }
+
+export interface SterilizationDays {
+  minDays: number;
+  maxDays: number;
+}

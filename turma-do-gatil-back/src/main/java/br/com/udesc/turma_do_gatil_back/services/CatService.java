@@ -25,10 +25,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CatService {
 
-    private static final int MINIMUM_STERILIZATION_AGE_DAYS = 90;
-    private static final int OVERDUE_STERILIZATION_AGE_DAYS = 180;
-
     private final CatRepository catRepository;
+    private final PropertiesService propertiesService;
 
     public Page<Cat> findAll(Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
@@ -169,7 +167,7 @@ public class CatService {
         for (Cat cat : nonAdoptedCats) {
             if (needsSterilization(cat)) {
                 int ageInDays = calculateAgeInDays(cat.getBirthDate(), now);
-                if (ageInDays >= OVERDUE_STERILIZATION_AGE_DAYS) {
+                if (ageInDays >= propertiesService.getOverdueSterilizationAgeDays()) {
                     overdueCount++;
                 } else {
                     eligibleCount++;
@@ -212,7 +210,7 @@ public class CatService {
     }
 
     private SterilizationEligibilityStatus determineEligibilityStatus(int ageInDays) {
-        return ageInDays >= OVERDUE_STERILIZATION_AGE_DAYS ?
+        return ageInDays >= propertiesService.getOverdueSterilizationAgeDays() ?
                 SterilizationEligibilityStatus.OVERDUE :
                 SterilizationEligibilityStatus.ELIGIBLE;
     }
@@ -225,7 +223,7 @@ public class CatService {
         LocalDateTime now = LocalDateTime.now();
         int ageInDays = calculateAgeInDays(cat.getBirthDate(), now);
 
-        if (ageInDays < MINIMUM_STERILIZATION_AGE_DAYS) {
+        if (ageInDays < propertiesService.getMinimumSterilizationAgeDays()) {
             return false;
         }
 

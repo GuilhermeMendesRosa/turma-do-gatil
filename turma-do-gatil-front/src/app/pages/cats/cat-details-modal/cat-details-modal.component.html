@@ -182,11 +182,11 @@
               <div class="form-actions">
                 <app-generic-button 
                   [config]="saveNoteButtonConfig"
-                  (click)="saveNote()">
+                  (buttonClick)="saveNote()">
                 </app-generic-button>
                 <app-generic-button 
                   [config]="cancelButtonConfig"
-                  (click)="cancelAddNote()">
+                  (buttonClick)="cancelAddNote()">
                 </app-generic-button>
               </div>
             </div>
@@ -198,7 +198,7 @@
                 <app-generic-button 
                   *ngIf="!showAddNoteForm"
                   [config]="addNoteButtonConfig"
-                  (click)="startAddNote()">
+                  (buttonClick)="startAddNote()">
                 </app-generic-button>
               </div>
 
@@ -258,7 +258,7 @@
                           size: 'small',
                           loading: savingNote
                         }"
-                        (click)="saveEditNote(note)">
+                        (buttonClick)="saveEditNote(note)">
                       </app-generic-button>
                       <app-generic-button 
                         [config]="{
@@ -268,7 +268,7 @@
                           severity: 'secondary',
                           outlined: true
                         }"
-                        (click)="cancelEditNote()">
+                        (buttonClick)="cancelEditNote()">
                       </app-generic-button>
                     </div>
                   </div>
@@ -287,17 +287,17 @@
         <app-generic-button 
           *ngIf="cat?.adoptionStatus === 'NAO_ADOTADO'"
           [config]="adoptButtonConfig"
-          (click)="onAdoptCat()">
+          (buttonClick)="onAdoptCat()">
         </app-generic-button>
         
         <app-generic-button 
           [config]="editButtonConfig"
-          (click)="onEditCat()">
+          (buttonClick)="onEditCat()">
         </app-generic-button>
         
         <app-generic-button 
           [config]="deleteButtonConfig"
-          (click)="onDeleteCat()">
+          (buttonClick)="onDeleteCat()">
         </app-generic-button>
       </div>
     </div>
