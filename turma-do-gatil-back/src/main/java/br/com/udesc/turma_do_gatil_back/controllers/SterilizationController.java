@@ -5,7 +5,6 @@ import br.com.udesc.turma_do_gatil_back.dto.SterilizationDto;
 import br.com.udesc.turma_do_gatil_back.entities.Sterilization;
 import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
 import br.com.udesc.turma_do_gatil_back.mappers.EntityMapper;
-import br.com.udesc.turma_do_gatil_back.services.PropertiesService;
 import br.com.udesc.turma_do_gatil_back.services.SterilizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,7 +28,6 @@ import java.util.UUID;
 public class SterilizationController {
 
     private final SterilizationService sterilizationService;
-    private final PropertiesService propertiesService;
 
     @GetMapping
     public ResponseEntity<Page<SterilizationDto>> getAllSterilizations(
@@ -129,17 +127,12 @@ public class SterilizationController {
 
     @GetMapping("/days")
     public ResponseEntity<SterilizationDaysDto> getSterilizationDays() {
-        String min = propertiesService.getProperty("sterilizationMinDays");
-        String max = propertiesService.getProperty("sterilizationMaxDays");
-        int minDays = Integer.parseInt(min);
-        int maxDays = Integer.parseInt(max);
-        return ResponseEntity.ok(new SterilizationDaysDto(minDays, maxDays));
+        return ResponseEntity.ok(sterilizationService.getSterilizationDays());
     }
 
     @PostMapping("/days")
     public ResponseEntity<Void> setSterilizationDays(@RequestBody SterilizationDaysDto dto) {
-        propertiesService.setProperty("sterilizationMinDays", String.valueOf(dto.getMinDays()));
-        propertiesService.setProperty("sterilizationMaxDays", String.valueOf(dto.getMaxDays()));
+        sterilizationService.setSterilizationDays(dto);
         return ResponseEntity.ok().build();
     }
 }
