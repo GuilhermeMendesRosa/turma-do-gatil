@@ -164,6 +164,12 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       formatter: (value: number) => value < 0 ? '-' : `${value} dias`
     },
     {
+      key: 'deadline',
+      header: 'Data Limite',
+      type: 'date',
+      formatter: (value: string) => new Date(value).toLocaleDateString('pt-BR')
+    },
+    {
       key: 'sterilizationStatus',
       header: 'Status',
       type: 'badge',
@@ -181,7 +187,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     {
       key: 'sterilizationDate',
       header: 'Data Agendada',
-      type: 'date'
+      type: 'date',
+      formatter: (value: string) => new Date(value).toLocaleDateString('pt-BR')
     },
     {
       key: 'status',
@@ -206,7 +213,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     {
       key: 'sterilizationDate',
       header: 'Data Realizada',
-      type: 'date'
+      type: 'date',
+      formatter: (value: string) => new Date(value).toLocaleDateString('pt-BR')
     },
     {
       key: 'status',
@@ -380,7 +388,10 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (cats) => {
-          this.catsNeedingSterilization = cats;
+          this.catsNeedingSterilization = cats.map(cat => ({
+            ...cat,
+            deadline: this.calculateDeadline(cat.birthDate, this.sterilizationDays.maxDays)
+          }));
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -513,6 +524,16 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
    */
   private formatSterilizationStatusLabel(status: string): string {
     return STERILIZATION_STATUS_LABELS[status as SterilizationStatus] || status;
+  }
+
+  /**
+   * Calculates the sterilization deadline based on birth date and max sterilization days
+   */
+  private calculateDeadline(birthDate: string, maxDays: number): string {
+    const birth = new Date(birthDate);
+    const deadline = new Date(birth);
+    deadline.setDate(birth.getDate() + maxDays);
+    return deadline.toISOString().split('T')[0]; // Return YYYY-MM-DD format
   }
 
   // ===== TABLE ACTION PROVIDERS =====
