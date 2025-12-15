@@ -390,7 +390,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
         next: (cats) => {
           this.catsNeedingSterilization = cats.map(cat => ({
             ...cat,
-            deadline: this.calculateDeadline(cat.birthDate, this.sterilizationDays.maxDays)
+            deadline: this.calculateDeadline(cat.birthDate, cat.shelterEntryDate, this.sterilizationDays.maxDays)
           }));
           this.cdr.markForCheck();
         },
@@ -529,11 +529,15 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   /**
    * Calculates the sterilization deadline based on birth date and max sterilization days
    */
-  private calculateDeadline(birthDate: string, maxDays: number): string {
-    const birth = new Date(birthDate);
-    const deadline = new Date(birth);
-    deadline.setDate(birth.getDate() + maxDays);
-    return deadline.toISOString().split('T')[0]; // Return YYYY-MM-DD format
+  private calculateDeadline(birthDate: string | null, shelterEntryDate: string | null, maxDays: number): string {
+    const baseDateStr = birthDate ?? shelterEntryDate;
+    if (!baseDateStr) {
+      return new Date().toISOString().split('T')[0];
+    }
+    const base = new Date(baseDateStr);
+    const deadline = new Date(base);
+    deadline.setDate(base.getDate() + maxDays);
+    return deadline.toISOString().split('T')[0];
   }
 
   // ===== TABLE ACTION PROVIDERS =====
