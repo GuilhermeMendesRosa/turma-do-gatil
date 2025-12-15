@@ -143,10 +143,10 @@ public class CatService {
     public List<CatSterilizationStatusDto> findCatsNeedingSterilization() {
         log.debug("Finding cats needing sterilization");
 
-        List<Cat> nonAdoptedCats = catRepository.findByAdoptionStatusList(CatAdoptionStatus.NAO_ADOTADO);
+        List<Cat> allCats = catRepository.findAll();
         LocalDateTime now = LocalDateTime.now();
 
-        List<CatSterilizationStatusDto> result = nonAdoptedCats.stream()
+        List<CatSterilizationStatusDto> result = allCats.stream()
                 .filter(this::needsSterilization)
                 .map(cat -> mapToCatSterilizationStatusDto(cat, now))
                 .collect(Collectors.toList());
@@ -158,13 +158,13 @@ public class CatService {
     public SterilizationStatsDto getSterilizationStats() {
         log.debug("Calculating sterilization statistics");
 
-        List<Cat> nonAdoptedCats = catRepository.findByAdoptionStatusList(CatAdoptionStatus.NAO_ADOTADO);
+        List<Cat> allCats = catRepository.findAll();
         LocalDateTime now = LocalDateTime.now();
 
         long eligibleCount = 0;
         long overdueCount = 0;
 
-        for (Cat cat : nonAdoptedCats) {
+        for (Cat cat : allCats) {
             if (needsSterilization(cat)) {
                 int ageInDays = calculateAgeInDays(cat.getBirthDate(), now);
                 if (ageInDays >= propertiesService.getOverdueSterilizationAgeDays()) {
