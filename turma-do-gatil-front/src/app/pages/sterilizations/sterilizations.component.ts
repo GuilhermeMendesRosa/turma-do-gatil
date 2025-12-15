@@ -166,7 +166,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     {
       key: 'deadline',
       header: 'Data Limite',
-      type: 'date'
+      type: 'date',
+      formatter: (value: string) => new Date(value).toLocaleDateString('pt-BR')
     },
     {
       key: 'sterilizationStatus',
@@ -186,7 +187,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     {
       key: 'sterilizationDate',
       header: 'Data Agendada',
-      type: 'date'
+      type: 'date',
+      formatter: (value: string) => new Date(value).toLocaleDateString('pt-BR')
     },
     {
       key: 'status',
@@ -211,7 +213,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     {
       key: 'sterilizationDate',
       header: 'Data Realizada',
-      type: 'date'
+      type: 'date',
+      formatter: (value: string) => new Date(value).toLocaleDateString('pt-BR')
     },
     {
       key: 'status',
