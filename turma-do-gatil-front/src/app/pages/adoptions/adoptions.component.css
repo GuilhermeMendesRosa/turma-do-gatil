@@ -38,6 +38,91 @@
   font-size: 0.9rem;
 }
 
+/* ==================== FILTROS ==================== */
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: var(--p-text-color, #1f2937);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-group label i {
+  color: var(--p-primary-color, #3b82f6);
+  font-size: 0.85rem;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 8px;
+  background: white;
+  color: var(--p-text-color, #1f2937);
+  transition: all 0.3s ease;
+  min-height: 45px;
+  box-sizing: border-box;
+  font-size: 0.9rem;
+}
+
+.filter-input:focus {
+  border-color: var(--p-primary-color, #3b82f6);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  outline: none;
+}
+
+.filter-input:hover {
+  border-color: var(--p-primary-color, #3b82f6);
+}
+
+.filter-input::placeholder {
+  color: var(--p-text-color-secondary, #6b7280);
+}
+
+.clear-filters-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid var(--p-surface-border, #e5e7eb);
+  border-radius: 6px;
+  color: var(--p-text-color-secondary, #6b7280);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.clear-filters-btn:hover:not(:disabled) {
+  background: var(--p-surface-100, #f3f4f6);
+  border-color: var(--p-primary-color, #3b82f6);
+  color: var(--p-primary-color, #3b82f6);
+}
+
+.clear-filters-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clear-filters-btn i {
+  font-size: 0.9rem;
+}
+
 /* ==================== MODAL E FORMULÁRIOS ==================== */
 
 .modal-content {

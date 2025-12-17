@@ -42,6 +42,12 @@ export class AdoptionService {
     if (filters.adopterId) {
       params = params.set('adopterId', filters.adopterId);
     }
+    if (filters.catName) {
+      params = params.set('catName', filters.catName);
+    }
+    if (filters.adopterName) {
+      params = params.set('adopterName', filters.adopterName);
+    }
 
     return this.http.get<Page<Adoption>>(this.apiUrl, { params }).pipe(
       catchError(error => {

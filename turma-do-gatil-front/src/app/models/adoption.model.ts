@@ -36,6 +36,8 @@ export interface AdoptionFilters {
   status?: AdoptionStatus;
   catId?: string;
   adopterId?: string;
+  catName?: string;
+  adopterName?: string;
   page?: number;
   size?: number;
   sortBy?: string;

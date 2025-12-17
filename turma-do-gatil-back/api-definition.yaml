@@ -925,6 +925,18 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: catName
+          in: query
+          description: Filtro por nome do gato (busca parcial, case insensitive)
+          required: false
+          schema:
+            type: string
+        - name: adopterName
+          in: query
+          description: Filtro por nome do adotante (busca parcial no primeiro ou último nome, case insensitive)
+          required: false
+          schema:
+            type: string
         - name: startDate
           in: query
           description: Data inicial para filtro por período
