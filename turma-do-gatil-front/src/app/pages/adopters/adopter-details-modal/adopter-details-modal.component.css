@@ -1,0 +1,251 @@
+/* ===== ADOPTER DETAILS MODAL ===== */
+
+.adopter-details-container {
+  padding: 0.5rem;
+  padding-bottom: 1rem;
+  border-radius: 0 0 var(--tdg-modal-border-radius, 12px) var(--tdg-modal-border-radius, 12px);
+}
+
+/* Header */
+.adopter-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--p-surface-border);
+  margin-bottom: 1.25rem;
+}
+
+.adopter-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.adopter-avatar i {
+  font-size: 1.4rem;
+  color: white;
+}
+
+.adopter-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.adopter-name {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--p-text-color);
+}
+
+.adopter-cpf {
+  font-size: 0.875rem;
+  color: var(--p-text-color-secondary);
+}
+
+/* Tabs */
+.tab-container {
+  margin-top: 0.25rem;
+}
+
+.tab-nav {
+  display: flex;
+  gap: 0.25rem;
+  background: var(--p-surface-ground);
+  padding: 0.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--p-surface-border);
+  margin-bottom: 1.25rem;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--p-text-color-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tab-btn:hover {
+  background: var(--p-surface-hover);
+  color: var(--p-text-color);
+}
+
+.tab-btn.active {
+  background: var(--p-primary-color);
+  color: white;
+}
+
+.tab-btn i {
+  font-size: 0.9rem;
+}
+
+.tab-content {
+  min-height: 160px;
+}
+
+.tab-pane {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--p-surface-ground);
+  border-radius: 10px;
+  border: 1px solid var(--p-surface-border);
+}
+
+.info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-item > i {
+  color: var(--p-primary-color);
+  font-size: 0.95rem;
+  margin-top: 0.15rem;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.info-label {
+  font-size: 0.7rem;
+  color: var(--p-text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.info-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--p-text-color);
+  word-break: break-word;
+}
+
+/* Cats List */
+.cats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--p-surface-ground);
+  border-radius: 10px;
+  border: 1px solid var(--p-surface-border);
+  transition: border-color 0.2s ease;
+}
+
+.cat-item:hover {
+  border-color: var(--p-primary-color);
+}
+
+.cat-photo {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.cat-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.cat-name {
+  font-weight: 600;
+  color: var(--p-text-color);
+  font-size: 0.9rem;
+}
+
+.cat-date {
+  font-size: 0.75rem;
+  color: var(--p-text-color-secondary);
+}
+
+.cat-status {
+  flex-shrink: 0;
+}
+
+/* Loading & Empty State */
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  gap: 0.5rem;
+  color: var(--p-text-color-secondary);
+}
+
+.loading-state i {
+  font-size: 1.5rem;
+  color: var(--p-primary-color);
+}
+
+.empty-state i {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .adopter-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tab-btn {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+

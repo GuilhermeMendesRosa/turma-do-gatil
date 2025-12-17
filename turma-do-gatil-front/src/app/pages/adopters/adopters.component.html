@@ -246,3 +246,9 @@
   (confirmed)="onConfirmationConfirmed()"
   (cancelled)="onConfirmationCancelled()">
 </app-confirmation-modal>
+
+<!-- ==================== MODAL DE DETALHES DO ADOTANTE ==================== -->
+<app-adopter-details-modal
+  [(visible)]="showDetailsModal"
+  [adopter]="selectedAdopter">
+</app-adopter-details-modal>

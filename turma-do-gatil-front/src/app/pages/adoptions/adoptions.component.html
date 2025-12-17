@@ -17,6 +17,52 @@
     icon="pi-heart">
   </app-page-header>
 
+  <!-- Filtros de busca -->
+  <app-content-card
+    title="Filtros de Busca"
+    icon="pi-filter"
+    [hasActions]="true">
+    
+    <button 
+      slot="actions"
+      class="clear-filters-btn"
+      (click)="clearFilters()"
+      [disabled]="!filterCatName && !filterAdopterName">
+      <i class="pi pi-filter-slash"></i>
+      Limpar Filtros
+    </button>
+    
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="catNameFilter">
+          <i class="pi pi-tag"></i>
+          Nome do Gato
+        </label>
+        <input 
+          id="catNameFilter"
+          type="text" 
+          [(ngModel)]="filterCatName" 
+          (ngModelChange)="onFilterChange()"
+          placeholder="Digite o nome do gato..." 
+          class="filter-input">
+      </div>
+
+      <div class="filter-group">
+        <label for="adopterNameFilter">
+          <i class="pi pi-user"></i>
+          Nome do Adotante
+        </label>
+        <input 
+          id="adopterNameFilter"
+          type="text" 
+          [(ngModel)]="filterAdopterName" 
+          (ngModelChange)="onFilterChange()"
+          placeholder="Digite o nome do adotante..." 
+          class="filter-input">
+      </div>
+    </div>
+  </app-content-card>
+
   <!-- Card principal com dados das adoções -->
   <app-content-card
     title="Lista de Adoções"
@@ -37,7 +83,8 @@
       [actionProvider]="getRowActions"
       [emptyState]="emptyState"
       [trackByProperty]="'id'"
-      (actionClick)="onTableAction($event)">
+      (actionClick)="onTableAction($event)"
+      (imageClick)="onImageClick($event)">
     </app-data-table>
 
     <!-- Controles de paginação -->
@@ -135,3 +182,12 @@
   </div>
 
 </app-generic-modal>
+
+<!-- Cat Details Modal -->
+<app-cat-details-modal
+  [(visible)]="catDetailsModalVisible"
+  [cat]="selectedCatForDetails"
+  (adoptCat)="onAdoptCatFromModal($event)"
+  (editCat)="onEditCatFromModal($event)"
+  (deleteCat)="onDeleteCatFromModal($event)">
+</app-cat-details-modal>

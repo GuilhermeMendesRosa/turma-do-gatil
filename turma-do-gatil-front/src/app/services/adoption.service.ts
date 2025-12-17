@@ -42,6 +42,12 @@ export class AdoptionService {
     if (filters.adopterId) {
       params = params.set('adopterId', filters.adopterId);
     }
+    if (filters.catName) {
+      params = params.set('catName', filters.catName);
+    }
+    if (filters.adopterName) {
+      params = params.set('adopterName', filters.adopterName);
+    }
 
     return this.http.get<Page<Adoption>>(this.apiUrl, { params }).pipe(
       catchError(error => {
@@ -81,6 +87,24 @@ export class AdoptionService {
 
   deleteAdoption(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
+  }
+
+  getAdoptionsByCatId(catId: string): Observable<Adoption[]> {
+    return this.http.get<Adoption[]>(`${this.apiUrl}/cat/${catId}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
+  }
+
+  getAdoptionsByAdopterId(adopterId: string): Observable<Adoption[]> {
+    return this.http.get<Adoption[]>(`${this.apiUrl}/adopter/${adopterId}`).pipe(
       catchError(error => {
         this.notificationService.showHttpError(error);
         throw error;

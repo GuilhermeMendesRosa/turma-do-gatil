@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-export type ActionButtonType = 'schedule' | 'edit' | 'complete' | 'cancel' | 'info';
+export type ActionButtonType = 'schedule' | 'edit' | 'complete' | 'cancel' | 'info' | 'view';
 
 export interface ActionButtonConfig {
   type: ActionButtonType;
@@ -110,7 +110,8 @@ export class ActionButtonComponent {
     edit: 'p-button-warning',
     complete: 'p-button-success',
     cancel: 'p-button-danger',
-    info: 'p-button-info'
+    info: 'p-button-info',
+    view: 'p-button-info'
   };
 
   private iconClassMap = {
@@ -118,7 +119,8 @@ export class ActionButtonComponent {
     edit: 'pi-pencil',
     complete: 'pi-check',
     cancel: 'pi-trash',
-    info: 'pi-info-circle'
+    info: 'pi-info-circle',
+    view: 'pi-eye'
   };
 
   getButtonClass(): string {

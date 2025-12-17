@@ -1,0 +1,136 @@
+<!-- Diálogo de Detalhes do Adotante -->
+<p-dialog 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="tdg-modal"
+  maskStyleClass="tdg-modal-mask"
+  [style]="{width: '90vw', maxWidth: '600px'}"
+  header="Detalhes do Adotante"
+  (onHide)="onHide()">
+  
+  <div class="adopter-details-container" *ngIf="adopter">
+    <!-- Cabeçalho com avatar e nome -->
+    <div class="adopter-header">
+      <div class="adopter-avatar">
+        <i class="pi pi-user"></i>
+      </div>
+      <div class="adopter-info">
+        <h3 class="adopter-name">{{ getFullName() }}</h3>
+        <span class="adopter-cpf">{{ formatCpf(adopter.cpf) }}</span>
+      </div>
+    </div>
+
+    <!-- Abas -->
+    <div class="tab-container">
+      <div class="tab-nav">
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab === 'info'"
+          (click)="activeTab = 'info'">
+          <i class="pi pi-user"></i>
+          Informações
+        </button>
+        <button 
+          class="tab-btn" 
+          [class.active]="activeTab === 'cats'"
+          (click)="activeTab = 'cats'">
+          <i class="fas fa-cat"></i>
+          Gatos ({{ adoptions.length }})
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <!-- Aba Informações -->
+        <div *ngIf="activeTab === 'info'" class="tab-pane">
+          <div class="info-grid">
+            <div class="info-item">
+              <i class="pi pi-phone"></i>
+              <div class="info-content">
+                <span class="info-label">Telefone</span>
+                <span class="info-value">{{ formatPhone(adopter.phone) }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <i class="pi pi-envelope"></i>
+              <div class="info-content">
+                <span class="info-label">E-mail</span>
+                <span class="info-value">{{ adopter.email || '-' }}</span>
+              </div>
+            </div>
+
+            <div class="info-item" *ngIf="adopter.instagram">
+              <i class="pi pi-instagram"></i>
+              <div class="info-content">
+                <span class="info-label">Instagram</span>
+                <span class="info-value">@{{ adopter.instagram.replace('@', '') }}</span>
+              </div>
+            </div>
+
+            <div class="info-item" *ngIf="adopter.birthDate">
+              <i class="pi pi-calendar"></i>
+              <div class="info-content">
+                <span class="info-label">Data de Nascimento</span>
+                <span class="info-value">{{ formatDate(adopter.birthDate) }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <i class="pi pi-calendar-plus"></i>
+              <div class="info-content">
+                <span class="info-label">Cadastrado em</span>
+                <span class="info-value">{{ formatDate(adopter.registrationDate) }}</span>
+              </div>
+            </div>
+
+            <div class="info-item full-width" *ngIf="adopter.address">
+              <i class="pi pi-map-marker"></i>
+              <div class="info-content">
+                <span class="info-label">Endereço</span>
+                <span class="info-value">{{ adopter.address }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aba Gatos Adotados -->
+        <div *ngIf="activeTab === 'cats'" class="tab-pane">
+          <!-- Loading -->
+          <div *ngIf="loadingAdoptions" class="loading-state">
+            <i class="pi pi-spin pi-spinner"></i>
+            <span>Carregando...</span>
+          </div>
+
+          <!-- Lista de gatos -->
+          <div *ngIf="!loadingAdoptions && adoptions.length > 0" class="cats-list">
+            <div *ngFor="let adoption of adoptions" class="cat-item">
+              <img 
+                [src]="adoption.cat?.photoUrl || getDefaultCatImage()" 
+                [alt]="adoption.cat?.name"
+                (error)="onImageError($event)"
+                class="cat-photo">
+              <div class="cat-info">
+                <span class="cat-name">{{ adoption.cat?.name || 'Gato' }}</span>
+                <span class="cat-date">{{ formatDate(adoption.adoptionDate) }}</span>
+              </div>
+              <p-tag 
+                [value]="getAdoptionStatusText(adoption.status)"
+                [severity]="getAdoptionStatusSeverity(adoption.status)"
+                class="cat-status">
+              </p-tag>
+            </div>
+          </div>
+
+          <!-- Estado vazio -->
+          <div *ngIf="!loadingAdoptions && adoptions.length === 0" class="empty-state">
+            <i class="fas fa-cat"></i>
+            <span>Nenhum gato adotado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>

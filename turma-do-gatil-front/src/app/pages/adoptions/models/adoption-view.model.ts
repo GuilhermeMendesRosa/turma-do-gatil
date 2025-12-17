@@ -18,6 +18,8 @@ export interface AdoptionLoadParams {
   readonly size: number;
   readonly sortBy: string;
   readonly sortDir: 'asc' | 'desc';
+  readonly catName?: string;
+  readonly adopterName?: string;
 }
 
 /** Estado do componente de adoções */

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, forkJoin, EMPTY, Observable, of } from 'rxjs';
-import { takeUntil, catchError, finalize, switchMap } from 'rxjs/operators';
+import { takeUntil, catchError, finalize, switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 // Services
 import { AdoptionService } from '../../services/adoption.service';
@@ -53,6 +53,7 @@ import {
   ModalAction,
   PhotoUploadComponent
 } from '../../shared/components';
+import { CatDetailsModalComponent } from '../cats/cat-details-modal/cat-details-modal.component';
 
 /**
  * Componente para gestão de adoções
@@ -75,7 +76,8 @@ import {
     DataTableComponent,
     PaginationComponent,
     GenericModalComponent,
-    PhotoUploadComponent
+    PhotoUploadComponent,
+    CatDetailsModalComponent
   ],
   templateUrl: './adoptions.component.html',
   styleUrls: ['./adoptions.component.css']
@@ -116,6 +118,28 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   
   /** Flag indicando se a foto foi removida pelo usuário */
   photoRemoved: boolean = false;
+
+  // ==================== CAT DETAILS MODAL STATE ====================
+  
+  /** Controle de visibilidade do modal de detalhes do gato */
+  catDetailsModalVisible: boolean = false;
+  
+  /** Gato selecionado para exibição no modal */
+  selectedCatForDetails: Cat | null = null;
+  
+  /** Estado de carregamento dos detalhes do gato */
+  loadingCatDetails: boolean = false;
+  
+  // ==================== PROPRIEDADES DE FILTRO ====================
+  
+  /** Filtro por nome do gato */
+  filterCatName: string = '';
+  
+  /** Filtro por nome do adotante */
+  filterAdopterName: string = '';
+  
+  /** Subject para debounce dos filtros */
+  private readonly filterSubject$ = new Subject<void>();
   
   // ==================== PROPRIEDADES DE PAGINAÇÃO ====================
   
@@ -226,6 +250,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   // ==================== LIFECYCLE HOOKS ====================
 
   ngOnInit(): void {
+    this.setupFilterDebounce();
     this.loadAdoptionsData();
   }
 
@@ -235,6 +260,21 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   }
 
   // ==================== INICIALIZAÇÃO ====================
+
+  /**
+   * Configura o debounce para os filtros de busca
+   */
+  private setupFilterDebounce(): void {
+    this.filterSubject$
+      .pipe(
+        debounceTime(400),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        this.first = 0;
+        this.loadAdoptionsData();
+      });
+  }
 
   /**
    * Inicializa as configurações das colunas da tabela
@@ -252,7 +292,7 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   // ==================== CARREGAMENTO DE DADOS ====================
 
   /**
-   * Carrega os dados de adoções com paginação
+   * Carrega os dados de adoções com paginação e filtros
    */
   private loadAdoptionsData(): void {
     this.setLoadingState(true);
@@ -262,7 +302,9 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
       page: Math.floor(this.first / this.rows),
       size: this.rows,
       sortBy: ADOPTION_CONSTANTS.SORT_FIELD,
-      sortDir: ADOPTION_CONSTANTS.SORT_DIRECTION
+      sortDir: ADOPTION_CONSTANTS.SORT_DIRECTION,
+      catName: this.filterCatName || undefined,
+      adopterName: this.filterAdopterName || undefined
     };
 
     this.adoptionService.getAllAdoptions(params)
@@ -378,6 +420,25 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         }
       });
+  }
+
+  // ==================== MÉTODOS DE FILTRO ====================
+
+  /**
+   * Manipula mudança nos filtros (com debounce)
+   */
+  onFilterChange(): void {
+    this.filterSubject$.next();
+  }
+
+  /**
+   * Limpa todos os filtros
+   */
+  clearFilters(): void {
+    this.filterCatName = '';
+    this.filterAdopterName = '';
+    this.first = 0;
+    this.loadAdoptionsData();
   }
 
   // ==================== MÉTODOS DE PAGINAÇÃO ====================
@@ -801,5 +862,70 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     this.selectedFile = null;
     this.previewUrl = null;
     this.photoRemoved = true;
+  }
+
+  // ==================== CAT DETAILS MODAL HANDLERS ====================
+
+  /**
+   * Handles image click event from data table to open cat details modal
+   */
+  onImageClick(event: { item: any; column: any }): void {
+    const catId = event.item.catId;
+    if (catId) {
+      this.openCatDetailsModal(catId);
+    }
+  }
+
+  /**
+   * Opens the cat details modal by loading cat data
+   */
+  private openCatDetailsModal(catId: string): void {
+    this.loadingCatDetails = true;
+    this.cdr.markForCheck();
+
+    this.catService.getCatById(catId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (cat) => {
+          this.selectedCatForDetails = cat;
+          this.catDetailsModalVisible = true;
+          this.loadingCatDetails = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar detalhes do gato:', error);
+          this.loadingCatDetails = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  /**
+   * Closes the cat details modal
+   */
+  closeCatDetailsModal(): void {
+    this.catDetailsModalVisible = false;
+    this.selectedCatForDetails = null;
+  }
+
+  /**
+   * Handles edit cat event from details modal
+   */
+  onEditCatFromModal(cat: Cat): void {
+    this.closeCatDetailsModal();
+  }
+
+  /**
+   * Handles delete cat event from details modal
+   */
+  onDeleteCatFromModal(cat: Cat): void {
+    this.closeCatDetailsModal();
+  }
+
+  /**
+   * Handles adopt cat event from details modal
+   */
+  onAdoptCatFromModal(cat: Cat): void {
+    this.closeCatDetailsModal();
   }
 }

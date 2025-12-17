@@ -352,7 +352,9 @@
 
 /* Estados de carregamento e vazio */
 .loading-notes,
-.empty-notes {
+.empty-notes,
+.loading-adopter,
+.empty-adopter {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -366,15 +368,63 @@
 }
 
 .loading-notes i,
-.empty-notes i {
+.empty-notes i,
+.loading-adopter i,
+.empty-adopter i {
   margin-bottom: 1rem;
   color: var(--p-text-color-secondary);
 }
 
 .loading-notes p,
-.empty-notes p {
+.empty-notes p,
+.loading-adopter p,
+.empty-adopter p {
   margin: 0;
   font-size: 1rem;
+}
+
+/* ===== ABA DE ADOTANTE ===== */
+.adopter-container {
+  padding: 0.5rem 0;
+}
+
+.adopter-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.adoption-status-card {
+  background: var(--p-surface-ground);
+  border: 1px solid var(--p-surface-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.adoption-status-card .status-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  color: var(--p-text-color);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.adoption-status-card .status-header i {
+  color: var(--p-primary-color);
+  font-size: 1.1rem;
+}
+
+.adoption-status-card .status-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.adoption-status-card .adoption-date {
+  color: var(--p-text-color-secondary);
+  font-size: 0.9rem;
 }
 
 /* Lista de anotações */

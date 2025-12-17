@@ -37,6 +37,8 @@ public class AdoptionController {
             @RequestParam(required = false) AdoptionStatus status,
             @RequestParam(required = false) UUID catId,
             @RequestParam(required = false) UUID adopterId,
+            @RequestParam(required = false) String catName,
+            @RequestParam(required = false) String adopterName,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
 
@@ -47,8 +49,8 @@ public class AdoptionController {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Adoption> adoptions;
-        if (status != null || catId != null || adopterId != null || startDate != null || endDate != null) {
-            adoptions = adoptionService.findWithFilters(status, catId, adopterId, startDate, endDate, pageable);
+        if (status != null || catId != null || adopterId != null || catName != null || adopterName != null || startDate != null || endDate != null) {
+            adoptions = adoptionService.findWithFilters(status, catId, adopterId, catName, adopterName, startDate, endDate, pageable);
         } else {
             adoptions = adoptionService.findAll(pageable);
         }

@@ -24,4 +24,10 @@ public interface CatRepositoryCustom {
     Page<Cat> findByNameContainingIgnoreCase(String name, Pageable pageable);
     
     long countByAdoptionStatus(CatAdoptionStatus adoptionStatus);
+    
+    List<Cat> findCatsNeedingSterilization(int minimumAgeDays);
+    
+    long countEligibleForSterilization(int minimumAgeDays, int overdueAgeDays);
+    
+    long countOverdueForSterilization(int overdueAgeDays);
 }

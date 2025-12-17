@@ -191,6 +191,7 @@ public class AdoptionService {
     }
 
     public Page<Adoption> findWithFilters(AdoptionStatus status, UUID catId, UUID adopterId,
+                                          String catName, String adopterName,
                                           LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
 
@@ -198,10 +199,10 @@ public class AdoptionService {
             throw new IllegalArgumentException("Start date must be before or equal to end date");
         }
 
-        log.debug("Finding adoptions with filters - status: {}, catId: {}, adopterId: {}, dateRange: {} to {}",
-                status, catId, adopterId, startDate, endDate);
+        log.debug("Finding adoptions with filters - status: {}, catId: {}, adopterId: {}, catName: {}, adopterName: {}, dateRange: {} to {}",
+                status, catId, adopterId, catName, adopterName, startDate, endDate);
 
-        Page<Adoption> adoptions = adoptionRepository.findWithFilters(status, catId, adopterId, startDate, endDate, pageable);
+        Page<Adoption> adoptions = adoptionRepository.findWithFilters(status, catId, adopterId, catName, adopterName, startDate, endDate, pageable);
 
         log.debug("Found {} adoptions with applied filters", adoptions.getTotalElements());
         return adoptions;
@@ -248,7 +249,6 @@ public class AdoptionService {
     }
 
     private boolean hasAdoptionsWithStatus(UUID catId, AdoptionStatus status) {
-        List<Adoption> adoptions = adoptionRepository.findByCatIdAndStatus(catId, status);
-        return !adoptions.isEmpty();
+        return adoptionRepository.existsByCatIdAndStatus(catId, status);
     }
 }

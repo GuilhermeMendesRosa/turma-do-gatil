@@ -11,7 +11,8 @@ import java.util.UUID;
 
 public interface AdoptionRepositoryCustom {
     
-    Page<Adoption> findWithFilters(AdoptionStatus status, UUID catId, UUID adopterId, 
+    Page<Adoption> findWithFilters(AdoptionStatus status, UUID catId, UUID adopterId,
+                                  String catName, String adopterName,
                                   LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
     
     Page<Adoption> findByStatus(AdoptionStatus status, Pageable pageable);
@@ -23,4 +24,6 @@ public interface AdoptionRepositoryCustom {
     Page<Adoption> findByAdoptionDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
     
     List<Adoption> findByCatIdAndStatus(UUID catId, AdoptionStatus status);
+    
+    boolean existsByCatIdAndStatus(UUID catId, AdoptionStatus status);
 }

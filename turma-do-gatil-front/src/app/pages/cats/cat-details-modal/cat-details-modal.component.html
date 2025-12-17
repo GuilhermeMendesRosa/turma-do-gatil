@@ -66,6 +66,14 @@
           <i class="fas fa-file-edit"></i>
           Anotações
         </button>
+        <button 
+          *ngIf="cat?.adoptionStatus !== 'NAO_ADOTADO'"
+          class="tab-btn" 
+          [class.active]="activeTab === 'adopter'"
+          (click)="activeTab = 'adopter'">
+          <i class="fas fa-heart"></i>
+          Adotante
+        </button>
       </div>
 
       <!-- Conteúdo das abas -->
@@ -272,6 +280,100 @@
                       </app-generic-button>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aba de Adotante -->
+        <div *ngIf="activeTab === 'adopter'" class="tab-pane">
+          <div class="adopter-container">
+            <!-- Loading state -->
+            <div *ngIf="loadingAdoption" class="loading-adopter">
+              <i class="fas fa-spinner fa-spin" style="font-size: 2rem;"></i>
+              <p>Carregando informações do adotante...</p>
+            </div>
+
+            <!-- No adopter found -->
+            <div *ngIf="!loadingAdoption && !adopter" class="empty-adopter">
+              <i class="fas fa-user-slash" style="font-size: 2rem; color: #6c757d;"></i>
+              <p>Nenhum adotante encontrado para este gato.</p>
+            </div>
+
+            <!-- Adopter info -->
+            <div *ngIf="!loadingAdoption && adopter" class="adopter-info">
+              <!-- Adoption status -->
+              <div class="adoption-status-card">
+                <div class="status-header">
+                  <i class="fas fa-heart"></i>
+                  <span>Status da Adoção</span>
+                </div>
+                <div class="status-content">
+                  <p-tag 
+                    [value]="getAdoptionStatusLabel()" 
+                    [severity]="adoption?.status === 'COMPLETED' ? 'success' : 'warn'">
+                  </p-tag>
+                  <span class="adoption-date">{{ formatDate(adoption?.adoptionDate) }}</span>
+                </div>
+              </div>
+
+              <!-- Adopter details -->
+              <div class="details-grid">
+                <div class="detail-card">
+                  <div class="detail-label">
+                    <i class="fas fa-user"></i>
+                    Nome Completo
+                  </div>
+                  <div class="detail-value">{{ getAdopterFullName() }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">
+                    <i class="fas fa-id-card"></i>
+                    CPF
+                  </div>
+                  <div class="detail-value">{{ formatCpf(adopter.cpf) }}</div>
+                </div>
+
+                <div class="detail-card">
+                  <div class="detail-label">
+                    <i class="fas fa-phone"></i>
+                    Telefone
+                  </div>
+                  <div class="detail-value">{{ formatPhone(adopter.phone) }}</div>
+                </div>
+
+                <div class="detail-card" *ngIf="adopter.email">
+                  <div class="detail-label">
+                    <i class="fas fa-envelope"></i>
+                    E-mail
+                  </div>
+                  <div class="detail-value">{{ adopter.email }}</div>
+                </div>
+
+                <div class="detail-card" *ngIf="adopter.instagram">
+                  <div class="detail-label">
+                    <i class="fab fa-instagram"></i>
+                    Instagram
+                  </div>
+                  <div class="detail-value">{{ adopter.instagram }}</div>
+                </div>
+
+                <div class="detail-card full-width">
+                  <div class="detail-label">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Endereço
+                  </div>
+                  <div class="detail-value">{{ adopter.address }}</div>
+                </div>
+
+                <div class="detail-card" *ngIf="adopter.registrationDate">
+                  <div class="detail-label">
+                    <i class="fas fa-calendar-plus"></i>
+                    Data de Cadastro
+                  </div>
+                  <div class="detail-value">{{ formatDate(adopter.registrationDate) }}</div>
                 </div>
               </div>
             </div>

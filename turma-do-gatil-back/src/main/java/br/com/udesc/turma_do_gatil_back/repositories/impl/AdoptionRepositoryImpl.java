@@ -2,9 +2,12 @@ package br.com.udesc.turma_do_gatil_back.repositories.impl;
 
 import br.com.udesc.turma_do_gatil_back.entities.Adoption;
 import br.com.udesc.turma_do_gatil_back.entities.QAdoption;
+import br.com.udesc.turma_do_gatil_back.entities.QAdopter;
+import br.com.udesc.turma_do_gatil_back.entities.QCat;
 import br.com.udesc.turma_do_gatil_back.enums.AdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.repositories.AdoptionRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +27,12 @@ public class AdoptionRepositoryImpl implements AdoptionRepositoryCustom {
     private JPAQueryFactory queryFactory;
 
     private final QAdoption qAdoption = QAdoption.adoption;
+    private final QCat qCat = QCat.cat;
+    private final QAdopter qAdopter = QAdopter.adopter;
 
     @Override
     public Page<Adoption> findWithFilters(AdoptionStatus status, UUID catId, UUID adopterId,
+                                          String catName, String adopterName,
                                           LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         BooleanBuilder predicate = new BooleanBuilder();
 
@@ -40,6 +46,23 @@ public class AdoptionRepositoryImpl implements AdoptionRepositoryCustom {
 
         if (adopterId != null) {
             predicate.and(qAdoption.adopterId.eq(adopterId));
+        }
+
+        if (catName != null && !catName.isBlank()) {
+            predicate.and(qAdoption.catId.in(
+                JPAExpressions.select(qCat.id)
+                    .from(qCat)
+                    .where(qCat.name.containsIgnoreCase(catName))
+            ));
+        }
+
+        if (adopterName != null && !adopterName.isBlank()) {
+            predicate.and(qAdoption.adopterId.in(
+                JPAExpressions.select(qAdopter.id)
+                    .from(qAdopter)
+                    .where(qAdopter.firstName.containsIgnoreCase(adopterName)
+                        .or(qAdopter.lastName.containsIgnoreCase(adopterName)))
+            ));
         }
 
         if (startDate != null) {
@@ -135,5 +158,16 @@ public class AdoptionRepositoryImpl implements AdoptionRepositoryCustom {
                         .and(qAdoption.status.eq(status)))
                 .orderBy(qAdoption.adoptionDate.desc())
                 .fetch();
+    }
+
+    @Override
+    public boolean existsByCatIdAndStatus(UUID catId, AdoptionStatus status) {
+        Integer result = queryFactory.selectOne()
+                .from(qAdoption)
+                .where(qAdoption.catId.eq(catId)
+                        .and(qAdoption.status.eq(status)))
+                .fetchFirst();
+        
+        return result != null;
     }
 }

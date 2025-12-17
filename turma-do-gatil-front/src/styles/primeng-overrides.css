@@ -81,6 +81,11 @@
 .tdg-modal .p-dialog-content {
   padding: 2rem;
   background: var(--p-surface-card) !important;
+  border-radius: 0 0 var(--tdg-modal-border-radius) var(--tdg-modal-border-radius);
+}
+
+/* Quando há footer, o content não tem border-radius inferior */
+.tdg-modal .p-dialog-content:has(+ .p-dialog-footer) {
   border-radius: 0;
 }
 
