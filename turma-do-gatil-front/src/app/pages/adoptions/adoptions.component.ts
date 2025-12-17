@@ -53,6 +53,7 @@ import {
   ModalAction,
   PhotoUploadComponent
 } from '../../shared/components';
+import { CatDetailsModalComponent } from '../cats/cat-details-modal/cat-details-modal.component';
 
 /**
  * Componente para gestão de adoções
@@ -75,7 +76,8 @@ import {
     DataTableComponent,
     PaginationComponent,
     GenericModalComponent,
-    PhotoUploadComponent
+    PhotoUploadComponent,
+    CatDetailsModalComponent
   ],
   templateUrl: './adoptions.component.html',
   styleUrls: ['./adoptions.component.css']
@@ -116,6 +118,17 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
   
   /** Flag indicando se a foto foi removida pelo usuário */
   photoRemoved: boolean = false;
+
+  // ==================== CAT DETAILS MODAL STATE ====================
+  
+  /** Controle de visibilidade do modal de detalhes do gato */
+  catDetailsModalVisible: boolean = false;
+  
+  /** Gato selecionado para exibição no modal */
+  selectedCatForDetails: Cat | null = null;
+  
+  /** Estado de carregamento dos detalhes do gato */
+  loadingCatDetails: boolean = false;
   
   // ==================== PROPRIEDADES DE PAGINAÇÃO ====================
   
@@ -801,5 +814,70 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
     this.selectedFile = null;
     this.previewUrl = null;
     this.photoRemoved = true;
+  }
+
+  // ==================== CAT DETAILS MODAL HANDLERS ====================
+
+  /**
+   * Handles image click event from data table to open cat details modal
+   */
+  onImageClick(event: { item: any; column: any }): void {
+    const catId = event.item.catId;
+    if (catId) {
+      this.openCatDetailsModal(catId);
+    }
+  }
+
+  /**
+   * Opens the cat details modal by loading cat data
+   */
+  private openCatDetailsModal(catId: string): void {
+    this.loadingCatDetails = true;
+    this.cdr.markForCheck();
+
+    this.catService.getCatById(catId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (cat) => {
+          this.selectedCatForDetails = cat;
+          this.catDetailsModalVisible = true;
+          this.loadingCatDetails = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar detalhes do gato:', error);
+          this.loadingCatDetails = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  /**
+   * Closes the cat details modal
+   */
+  closeCatDetailsModal(): void {
+    this.catDetailsModalVisible = false;
+    this.selectedCatForDetails = null;
+  }
+
+  /**
+   * Handles edit cat event from details modal
+   */
+  onEditCatFromModal(cat: Cat): void {
+    this.closeCatDetailsModal();
+  }
+
+  /**
+   * Handles delete cat event from details modal
+   */
+  onDeleteCatFromModal(cat: Cat): void {
+    this.closeCatDetailsModal();
+  }
+
+  /**
+   * Handles adopt cat event from details modal
+   */
+  onAdoptCatFromModal(cat: Cat): void {
+    this.closeCatDetailsModal();
   }
 }

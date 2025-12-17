@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, finalize } from 'rxjs';
 import { SterilizationService } from '../../services/sterilization.service';
+import { CatService } from '../../services/cat.service';
+import { Cat } from '../../models/cat.model';
 import { 
   SterilizationStatsDto, 
   CatSterilizationStatusDto, 
@@ -10,6 +12,7 @@ import {
   SterilizationRequest
 } from '../../models/sterilization.model';
 import { SterilizationScheduleModalComponent } from './sterilization-schedule-modal/sterilization-schedule-modal.component';
+import { CatDetailsModalComponent } from '../cats/cat-details-modal/cat-details-modal.component';
 import { 
   RefreshButtonComponent,
   PaginationComponent,
@@ -56,6 +59,7 @@ import {
   imports: [
     CommonModule, 
     SterilizationScheduleModalComponent,
+    CatDetailsModalComponent,
     RefreshButtonComponent,
     PaginationComponent,
     StatsGridComponent,
@@ -89,6 +93,11 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     selectedCatForSchedule: null as CatSterilizationStatusDto | null,
     selectedSterilizationForEdit: null as SterilizationDto | null
   };
+
+  // ===== CAT DETAILS MODAL STATE =====
+  catDetailsModalVisible = false;
+  selectedCatForDetails: Cat | null = null;
+  loadingCatDetails = false;
 
   // ===== CONFIRMATION MODAL STATE =====
   confirmationModalVisible = false;
@@ -232,6 +241,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly sterilizationService: SterilizationService,
+    private readonly catService: CatService,
     private readonly cdr: ChangeDetectorRef
   ) {
     this.initializePagination();
@@ -855,6 +865,77 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     this.modalState.scheduleModalVisible = false;
     this.modalState.selectedCatForSchedule = null;
     this.modalState.selectedSterilizationForEdit = null;
+  }
+
+  // ===== CAT DETAILS MODAL HANDLERS =====
+
+  /**
+   * Handles image click event from data table to open cat details modal
+   */
+  onImageClick(event: { item: any; column: any }): void {
+    const catId = event.item.catId || event.item.id;
+    if (catId) {
+      this.openCatDetailsModal(catId);
+    }
+  }
+
+  /**
+   * Opens the cat details modal by loading cat data
+   */
+  private openCatDetailsModal(catId: string): void {
+    this.loadingCatDetails = true;
+    this.cdr.markForCheck();
+
+    this.catService.getCatById(catId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (cat) => {
+          this.selectedCatForDetails = cat;
+          this.catDetailsModalVisible = true;
+          this.loadingCatDetails = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar detalhes do gato:', error);
+          this.loadingCatDetails = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  /**
+   * Closes the cat details modal
+   */
+  closeCatDetailsModal(): void {
+    this.catDetailsModalVisible = false;
+    this.selectedCatForDetails = null;
+  }
+
+  /**
+   * Handles edit cat event from details modal - navigates to cats page for editing
+   */
+  onEditCatFromModal(cat: Cat): void {
+    this.closeCatDetailsModal();
+    // Poderia navegar para a página de gatos para edição
+    // this.router.navigate(['/cats'], { queryParams: { edit: cat.id } });
+  }
+
+  /**
+   * Handles delete cat event from details modal
+   */
+  onDeleteCatFromModal(cat: Cat): void {
+    this.closeCatDetailsModal();
+    // Poderia navegar para a página de gatos para deletar
+    // this.router.navigate(['/cats'], { queryParams: { delete: cat.id } });
+  }
+
+  /**
+   * Handles adopt cat event from details modal
+   */
+  onAdoptCatFromModal(cat: Cat): void {
+    this.closeCatDetailsModal();
+    // Poderia navegar para a página de adoções
+    // this.router.navigate(['/adoptions'], { queryParams: { catId: cat.id } });
   }
 
   // ===== TEMPLATE GETTERS FOR EASIER ACCESS =====

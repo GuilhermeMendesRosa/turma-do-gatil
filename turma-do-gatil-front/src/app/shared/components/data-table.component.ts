@@ -64,7 +64,7 @@ export interface TableEmptyState {
                 </span>
                 
                 <!-- Imagem -->
-                <div *ngSwitchCase="'image'" class="table-image">
+                <div *ngSwitchCase="'image'" class="table-image clickable" (click)="onImageClick(item, column)">
                   <img 
                     *ngIf="getNestedProperty(item, column.imageProperty || column.key); else imagePlaceholder" 
                     [src]="getNestedProperty(item, column.imageProperty || column.key)" 
@@ -88,7 +88,7 @@ export interface TableEmptyState {
                 </span>
                 
                 <!-- Cat info (gato com foto e nome) -->
-                <div *ngSwitchCase="'cat-info'" class="cat-info">
+                <div *ngSwitchCase="'cat-info'" class="cat-info clickable" (click)="onImageClick(item, column)">
                   <img 
                     *ngIf="getNestedProperty(item, 'photoUrl'); else catMiniPlaceholder" 
                     [src]="getNestedProperty(item, 'photoUrl')" 
@@ -258,6 +258,22 @@ export interface TableEmptyState {
       justify-content: center;
     }
 
+    .table-image.clickable,
+    .cat-info.clickable {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .table-image.clickable:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .cat-info.clickable:hover .cat-mini-photo {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
     .table-image img {
       width: 100%;
       height: 100%;
@@ -410,6 +426,11 @@ export class DataTableComponent {
 
   @Output() actionClick = new EventEmitter<{type: string, data: any}>();
   @Output() sortChange = new EventEmitter<{column: string, direction: 'asc' | 'desc'}>();
+  @Output() imageClick = new EventEmitter<{item: any, column: TableColumn}>();
+
+  onImageClick(item: any, column: TableColumn): void {
+    this.imageClick.emit({ item, column });
+  }
 
   get hasActions(): boolean {
     return !!this.actionProvider;

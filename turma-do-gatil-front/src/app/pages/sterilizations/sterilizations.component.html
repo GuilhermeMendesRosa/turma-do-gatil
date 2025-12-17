@@ -30,7 +30,8 @@
         [emptyState]="catsEmptyState"
         [actionProvider]="getCatsTableActions"
         trackByProperty="id"
-        (actionClick)="onCatsTableAction($event)">
+        (actionClick)="onCatsTableAction($event)"
+        (imageClick)="onImageClick($event)">
       </app-data-table>
     </app-loading-state>
   </app-content-card>
@@ -57,7 +58,8 @@
         [emptyState]="scheduledEmptyState"
         [actionProvider]="getScheduledTableActions"
         trackByProperty="id"
-        (actionClick)="onScheduledTableAction($event)">
+        (actionClick)="onScheduledTableAction($event)"
+        (imageClick)="onImageClick($event)">
       </app-data-table>
     </app-loading-state>
 
@@ -92,7 +94,8 @@
         [data]="completedSterilizations"
         [loading]="loadingCompletedSterilizations"
         [emptyState]="completedEmptyState"
-        trackByProperty="id">
+        trackByProperty="id"
+        (imageClick)="onImageClick($event)">
       </app-data-table>
     </app-loading-state>
 
@@ -125,3 +128,12 @@
   (confirmed)="onConfirmationConfirmed()"
   (cancelled)="onConfirmationCancelled()">
 </app-confirmation-modal>
+
+<!-- Cat Details Modal -->
+<app-cat-details-modal
+  [(visible)]="catDetailsModalVisible"
+  [cat]="selectedCatForDetails"
+  (adoptCat)="onAdoptCatFromModal($event)"
+  (editCat)="onEditCatFromModal($event)"
+  (deleteCat)="onDeleteCatFromModal($event)">
+</app-cat-details-modal>

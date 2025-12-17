@@ -37,7 +37,8 @@
       [actionProvider]="getRowActions"
       [emptyState]="emptyState"
       [trackByProperty]="'id'"
-      (actionClick)="onTableAction($event)">
+      (actionClick)="onTableAction($event)"
+      (imageClick)="onImageClick($event)">
     </app-data-table>
 
     <!-- Controles de paginação -->
@@ -135,3 +136,12 @@
   </div>
 
 </app-generic-modal>
+
+<!-- Cat Details Modal -->
+<app-cat-details-modal
+  [(visible)]="catDetailsModalVisible"
+  [cat]="selectedCatForDetails"
+  (adoptCat)="onAdoptCatFromModal($event)"
+  (editCat)="onEditCatFromModal($event)"
+  (deleteCat)="onDeleteCatFromModal($event)">
+</app-cat-details-modal>
