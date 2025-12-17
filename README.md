@@ -2,6 +2,8 @@
 
 Sistema completo de gerenciamento para organizações de adoção de gatos, desenvolvido com Spring Boot e Angular.
 
+**Kanban de Tarefas**: [Turma do Gatil](https://mendesworkspace.notion.site/Turma-do-Gatil-2639f9e2a59380448ac3ce437feaa7bc)
+
 ## 📋 Sobre o Projeto
 
 O **Turma do Gatil** é uma aplicação web fullstack desenvolvida para facilitar o gerenciamento de gatos em organizações de adoção. O sistema permite o controle completo do processo de adoção, desde o cadastro dos gatos até o acompanhamento pós-adoção.
@@ -124,7 +126,6 @@ psql -U seu_usuario -d turma_do_gatil < turma-do-gatil-back/database-dump.sql
 A documentação completa da API está disponível via Swagger UI:
 - **Desenvolvimento**: `https://turma-do-gatil-production.up.railway.app/swagger-ui.html`
 - **Especificação OpenAPI**: Disponível em `turma-do-gatil-back/api-definition.yaml`
-- **Documentação Geral**: [Turma do Gatil](https://mendesworkspace.notion.site/Turma-do-Gatil-2639f9e2a59380448ac3ce437feaa7bc)
 
 ## 🧪 Testes
 
