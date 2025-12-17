@@ -124,6 +124,7 @@ psql -U seu_usuario -d turma_do_gatil < turma-do-gatil-back/database-dump.sql
 A documentação completa da API está disponível via Swagger UI:
 - **Desenvolvimento**: `https://turma-do-gatil-production.up.railway.app/swagger-ui.html`
 - **Especificação OpenAPI**: Disponível em `turma-do-gatil-back/api-definition.yaml`
+- **Documentação Geral**: [Turma do Gatil](https://mendesworkspace.notion.site/Turma-do-Gatil-2639f9e2a59380448ac3ce437feaa7bc)
 
 ## 🧪 Testes
 
