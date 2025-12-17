@@ -2,6 +2,7 @@
  * Enums para ações da tabela de adotantes
  */
 export enum AdopterTableAction {
+  VIEW = 'view',
   EDIT = 'edit',
   DELETE = 'delete'
 }

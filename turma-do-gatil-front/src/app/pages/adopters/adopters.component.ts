@@ -36,6 +36,7 @@ import {
   ADOPTERS_CONFIG,
   VALIDATION_MESSAGES 
 } from './constants/adopters.constants';
+import { AdopterDetailsModalComponent } from './adopter-details-modal/adopter-details-modal.component';
 
 /**
  * Componente responsável pela gestão de adotantes
@@ -66,7 +67,8 @@ import {
     PaginationComponent,
     ModalButtonComponent,
     ConfirmationModalComponent,
-    LoadingStateComponent
+    LoadingStateComponent,
+    AdopterDetailsModalComponent
   ],
   templateUrl: './adopters.component.html',
   styleUrls: ['./adopters.component.css']
@@ -89,6 +91,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   
   // ==================== MODAL E FORMULÁRIO ====================
   showCreateModal = false;
+  showDetailsModal = false;
   selectedAdopter: Adopter | null = null;
   currentModalType: ModalType = ModalType.CREATE;
   adopterForm!: FormGroup<any>;
@@ -290,6 +293,10 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   getAdopterActions = (adopter: Adopter): ActionButtonConfig[] => {
     return [
       {
+        type: AdopterTableAction.VIEW,
+        tooltip: 'Ver detalhes'
+      },
+      {
         type: AdopterTableAction.EDIT,
         tooltip: this.formattingUtils.generateActionTooltip('edit', adopter.firstName, adopter.lastName)
       },
@@ -305,6 +312,9 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    */
   onAdopterTableAction(event: {type: string, data: Adopter}): void {
     switch (event.type) {
+      case AdopterTableAction.VIEW:
+        this.openDetailsModal(event.data);
+        break;
       case AdopterTableAction.EDIT:
         this.openEditModal(event.data);
         break;
@@ -473,6 +483,14 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   }
 
   // ==================== MÉTODOS DO MODAL ====================
+  /**
+   * Abre modal de detalhes do adotante
+   */
+  openDetailsModal(adopter: Adopter): void {
+    this.selectedAdopter = adopter;
+    this.showDetailsModal = true;
+  }
+
   /**
    * Abre modal para criação de novo adotante
    */

@@ -1,3 +1,6 @@
+import { Cat } from './cat.model';
+import { Adopter } from './adopter.model';
+
 export interface Adoption {
   id: string;
   catId: string;
@@ -5,6 +8,8 @@ export interface Adoption {
   adoptionDate: string;
   status: AdoptionStatus;
   adoptionTermPhoto?: string;
+  cat?: Cat;
+  adopter?: Adopter;
 }
 
 export interface AdoptionRequest {
