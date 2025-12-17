@@ -159,4 +159,15 @@ public class AdoptionRepositoryImpl implements AdoptionRepositoryCustom {
                 .orderBy(qAdoption.adoptionDate.desc())
                 .fetch();
     }
+
+    @Override
+    public boolean existsByCatIdAndStatus(UUID catId, AdoptionStatus status) {
+        Integer result = queryFactory.selectOne()
+                .from(qAdoption)
+                .where(qAdoption.catId.eq(catId)
+                        .and(qAdoption.status.eq(status)))
+                .fetchFirst();
+        
+        return result != null;
+    }
 }

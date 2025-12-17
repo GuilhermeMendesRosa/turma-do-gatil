@@ -143,11 +143,11 @@ public class CatService {
     public List<CatSterilizationStatusDto> findCatsNeedingSterilization() {
         log.debug("Finding cats needing sterilization");
 
-        List<Cat> allCats = catRepository.findAll();
+        int minimumAgeDays = propertiesService.getMinimumSterilizationAgeDays();
+        List<Cat> cats = catRepository.findCatsNeedingSterilization(minimumAgeDays);
         LocalDateTime now = LocalDateTime.now();
 
-        List<CatSterilizationStatusDto> result = allCats.stream()
-                .filter(this::needsSterilization)
+        List<CatSterilizationStatusDto> result = cats.stream()
                 .map(cat -> mapToCatSterilizationStatusDto(cat, now))
                 .collect(Collectors.toList());
 
@@ -158,22 +158,11 @@ public class CatService {
     public SterilizationStatsDto getSterilizationStats() {
         log.debug("Calculating sterilization statistics");
 
-        List<Cat> allCats = catRepository.findAll();
-        LocalDateTime now = LocalDateTime.now();
+        int minimumAgeDays = propertiesService.getMinimumSterilizationAgeDays();
+        int overdueAgeDays = propertiesService.getOverdueSterilizationAgeDays();
 
-        long eligibleCount = 0;
-        long overdueCount = 0;
-
-        for (Cat cat : allCats) {
-            if (needsSterilization(cat)) {
-                int ageInDays = calculateAgeInDays(cat.getBirthDate(), now);
-                if (ageInDays >= propertiesService.getOverdueSterilizationAgeDays()) {
-                    overdueCount++;
-                } else {
-                    eligibleCount++;
-                }
-            }
-        }
+        long eligibleCount = catRepository.countEligibleForSterilization(minimumAgeDays, overdueAgeDays);
+        long overdueCount = catRepository.countOverdueForSterilization(overdueAgeDays);
 
         SterilizationStatsDto stats = new SterilizationStatsDto(eligibleCount, overdueCount);
         log.info("Sterilization stats calculated - eligible: {}, overdue: {}", eligibleCount, overdueCount);
@@ -213,31 +202,5 @@ public class CatService {
         return ageInDays >= propertiesService.getOverdueSterilizationAgeDays() ?
                 SterilizationEligibilityStatus.OVERDUE :
                 SterilizationEligibilityStatus.ELIGIBLE;
-    }
-
-    private boolean needsSterilization(Cat cat) {
-        if (cat.getBirthDate() == null) {
-            return !hasCompletedOrScheduledSterilization(cat);
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        int ageInDays = calculateAgeInDays(cat.getBirthDate(), now);
-
-        if (ageInDays < propertiesService.getMinimumSterilizationAgeDays()) {
-            return false;
-        }
-
-        return !hasCompletedOrScheduledSterilization(cat);
-    }
-
-    private boolean hasCompletedOrScheduledSterilization(Cat cat) {
-        if (cat.getSterilizations() == null || cat.getSterilizations().isEmpty()) {
-            return false;
-        }
-
-        return cat.getSterilizations().stream()
-                .anyMatch(sterilization ->
-                        sterilization.getStatus() == SterilizationStatus.COMPLETED ||
-                                sterilization.getStatus() == SterilizationStatus.SCHEDULED);
     }
 }

@@ -249,7 +249,6 @@ public class AdoptionService {
     }
 
     private boolean hasAdoptionsWithStatus(UUID catId, AdoptionStatus status) {
-        List<Adoption> adoptions = adoptionRepository.findByCatIdAndStatus(catId, status);
-        return !adoptions.isEmpty();
+        return adoptionRepository.existsByCatIdAndStatus(catId, status);
     }
 }

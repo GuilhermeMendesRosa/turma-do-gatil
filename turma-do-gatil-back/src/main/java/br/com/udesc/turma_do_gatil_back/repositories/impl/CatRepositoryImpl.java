@@ -2,12 +2,15 @@ package br.com.udesc.turma_do_gatil_back.repositories.impl;
 
 import br.com.udesc.turma_do_gatil_back.entities.Cat;
 import br.com.udesc.turma_do_gatil_back.entities.QCat;
+import br.com.udesc.turma_do_gatil_back.entities.QSterilization;
 import br.com.udesc.turma_do_gatil_back.enums.CatAdoptionStatus;
 import br.com.udesc.turma_do_gatil_back.enums.Color;
 import br.com.udesc.turma_do_gatil_back.enums.Sex;
+import br.com.udesc.turma_do_gatil_back.enums.SterilizationStatus;
 import br.com.udesc.turma_do_gatil_back.repositories.CatRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -214,5 +218,104 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
         }
 
         return orders.toArray(new OrderSpecifier<?>[0]);
+    }
+
+    @Override
+    public List<Cat> findCatsNeedingSterilization(int minimumAgeDays) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime maxBirthDate = now.minusDays(minimumAgeDays);
+
+        QSterilization subSterilization = new QSterilization("subSterilization");
+
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        // Gatos com data de nascimento conhecida e idade mínima
+        BooleanBuilder withBirthDate = new BooleanBuilder();
+        withBirthDate.and(qCat.birthDate.isNotNull());
+        withBirthDate.and(qCat.birthDate.loe(maxBirthDate));
+
+        // Gatos sem data de nascimento
+        BooleanBuilder withoutBirthDate = new BooleanBuilder();
+        withoutBirthDate.and(qCat.birthDate.isNull());
+
+        // Combinar ambos os casos (com ou sem data de nascimento)
+        predicate.and(withBirthDate.or(withoutBirthDate));
+
+        // NOT EXISTS: não ter esterilização COMPLETED ou SCHEDULED
+        predicate.andNot(
+            JPAExpressions.selectOne()
+                .from(subSterilization)
+                .where(subSterilization.catId.eq(qCat.id)
+                    .and(subSterilization.status.in(SterilizationStatus.COMPLETED, SterilizationStatus.SCHEDULED)))
+                .exists()
+        );
+
+        return queryFactory.selectFrom(qCat)
+            .where(predicate)
+            .orderBy(qCat.name.asc())
+            .fetch();
+    }
+
+    @Override
+    public long countEligibleForSterilization(int minimumAgeDays, int overdueAgeDays) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime maxBirthDateEligible = now.minusDays(overdueAgeDays);
+        LocalDateTime minBirthDate = now.minusDays(minimumAgeDays);
+
+        QSterilization subSterilization = new QSterilization("subSterilization");
+
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        // Gatos elegíveis: idade >= minimumAgeDays E idade < overdueAgeDays
+        predicate.and(qCat.birthDate.isNotNull());
+        predicate.and(qCat.birthDate.loe(minBirthDate));
+        predicate.and(qCat.birthDate.gt(maxBirthDateEligible));
+
+        // NOT EXISTS: não ter esterilização COMPLETED ou SCHEDULED
+        predicate.andNot(
+            JPAExpressions.selectOne()
+                .from(subSterilization)
+                .where(subSterilization.catId.eq(qCat.id)
+                    .and(subSterilization.status.in(SterilizationStatus.COMPLETED, SterilizationStatus.SCHEDULED)))
+                .exists()
+        );
+
+        return queryFactory.selectFrom(qCat)
+            .where(predicate)
+            .fetchCount();
+    }
+
+    @Override
+    public long countOverdueForSterilization(int overdueAgeDays) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime maxBirthDate = now.minusDays(overdueAgeDays);
+
+        QSterilization subSterilization = new QSterilization("subSterilization");
+
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        // Gatos com data de nascimento e idade >= overdueAgeDays
+        BooleanBuilder withBirthDate = new BooleanBuilder();
+        withBirthDate.and(qCat.birthDate.isNotNull());
+        withBirthDate.and(qCat.birthDate.loe(maxBirthDate));
+
+        // Gatos sem data de nascimento também são considerados overdue
+        BooleanBuilder withoutBirthDate = new BooleanBuilder();
+        withoutBirthDate.and(qCat.birthDate.isNull());
+
+        predicate.and(withBirthDate.or(withoutBirthDate));
+
+        // NOT EXISTS: não ter esterilização COMPLETED ou SCHEDULED
+        predicate.andNot(
+            JPAExpressions.selectOne()
+                .from(subSterilization)
+                .where(subSterilization.catId.eq(qCat.id)
+                    .and(subSterilization.status.in(SterilizationStatus.COMPLETED, SterilizationStatus.SCHEDULED)))
+                .exists()
+        );
+
+        return queryFactory.selectFrom(qCat)
+            .where(predicate)
+            .fetchCount();
     }
 }

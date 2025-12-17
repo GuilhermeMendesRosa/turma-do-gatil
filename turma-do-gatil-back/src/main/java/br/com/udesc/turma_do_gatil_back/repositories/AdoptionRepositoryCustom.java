@@ -24,4 +24,6 @@ public interface AdoptionRepositoryCustom {
     Page<Adoption> findByAdoptionDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
     
     List<Adoption> findByCatIdAndStatus(UUID catId, AdoptionStatus status);
+    
+    boolean existsByCatIdAndStatus(UUID catId, AdoptionStatus status);
 }
