@@ -14,8 +14,12 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Cat, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
 import { Note, NoteRequest } from '../../../models/note.model';
 import { SterilizationDto } from '../../../models/sterilization.model';
+import { Adoption } from '../../../models/adoption.model';
+import { Adopter } from '../../../models/adopter.model';
 import { NoteService } from '../../../services/note.service';
 import { SterilizationService } from '../../../services/sterilization.service';
+import { AdoptionService } from '../../../services/adoption.service';
+import { AdopterService } from '../../../services/adopter.service';
 import { AdoptionModalComponent } from '../adoption-modal/adoption-modal.component';
 import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
 
@@ -51,7 +55,12 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
   showAdoptionModal = false;
 
   // Tab management
-  activeTab: 'info' | 'notes' = 'info';
+  activeTab: 'info' | 'notes' | 'adopter' = 'info';
+
+  // Adoption/Adopter properties
+  adoption: Adoption | null = null;
+  adopter: Adopter | null = null;
+  loadingAdoption = false;
 
   // Notes properties
   notes: Note[] = [];
@@ -119,7 +128,9 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
 
   constructor(
     private noteService: NoteService,
-    private sterilizationService: SterilizationService
+    private sterilizationService: SterilizationService,
+    private adoptionService: AdoptionService,
+    private adopterService: AdopterService
     // private confirmationService: ConfirmationService,
     // private messageService: MessageService
   ) { }
@@ -129,6 +140,7 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
     if (this.cat?.id) {
       this.loadNotes();
       this.loadSterilizations();
+      this.loadAdoption();
     }
   }
 
@@ -137,6 +149,7 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
     if (changes['cat'] && this.cat?.id) {
       this.loadNotes();
       this.loadSterilizations();
+      this.loadAdoption();
     }
   }
 
@@ -150,6 +163,10 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
     this.newNoteText = '';
     this.editingNoteId = null;
     this.editingNoteText = '';
+    
+    // Reset adoption state
+    this.adoption = null;
+    this.adopter = null;
   }
 
   onAdoptCat(): void {
@@ -494,5 +511,92 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
 
     const withNotes = this.sterilizations.filter(s => s.notes && s.notes.trim().length > 0);
     return withNotes.map(s => `${this.formatDate(s.sterilizationDate)}: ${s.notes}`).join('\n');
+  }
+
+  // Adoption methods
+  loadAdoption(): void {
+    if (!this.cat?.id) return;
+    
+    // Só carrega se o gato está em processo ou adotado
+    if (this.cat.adoptionStatus === CatAdoptionStatus.NAO_ADOTADO) {
+      this.adoption = null;
+      this.adopter = null;
+      return;
+    }
+    
+    this.loadingAdoption = true;
+    this.adoptionService.getAdoptionsByCatId(this.cat.id).subscribe({
+      next: (adoptions) => {
+        // Pega a adoção mais recente (PENDING ou COMPLETED)
+        const relevantAdoption = adoptions
+          .filter(a => a.status === 'PENDING' || a.status === 'COMPLETED')
+          .sort((a, b) => new Date(b.adoptionDate).getTime() - new Date(a.adoptionDate).getTime())[0];
+        
+        if (relevantAdoption) {
+          this.adoption = relevantAdoption;
+          this.loadAdopter(relevantAdoption.adopterId);
+        } else {
+          this.loadingAdoption = false;
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar adoção:', error);
+        this.loadingAdoption = false;
+      }
+    });
+  }
+
+  loadAdopter(adopterId: string): void {
+    this.adopterService.getAdopterById(adopterId).subscribe({
+      next: (adopter) => {
+        this.adopter = adopter;
+        this.loadingAdoption = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar adotante:', error);
+        this.loadingAdoption = false;
+      }
+    });
+  }
+
+  getAdopterFullName(): string {
+    if (!this.adopter) return '';
+    return `${this.adopter.firstName} ${this.adopter.lastName}`;
+  }
+
+  formatPhone(phone: string): string {
+    if (!phone) return '-';
+    // Formata telefone: (XX) XXXXX-XXXX
+    const cleaned = phone.replace(/\D/g, '');
+    if (cleaned.length === 11) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
+    }
+    if (cleaned.length === 10) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 6)}-${cleaned.slice(6)}`;
+    }
+    return phone;
+  }
+
+  formatCpf(cpf: string): string {
+    if (!cpf) return '-';
+    const cleaned = cpf.replace(/\D/g, '');
+    if (cleaned.length === 11) {
+      return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9)}`;
+    }
+    return cpf;
+  }
+
+  getAdoptionStatusLabel(): string {
+    if (!this.adoption) return '';
+    switch (this.adoption.status) {
+      case 'PENDING':
+        return 'Em Processo';
+      case 'COMPLETED':
+        return 'Concluída';
+      case 'CANCELED':
+        return 'Cancelada';
+      default:
+        return this.adoption.status;
+    }
   }
 }

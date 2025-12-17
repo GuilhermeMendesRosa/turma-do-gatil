@@ -87,4 +87,13 @@ export class AdoptionService {
       })
     );
   }
+
+  getAdoptionsByCatId(catId: string): Observable<Adoption[]> {
+    return this.http.get<Adoption[]>(`${this.apiUrl}/cat/${catId}`).pipe(
+      catchError(error => {
+        this.notificationService.showHttpError(error);
+        throw error;
+      })
+    );
+  }
 }
