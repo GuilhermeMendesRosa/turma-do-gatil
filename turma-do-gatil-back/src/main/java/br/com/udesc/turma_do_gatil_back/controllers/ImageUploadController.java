@@ -26,16 +26,16 @@ public class ImageUploadController {
         try {
             log.info("Recebendo requisição de upload de imagem: {}", file.getOriginalFilename());
             
-            String fileUrl = s3Service.uploadImage(file);
+            String imageUrl = s3Service.uploadImage(file);
             
             ImageUploadResponseDto response = new ImageUploadResponseDto(
                     file.getOriginalFilename(),
-                    fileUrl,
+                    imageUrl,
                     file.getSize(),
                     file.getContentType()
             );
             
-            log.info("Upload realizado com sucesso. URL: {}", fileUrl);
+            log.info("Upload realizado com sucesso. URL: {}", imageUrl);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
             
         } catch (IllegalArgumentException e) {
