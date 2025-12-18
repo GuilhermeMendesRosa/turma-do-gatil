@@ -109,6 +109,11 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   
   // ===== PAGINATION STATE =====
   readonly paginationState = {
+    cats: {
+      currentPage: 0,
+      pageSize: STERILIZATIONS_CONFIG.DEFAULT_PAGE_SIZE,
+      pagination: {} as Page<CatSterilizationStatusDto>
+    },
     scheduled: {
       currentPage: 0,
       pageSize: STERILIZATIONS_CONFIG.DEFAULT_PAGE_SIZE,
@@ -275,6 +280,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
    * Initializes pagination with empty states
    */
   private initializePagination(): void {
+    this.paginationState.cats.pagination = this.createEmptyPage<CatSterilizationStatusDto>();
     this.paginationState.scheduled.pagination = this.createEmptyPage<SterilizationDto>();
     this.paginationState.completed.pagination = this.createEmptyPage<SterilizationDto>();
   }
@@ -283,6 +289,7 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
    * Resets pagination state to avoid infinite loading
    */
   private resetPaginationState(): void {
+    this.paginationState.cats.currentPage = 0;
     this.paginationState.scheduled.currentPage = 0;
     this.paginationState.completed.currentPage = 0;
     this.initializePagination();
@@ -388,7 +395,14 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     this.loadingCats = true;
     this.cdr.markForCheck();
     
-    this.sterilizationService.getCatsNeedingSterilization()
+    const params = {
+      page: this.paginationState.cats.currentPage,
+      size: this.paginationState.cats.pageSize,
+      sortBy: 'name',
+      sortDir: 'asc' as const
+    };
+
+    this.sterilizationService.getCatsNeedingSterilization(params)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
@@ -397,8 +411,9 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe({
-        next: (cats) => {
-          this.catsNeedingSterilization = cats.map(cat => ({
+        next: (response) => {
+          this.paginationState.cats.pagination = response;
+          this.catsNeedingSterilization = response.content.map(cat => ({
             ...cat,
             deadline: this.calculateDeadline(cat.birthDate, cat.shelterEntryDate, this.sterilizationDays.maxDays)
           }));
@@ -646,6 +661,21 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
     };
   }
 
+  /**
+   * Gets pagination info for cats needing sterilization
+   */
+  getCatsPaginationInfo(): PaginationInfo {
+    const pagination = this.paginationState.cats.pagination;
+    return {
+      totalElements: pagination.totalElements,
+      numberOfElements: pagination.numberOfElements,
+      first: pagination.first,
+      last: pagination.last,
+      totalPages: pagination.totalPages,
+      currentPage: this.paginationState.cats.currentPage
+    };
+  }
+
   // ===== MODAL OPERATIONS =====
 
   /**
@@ -831,6 +861,36 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
   goToCompletedPage(event: any): void {
     this.paginationState.completed.currentPage = parseInt(event.target.value);
     this.loadCompletedSterilizations();
+  }
+
+  // ===== PAGINATION METHODS - CATS =====
+
+  /**
+   * Goes to previous page for cats needing sterilization
+   */
+  previousCatsPage(): void {
+    if (!this.paginationState.cats.pagination.first) {
+      this.paginationState.cats.currentPage--;
+      this.loadCatsNeedingSterilization();
+    }
+  }
+
+  /**
+   * Goes to next page for cats needing sterilization
+   */
+  nextCatsPage(): void {
+    if (!this.paginationState.cats.pagination.last) {
+      this.paginationState.cats.currentPage++;
+      this.loadCatsNeedingSterilization();
+    }
+  }
+
+  /**
+   * Goes to specific page for cats needing sterilization
+   */
+  goToCatsPage(event: any): void {
+    this.paginationState.cats.currentPage = parseInt(event.target.value);
+    this.loadCatsNeedingSterilization();
   }
 
   // ===== MODAL EVENT HANDLERS =====

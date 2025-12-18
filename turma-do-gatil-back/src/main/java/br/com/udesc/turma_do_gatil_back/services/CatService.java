@@ -155,6 +155,19 @@ public class CatService {
         return result;
     }
 
+    public Page<CatSterilizationStatusDto> findCatsNeedingSterilization(Pageable pageable) {
+        log.debug("Finding cats needing sterilization with pagination");
+
+        int minimumAgeDays = propertiesService.getMinimumSterilizationAgeDays();
+        Page<Cat> cats = catRepository.findCatsNeedingSterilization(minimumAgeDays, pageable);
+        LocalDateTime now = LocalDateTime.now();
+
+        Page<CatSterilizationStatusDto> result = cats.map(cat -> mapToCatSterilizationStatusDto(cat, now));
+
+        log.info("Found {} cats needing sterilization", result.getTotalElements());
+        return result;
+    }
+
     public SterilizationStatsDto getSterilizationStats() {
         log.debug("Calculating sterilization statistics");
 

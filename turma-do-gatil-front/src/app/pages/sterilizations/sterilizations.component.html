@@ -13,7 +13,8 @@
   <app-content-card
     title="Gatos que Precisam de Castração"
     icon="pi-heart"
-    [hasActions]="true">
+    [hasActions]="true"
+    [hasFooter]="true">
     
     <div slot="actions">
       <app-refresh-button 
@@ -34,6 +35,16 @@
         (imageClick)="onImageClick($event)">
       </app-data-table>
     </app-loading-state>
+
+    <!-- Cats Needing Sterilization Pagination -->
+    <div slot="footer">
+      <app-pagination
+        [pagination]="getCatsPaginationInfo()"
+        (pageChange)="goToCatsPage({target: {value: $event}})"
+        (previousPage)="previousCatsPage()"
+        (nextPage)="nextCatsPage()">
+      </app-pagination>
+    </div>
   </app-content-card>
 
   <!-- Scheduled Sterilizations Section -->
