@@ -158,7 +158,8 @@ export abstract class BasePaginatedComponent implements OnDestroy {
       first: this.first === 0,
       last: this.first + this.pageSize >= this.totalRecords,
       totalPages,
-      currentPage
+      currentPage,
+      pageSize: this.pageSize
     };
   }
   

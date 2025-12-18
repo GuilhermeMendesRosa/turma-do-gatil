@@ -201,7 +201,8 @@ export class ExampleTableComponent {
     first: true,
     last: false,
     totalPages: 9,
-    currentPage: 0
+    currentPage: 0,
+    pageSize: 10
   };
 
   // Configuração dos botões de ação baseada no item
@@ -287,7 +288,8 @@ export class ExampleTableComponent {
       first: this.paginationData.first,
       last: this.paginationData.last,
       totalPages: this.paginationData.totalPages,
-      currentPage: this.currentPage
+      currentPage: this.currentPage,
+      pageSize: this.paginationData.pageSize
     };
   }
 

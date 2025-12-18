@@ -191,7 +191,8 @@ export class AdoptionsComponent implements OnInit, OnDestroy {
       first: this.first === 0,
       last: this.first + this.rows >= this.totalRecords,
       totalPages,
-      currentPage
+      currentPage,
+      pageSize: this.rows
     };
   }
 

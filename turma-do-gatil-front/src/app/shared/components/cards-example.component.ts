@@ -249,7 +249,8 @@ export class CardsExampleComponent {
     first: true,
     last: false,
     totalPages: 10,
-    currentPage: 0
+    currentPage: 0,
+    pageSize: 10
   };
 
   getStatsData(): StatCardData[] {
@@ -318,7 +319,8 @@ export class CardsExampleComponent {
       first: this.mockPagination.first,
       last: this.mockPagination.last,
       totalPages: this.mockPagination.totalPages,
-      currentPage: this.currentPage
+      currentPage: this.currentPage,
+      pageSize: this.mockPagination.pageSize
     };
   }
 
