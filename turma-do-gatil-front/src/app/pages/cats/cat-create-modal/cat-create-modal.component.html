@@ -1,54 +1,34 @@
 <!-- Diálogo de Criação de Gato -->
-<p-dialog 
-  [(visible)]="visible" 
-  [modal]="true" 
-  [closable]="true"
-  [draggable]="false"
-  [resizable]="false"
-  styleClass="tdg-modal"
-  maskStyleClass="tdg-modal-mask"
-  [style]="{width: '90vw', maxWidth: '600px'}"
-  [header]="isEditMode ? 'Editar Gato' : 'Adicionar Novo Gato'"
-  (onHide)="onHide()">
-  
+<p-dialog [(visible)]="visible" [modal]="true" [closable]="true" [draggable]="false" [resizable]="false"
+  styleClass="tdg-modal" maskStyleClass="tdg-modal-mask" [style]="{width: '90vw', maxWidth: '600px'}"
+  [header]="isEditMode ? 'Editar Gato' : 'Adicionar Novo Gato'" (onHide)="onHide()">
+
   <form [formGroup]="catForm" class="cat-create-form">
-    
+
     <!-- Upload de Foto -->
     <div class="form-section">
       <h3>
         <i class="fas fa-camera"></i>
         Foto do Gato
       </h3>
-      
+
       <div class="photo-upload-section">
         <div class="photo-preview" *ngIf="previewUrl">
           <img [src]="previewUrl" alt="Preview" class="preview-image">
-          <button 
-            type="button" 
-            class="remove-photo-btn" 
-            (click)="onFileRemove()"
-            title="Remover foto">
+          <button type="button" class="remove-photo-btn" (click)="onFileRemove()" title="Remover foto">
             <i class="fas fa-trash"></i>
           </button>
         </div>
-        
+
         <div class="upload-placeholder" *ngIf="!previewUrl">
           <i class="fas fa-camera upload-icon"></i>
           <p>Clique para adicionar uma foto</p>
-          <input 
-            type="file" 
-            accept="image/*" 
-            (change)="onFileSelect($event)"
-            class="file-input"
-            #fileInput>
-          <button 
-            type="button" 
-            class="upload-btn"
-            (click)="fileInput.click()">
+          <input type="file" accept="image/*" (change)="onFileSelect($event)" class="file-input" #fileInput>
+          <button type="button" class="upload-btn" (click)="fileInput.click()">
             Escolher Arquivo
           </button>
         </div>
-        
+
         <small class="file-info" *ngIf="selectedFile">
           <i class="pi pi-file"></i>
           Arquivo selecionado: {{ selectedFile.name }} ({{ (selectedFile.size / 1024).toFixed(2) }} KB)
@@ -62,18 +42,13 @@
         <i class="fas fa-info-circle"></i>
         Informações Básicas
       </h3>
-      
+
       <div class="form-grid">
         <!-- Nome -->
         <div class="form-field">
           <label for="name">Nome *</label>
-          <input 
-            pInputText 
-            id="name" 
-            formControlName="name"
-            placeholder="Digite o nome do gato"
-            [class.ng-invalid]="isFieldInvalid('name')"
-            class="form-input">
+          <input pInputText id="name" formControlName="name" placeholder="Digite o nome do gato"
+            [class.ng-invalid]="isFieldInvalid('name')" class="form-input">
           <small class="error-message" *ngIf="getFieldError('name')">
             {{ getFieldError('name') }}
           </small>
@@ -82,10 +57,7 @@
         <!-- Cor -->
         <div class="form-field">
           <label for="color">Cor *</label>
-          <select 
-            id="color"
-            formControlName="color"
-            [class.ng-invalid]="isFieldInvalid('color')"
+          <select id="color" formControlName="color" [class.ng-invalid]="isFieldInvalid('color')"
             class="form-input form-select">
             <option value="">Selecione a cor</option>
             <option *ngFor="let option of colorOptions" [value]="option.value">
@@ -100,10 +72,7 @@
         <!-- Sexo -->
         <div class="form-field">
           <label for="sex">Sexo *</label>
-          <select 
-            id="sex"
-            formControlName="sex"
-            [class.ng-invalid]="isFieldInvalid('sex')"
+          <select id="sex" formControlName="sex" [class.ng-invalid]="isFieldInvalid('sex')"
             class="form-input form-select">
             <option value="">Selecione o sexo</option>
             <option *ngFor="let option of sexOptions" [value]="option.value">
@@ -118,11 +87,7 @@
         <!-- Data de Nascimento -->
         <div class="form-field">
           <label for="birthDate">Data de Nascimento</label>
-          <input 
-            type="date" 
-            id="birthDate" 
-            formControlName="birthDate"
-            [class.ng-invalid]="isFieldInvalid('birthDate')"
+          <input type="date" id="birthDate" formControlName="birthDate" [class.ng-invalid]="isFieldInvalid('birthDate')"
             class="form-input date-input">
           <small class="error-message" *ngIf="getFieldError('birthDate')">
             {{ getFieldError('birthDate') }}
@@ -132,12 +97,8 @@
         <!-- Data de Entrada no Abrigo -->
         <div class="form-field">
           <label for="shelterEntryDate">Data de Entrada no Abrigo *</label>
-          <input 
-            type="date" 
-            id="shelterEntryDate" 
-            formControlName="shelterEntryDate"
-            [class.ng-invalid]="isFieldInvalid('shelterEntryDate')"
-            class="form-input date-input">
+          <input type="date" id="shelterEntryDate" formControlName="shelterEntryDate"
+            [class.ng-invalid]="isFieldInvalid('shelterEntryDate')" class="form-input date-input">
           <small class="error-message" *ngIf="getFieldError('shelterEntryDate')">
             {{ getFieldError('shelterEntryDate') }}
           </small>
@@ -151,15 +112,12 @@
         <i class="fas fa-syringe"></i>
         Castração
       </h3>
-      
+
       <div class="form-grid">
         <!-- Checkbox para indicar se já é castrado -->
         <div class="form-field full-width">
           <div class="checkbox-field">
-            <p-checkbox 
-              formControlName="alreadySterilized"
-              [binary]="true"
-              inputId="alreadySterilized">
+            <p-checkbox formControlName="alreadySterilized" [binary]="true" inputId="alreadySterilized">
             </p-checkbox>
             <label for="alreadySterilized" class="checkbox-label">
               Este gato já foi castrado
@@ -170,20 +128,119 @@
         <!-- Data da Castração (aparece apenas se marcou como castrado) -->
         <div class="form-field" *ngIf="catForm.get('alreadySterilized')?.value">
           <label for="sterilizationDate">Data da Castração</label>
-          <input 
-            type="date" 
-            id="sterilizationDate" 
-            formControlName="sterilizationDate"
-            class="form-input date-input"
+          <input type="date" id="sterilizationDate" formControlName="sterilizationDate" class="form-input date-input"
             placeholder="Informe a data da castração">
           <small class="info-message">
             <i class="pi pi-info-circle"></i>
             Deixe em branco se a data for desconhecida
           </small>
         </div>
+
+        <!-- Checkbox para agendar castração (apenas se não for já castrado) -->
+        <div class="form-field full-width" *ngIf="!catForm.get('alreadySterilized')?.value">
+          <div class="checkbox-field">
+            <p-checkbox formControlName="scheduleSterilization" [binary]="true" [disabled]="!sterilizationEligible"
+              inputId="scheduleSterilization">
+            </p-checkbox>
+            <label for="scheduleSterilization" class="checkbox-label" [class.disabled-label]="!sterilizationEligible">
+              Agendar castração
+            </label>
+          </div>
+          <small class="info-message" *ngIf="!sterilizationEligible">
+            <i class="pi pi-info-circle"></i>
+            {{ sterilizationDisabledReason }}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informações de Adoção (apenas para criação) -->
+    <div class="form-section" *ngIf="!isEditMode">
+      <h3>
+        <i class="fas fa-heart"></i>
+        Adoção
+      </h3>
+
+      <div class="form-grid">
+        <!-- Checkbox para indicar se já foi adotado -->
+        <div class="form-field full-width">
+          <div class="checkbox-field">
+            <p-checkbox formControlName="alreadyAdopted" [binary]="true" inputId="alreadyAdopted">
+            </p-checkbox>
+            <label for="alreadyAdopted" class="checkbox-label">
+              Este gato já foi adotado
+            </label>
+          </div>
+        </div>
+
+        <!-- Campos de adoção (aparecem apenas se marcou como adotado) -->
+        <ng-container *ngIf="catForm.get('alreadyAdopted')?.value">
+          <!-- Seleção do Adotante -->
+          <div class="form-field full-width">
+            <label for="adopter">
+              <i class="fas fa-user"></i>
+              Adotante *
+            </label>
+
+            <div class="adopter-selection">
+              <p-autoComplete id="adopter" [(ngModel)]="selectedAdopter" [ngModelOptions]="{standalone: true}"
+                [suggestions]="filteredAdopters" (completeMethod)="searchAdopters($event)"
+                (onSelect)="selectAdopter($event)" (onClear)="clearAdopterSelection()" [optionLabel]="getAdopterLabel"
+                placeholder="Digite o nome, email ou CPF do adotante..." [minLength]="2"
+                styleClass="form-input adopter-autocomplete">
+
+                <ng-template let-adopter pTemplate="item">
+                  <div class="adopter-item">
+                    <div class="adopter-avatar">
+                      <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="adopter-info">
+                      <div class="adopter-name">{{ adopter.firstName }} {{ adopter.lastName }}</div>
+                      <div class="adopter-contact">{{ adopter.email || 'Sem email' }} • {{ formatCpf(adopter.cpf) }}
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+
+                <ng-template let-adopter pTemplate="selectedItem">
+                  <div class="selected-adopter-item">
+                    <div class="adopter-avatar">
+                      <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="adopter-info">
+                      <div class="adopter-name">{{ adopter.firstName }} {{ adopter.lastName }}</div>
+                      <div class="adopter-contact">{{ adopter.email || 'Sem email' }} • {{ formatCpf(adopter.cpf) }}
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+
+              <button type="button" class="create-adopter-button" (click)="openCreateAdopterModal()"
+                title="Criar novo adotante">
+                <i class="pi pi-plus"></i>
+                <span class="button-text">Novo Adotante</span>
+              </button>
+            </div>
+
+            <small class="error-message" *ngIf="catForm.get('alreadyAdopted')?.value && !selectedAdopter">
+              Selecione um adotante para registrar a adoção
+            </small>
+          </div>
+
+          <!-- Data da Adoção -->
+          <div class="form-field">
+            <label for="adoptionDate">Data da Adoção *</label>
+            <input type="date" id="adoptionDate" formControlName="adoptionDate" class="form-input date-input">
+          </div>
+        </ng-container>
       </div>
     </div>
   </form>
+
+  <!-- Modal de Criação de Adotante -->
+  <app-adopter-create-modal [(visible)]="showCreateAdopterModal" (adopterCreated)="onAdopterCreated()">
+  </app-adopter-create-modal>
 
   <ng-template pTemplate="footer">
     <div class="dialog-footer">
@@ -192,14 +249,10 @@
         Fazendo upload da imagem...
       </small>
       <div class="action-buttons">
-        <app-generic-button 
-          [config]="cancelButtonConfig"
-          (buttonClick)="onHide()">
+        <app-generic-button [config]="cancelButtonConfig" (buttonClick)="onHide()">
         </app-generic-button>
-        
-        <app-generic-button 
-          [config]="saveButtonConfig"
-          (buttonClick)="onSubmit()">
+
+        <app-generic-button [config]="saveButtonConfig" (buttonClick)="onSubmit()">
         </app-generic-button>
       </div>
     </div>

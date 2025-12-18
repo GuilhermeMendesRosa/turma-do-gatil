@@ -36,8 +36,15 @@ export class SterilizationService {
   }
 
   // Obter gatos que precisam de castração
-  getCatsNeedingSterilization(): Observable<CatSterilizationStatusDto[]> {
-    return this.http.get<CatSterilizationStatusDto[]>(`${this.apiUrl}/cats/needing-sterilization`).pipe(
+  getCatsNeedingSterilization(filters: { page?: number; size?: number; sortBy?: string; sortDir?: 'asc' | 'desc' } = {}): Observable<Page<CatSterilizationStatusDto>> {
+    let params = new HttpParams();
+    
+    if (filters.page !== undefined) params = params.set('page', filters.page.toString());
+    if (filters.size !== undefined) params = params.set('size', filters.size.toString());
+    if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
+    if (filters.sortDir) params = params.set('sortDir', filters.sortDir);
+
+    return this.http.get<Page<CatSterilizationStatusDto>>(`${this.apiUrl}/cats/needing-sterilization`, { params }).pipe(
       catchError(error => {
         this.notificationService.showHttpError(error);
         throw error;

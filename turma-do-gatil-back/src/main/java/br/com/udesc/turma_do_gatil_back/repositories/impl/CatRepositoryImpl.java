@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class CatRepositoryImpl implements CatRepositoryCustom {
@@ -56,7 +57,6 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
         JPAQuery<Cat> query = queryFactory.selectFrom(qCat)
                 .where(predicate);
 
-        // Aplicar ordenação dinâmica
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable.getSort());
         if (orderSpecifiers.length > 0) {
             query.orderBy(orderSpecifiers);
@@ -79,7 +79,6 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
         JPAQuery<Cat> query = queryFactory.selectFrom(qCat)
                 .where(qCat.adoptionStatus.eq(adoptionStatus));
 
-        // Aplicar ordenação dinâmica
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable.getSort());
         if (orderSpecifiers.length > 0) {
             query.orderBy(orderSpecifiers);
@@ -110,7 +109,6 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
         JPAQuery<Cat> query = queryFactory.selectFrom(qCat)
                 .where(qCat.color.eq(color));
 
-        // Aplicar ordenação dinâmica
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable.getSort());
         if (orderSpecifiers.length > 0) {
             query.orderBy(orderSpecifiers);
@@ -133,7 +131,6 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
         JPAQuery<Cat> query = queryFactory.selectFrom(qCat)
                 .where(qCat.sex.eq(sex));
 
-        // Aplicar ordenação dinâmica
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable.getSort());
         if (orderSpecifiers.length > 0) {
             query.orderBy(orderSpecifiers);
@@ -156,7 +153,6 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
         JPAQuery<Cat> query = queryFactory.selectFrom(qCat)
                 .where(qCat.name.containsIgnoreCase(name));
 
-        // Aplicar ordenação dinâmica
         OrderSpecifier<?>[] orderSpecifiers = getOrderSpecifiers(pageable.getSort());
         if (orderSpecifiers.length > 0) {
             query.orderBy(orderSpecifiers);
@@ -211,7 +207,6 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
                     orders.add(isAscending ? qCat.shelterEntryDate.asc() : qCat.shelterEntryDate.desc());
                     break;
                 default:
-                    // Se a propriedade não for reconhecida, ordena por nome
                     orders.add(qCat.name.asc());
                     break;
             }
@@ -229,19 +224,15 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
 
         BooleanBuilder predicate = new BooleanBuilder();
 
-        // Gatos com data de nascimento conhecida e idade mínima
         BooleanBuilder withBirthDate = new BooleanBuilder();
         withBirthDate.and(qCat.birthDate.isNotNull());
         withBirthDate.and(qCat.birthDate.loe(maxBirthDate));
 
-        // Gatos sem data de nascimento
         BooleanBuilder withoutBirthDate = new BooleanBuilder();
         withoutBirthDate.and(qCat.birthDate.isNull());
 
-        // Combinar ambos os casos (com ou sem data de nascimento)
         predicate.and(withBirthDate.or(withoutBirthDate));
 
-        // NOT EXISTS: não ter esterilização COMPLETED ou SCHEDULED
         predicate.andNot(
             JPAExpressions.selectOne()
                 .from(subSterilization)
@@ -257,6 +248,65 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
     }
 
     @Override
+    public Page<Cat> findCatsNeedingSterilization(int minimumAgeDays, Pageable pageable) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime maxBirthDate = now.minusDays(minimumAgeDays);
+
+        QSterilization subSterilization = new QSterilization("subSterilization");
+
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        BooleanBuilder withBirthDate = new BooleanBuilder();
+        withBirthDate.and(qCat.birthDate.isNotNull());
+        withBirthDate.and(qCat.birthDate.loe(maxBirthDate));
+
+        BooleanBuilder withoutBirthDate = new BooleanBuilder();
+        withoutBirthDate.and(qCat.birthDate.isNull());
+
+        predicate.and(withBirthDate.or(withoutBirthDate));
+
+        predicate.andNot(
+            JPAExpressions.selectOne()
+                .from(subSterilization)
+                .where(subSterilization.catId.eq(qCat.id)
+                    .and(subSterilization.status.in(SterilizationStatus.COMPLETED, SterilizationStatus.SCHEDULED)))
+                .exists()
+        );
+
+        JPAQuery<Cat> query = queryFactory.selectFrom(qCat)
+            .where(predicate);
+
+        if (pageable.getSort().isSorted()) {
+            List<OrderSpecifier<?>> orders = pageable.getSort().stream()
+                .map(order -> {
+                    if (order.getProperty().equals("name")) {
+                        return order.isAscending() ? qCat.name.asc() : qCat.name.desc();
+                    } else if (order.getProperty().equals("birthDate")) {
+                        return order.isAscending() ? qCat.birthDate.asc() : qCat.birthDate.desc();
+                    } else if (order.getProperty().equals("shelterEntryDate")) {
+                        return order.isAscending() ? qCat.shelterEntryDate.asc() : qCat.shelterEntryDate.desc();
+                    }
+                    return qCat.name.asc(); 
+                })
+                .collect(Collectors.toList());
+            query.orderBy(orders.toArray(new OrderSpecifier<?>[0]));
+        } else {
+            query.orderBy(qCat.name.asc());
+        }
+
+        long total = queryFactory.selectFrom(qCat)
+            .where(predicate)
+            .fetchCount();
+
+        List<Cat> content = query
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
     public long countEligibleForSterilization(int minimumAgeDays, int overdueAgeDays) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime maxBirthDateEligible = now.minusDays(overdueAgeDays);
@@ -266,12 +316,10 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
 
         BooleanBuilder predicate = new BooleanBuilder();
 
-        // Gatos elegíveis: idade >= minimumAgeDays E idade < overdueAgeDays
         predicate.and(qCat.birthDate.isNotNull());
         predicate.and(qCat.birthDate.loe(minBirthDate));
         predicate.and(qCat.birthDate.gt(maxBirthDateEligible));
 
-        // NOT EXISTS: não ter esterilização COMPLETED ou SCHEDULED
         predicate.andNot(
             JPAExpressions.selectOne()
                 .from(subSterilization)
@@ -294,18 +342,15 @@ public class CatRepositoryImpl implements CatRepositoryCustom {
 
         BooleanBuilder predicate = new BooleanBuilder();
 
-        // Gatos com data de nascimento e idade >= overdueAgeDays
         BooleanBuilder withBirthDate = new BooleanBuilder();
         withBirthDate.and(qCat.birthDate.isNotNull());
         withBirthDate.and(qCat.birthDate.loe(maxBirthDate));
 
-        // Gatos sem data de nascimento também são considerados overdue
         BooleanBuilder withoutBirthDate = new BooleanBuilder();
         withoutBirthDate.and(qCat.birthDate.isNull());
 
         predicate.and(withBirthDate.or(withoutBirthDate));
 
-        // NOT EXISTS: não ter esterilização COMPLETED ou SCHEDULED
         predicate.andNot(
             JPAExpressions.selectOne()
                 .from(subSterilization)

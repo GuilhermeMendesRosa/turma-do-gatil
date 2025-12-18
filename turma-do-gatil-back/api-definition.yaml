@@ -258,7 +258,7 @@ paths:
         - Cats
       summary: Busca gatos que precisam de castração
       description: |
-        Retorna uma lista de gatos que estão aptos para castração baseado nas seguintes regras:
+        Retorna uma lista paginada de gatos que estão aptos para castração baseado nas seguintes regras:
         
         **Critérios de Elegibilidade:**
         - Gato deve ter pelo menos **90 dias de vida**
@@ -274,15 +274,43 @@ paths:
         - Dados básicos do gato (nome, cor, sexo, foto)
         - Idade exata em dias
         - Status de prioridade para castração
+      parameters:
+        - name: page
+          in: query
+          description: Número da página (inicia em 0)
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Quantidade de itens por página
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: sortBy
+          in: query
+          description: Campo para ordenação
+          required: false
+          schema:
+            type: string
+            default: name
+        - name: sortDir
+          in: query
+          description: Direção da ordenação
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: asc
       responses:
         '200':
           description: Lista de gatos que precisam de castração retornada com sucesso
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CatSterilizationStatus'
+                $ref: '#/components/schemas/PageCatSterilizationStatus'
         '500':
           description: Erro interno do servidor ao processar a solicitação
           content:
@@ -1841,6 +1869,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Cat'
+        pageable:
+          $ref: '#/components/schemas/Pageable'
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+        last:
+          type: boolean
+        first:
+          type: boolean
+        numberOfElements:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+
+    PageCatSterilizationStatus:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatSterilizationStatus'
         pageable:
           $ref: '#/components/schemas/Pageable'
         totalElements:

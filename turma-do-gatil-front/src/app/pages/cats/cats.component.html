@@ -239,8 +239,16 @@
   [(visible)]="catCreateDialog"
   [cat]="catToEdit"
   (catCreated)="onCatCreated()"
-  (catUpdated)="onCatUpdated()">
+  (catUpdated)="onCatUpdated()"
+  (scheduleSterilizationForCat)="onScheduleSterilization($event)">
 </app-cat-create-modal>
+
+<!-- Modal de Agendamento de Castração -->
+<app-sterilization-schedule-modal
+  [(visible)]="sterilizationScheduleVisible"
+  [cat]="catForSterilization"
+  (sterilizationScheduled)="onSterilizationScheduled()">
+</app-sterilization-schedule-modal>
 
 <!-- Dialog de Confirmação de Delete -->
 <app-generic-modal 

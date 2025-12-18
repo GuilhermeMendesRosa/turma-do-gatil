@@ -27,6 +27,8 @@ public interface CatRepositoryCustom {
     
     List<Cat> findCatsNeedingSterilization(int minimumAgeDays);
     
+    Page<Cat> findCatsNeedingSterilization(int minimumAgeDays, Pageable pageable);
+    
     long countEligibleForSterilization(int minimumAgeDays, int overdueAgeDays);
     
     long countOverdueForSterilization(int overdueAgeDays);

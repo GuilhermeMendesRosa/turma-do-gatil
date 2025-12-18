@@ -6,6 +6,7 @@ import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
 import { GenericModalComponent, ModalAction } from '../../../shared/components';
 import { SterilizationDto, SterilizationRequest, CatSterilizationStatusDto } from '../../../models/sterilization.model';
+import { Cat } from '../../../models/cat.model';
 import { SterilizationService } from '../../../services/sterilization.service';
 
 @Component({
@@ -54,9 +55,9 @@ import { SterilizationService } from '../../../services/sterilization.service';
                   <i class="pi pi-palette"></i>
                   {{ getColorLabel(cat.color) }}
                 </span>
-                <span class="cat-info-item">
+                <span class="cat-info-item" *ngIf="catAgeInDays">
                   <i class="pi pi-clock"></i>
-                  {{ cat.ageInDays }} dias
+                  {{ catAgeInDays }} dias
                 </span>
               </div>
             </div>
@@ -113,7 +114,7 @@ import { SterilizationService } from '../../../services/sterilization.service';
 })
 export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
   @Input() visible: boolean = false;
-  @Input() cat: CatSterilizationStatusDto | null = null; // Gato para agendar castração
+  @Input() cat: CatSterilizationStatusDto | Cat | null = null; // Gato para agendar castração (aceita ambos tipos)
   @Input() sterilization: SterilizationDto | null = null; // Castração para edição (null para criação)
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() sterilizationScheduled = new EventEmitter<void>();
@@ -273,6 +274,29 @@ export class SterilizationScheduleModalComponent implements OnInit, OnChanges {
       return this.sterilization.cat;
     }
     return this.cat?.name || 'Gato não identificado';
+  }
+
+  /**
+   * Calcula a idade do gato em dias
+   * Se o cat for CatSterilizationStatusDto, usa ageInDays diretamente
+   * Se for Cat, calcula baseado em birthDate ou shelterEntryDate
+   */
+  get catAgeInDays(): number | null {
+    if (!this.cat) return null;
+    
+    // Se já tem ageInDays (é CatSterilizationStatusDto), usa diretamente
+    if ('ageInDays' in this.cat && this.cat.ageInDays !== undefined) {
+      return this.cat.ageInDays;
+    }
+    
+    // Calcular baseado em birthDate ou shelterEntryDate
+    const referenceDate = this.cat.birthDate || this.cat.shelterEntryDate;
+    if (!referenceDate) return null;
+    
+    const refDate = new Date(referenceDate);
+    const today = new Date();
+    const diffTime = today.getTime() - refDate.getTime();
+    return Math.floor(diffTime / (1000 * 60 * 60 * 24));
   }
 
   get modalTitle(): string {

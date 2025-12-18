@@ -98,9 +98,17 @@ public class CatController {
     }
 
     @GetMapping("/needing-sterilization")
-    public ResponseEntity<List<CatSterilizationStatusDto>> getCatsNeedingSterilization() {
+    public ResponseEntity<Page<CatSterilizationStatusDto>> getCatsNeedingSterilization(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+
+        Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
         try {
-            List<CatSterilizationStatusDto> cats = catService.findCatsNeedingSterilization();
+            Page<CatSterilizationStatusDto> cats = catService.findCatsNeedingSterilization(pageable);
             return ResponseEntity.ok(cats);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
