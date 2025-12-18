@@ -159,6 +159,26 @@
       </h3>
       
       <div class="form-grid">
+        <!-- CEP -->
+        <div class="form-field">
+          <label for="zipCode">CEP *</label>
+          <p-inputMask 
+            id="zipCode"
+            formControlName="zipCode"
+            mask="99999-999"
+            placeholder="00000-000"
+            (onComplete)="onCepBlur()"
+            [class.ng-invalid]="isFieldInvalid('zipCode')"
+            class="form-input">
+          </p-inputMask>
+          <small class="error-message" *ngIf="getFieldError('zipCode')">
+            {{ getFieldError('zipCode') }}
+          </small>
+          <small class="info-message" *ngIf="searchingCep">
+            <i class="pi pi-spin pi-spinner"></i> Buscando endereço...
+          </small>
+        </div>
+
         <!-- Rua -->
         <div class="form-field form-field-full">
           <label for="street">Rua *</label>
@@ -244,22 +264,6 @@
             style="text-transform: uppercase;">
           <small class="error-message" *ngIf="getFieldError('state')">
             {{ getFieldError('state') }}
-          </small>
-        </div>
-
-        <!-- CEP -->
-        <div class="form-field">
-          <label for="zipCode">CEP *</label>
-          <p-inputMask 
-            id="zipCode"
-            formControlName="zipCode"
-            mask="99999-999"
-            placeholder="00000-000"
-            [class.ng-invalid]="isFieldInvalid('zipCode')"
-            class="form-input">
-          </p-inputMask>
-          <small class="error-message" *ngIf="getFieldError('zipCode')">
-            {{ getFieldError('zipCode') }}
           </small>
         </div>
       </div>

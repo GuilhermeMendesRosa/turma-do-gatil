@@ -9,6 +9,7 @@ import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
 import { Adopter, AdopterRequest } from '../../../models/adopter.model';
 import { AdopterService } from '../../../services/adopter.service';
+import { CepService } from '../../../services/cep.service';
 import { GenericButtonComponent, GenericButtonConfig } from '../../../shared/components/generic-button.component';
 
 @Component({
@@ -38,6 +39,7 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
 
   adopterForm!: FormGroup;
   loading = false;
+  searchingCep = false;
   isEditMode = false;
 
   cancelButtonConfig: GenericButtonConfig = {
@@ -65,7 +67,8 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private adopterService: AdopterService
+    private adopterService: AdopterService,
+    private cepService: CepService
   ) {}
 
   ngOnInit(): void {
@@ -250,5 +253,28 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
   isFieldInvalid(fieldName: string): boolean {
     const field = this.adopterForm.get(fieldName);
     return !!(field?.invalid && field.touched);
+  }
+
+  onCepBlur(): void {
+    const cep = this.adopterForm.get('zipCode')?.value;
+    if (cep && cep.replace(/\D/g, '').length === 8) {
+      this.searchingCep = true;
+      this.cepService.searchCep(cep).subscribe({
+        next: (address) => {
+          if (address) {
+            this.adopterForm.patchValue({
+              street: address.street,
+              neighborhood: address.neighborhood,
+              city: address.city,
+              state: address.state
+            });
+          }
+          this.searchingCep = false;
+        },
+        error: () => {
+          this.searchingCep = false;
+        }
+      });
+    }
   }
 }

@@ -92,6 +92,16 @@
   display: block;
 }
 
+/* Info Messages */
+.info-message {
+  color: var(--p-primary-color);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 /* Dialog Footer */
 .dialog-footer {
   display: flex;
