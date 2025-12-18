@@ -21,6 +21,7 @@ import java.util.UUID;
 public class NoteService {
 
     private final NoteRepository noteRepository;
+    private final SecurityService securityService;
 
     public Page<Note> findAll(Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
@@ -65,12 +66,12 @@ public class NoteService {
         Objects.requireNonNull(id, "ID cannot be null");
         log.info("Deleting note with id: {}", id);
 
-        if (!existsById(id)) {
-            throw new NoteNotFoundException(id);
-        }
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new NoteNotFoundException(id));
 
-        noteRepository.deleteById(id);
-        log.debug("Note deleted successfully: {}", id);
+        note.setDeletedBy(securityService.getCurrentUsername());
+        noteRepository.delete(note);
+        log.debug("Note soft deleted successfully: {}", id);
     }
 
     public Page<Note> findByCatId(UUID catId, Pageable pageable) {

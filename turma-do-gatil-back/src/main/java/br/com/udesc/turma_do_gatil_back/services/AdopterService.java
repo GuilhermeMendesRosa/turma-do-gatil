@@ -22,6 +22,7 @@ import java.util.UUID;
 public class AdopterService {
 
     private final AdopterRepository adopterRepository;
+    private final SecurityService securityService;
 
     public Page<Adopter> findAll(Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
@@ -124,10 +125,13 @@ public class AdopterService {
 
         log.info("Deleting adopter with id: {}", id);
 
-        validateAdopterExists(id);
-        adopterRepository.deleteById(id);
+        Adopter adopter = adopterRepository.findById(id)
+                .orElseThrow(() -> new AdopterNotFoundException("Adopter not found with id: " + id));
 
-        log.info("Successfully deleted adopter with id: {}", id);
+        adopter.setDeletedBy(securityService.getCurrentUsername());
+        adopterRepository.delete(adopter);
+
+        log.info("Successfully soft deleted adopter with id: {}", id);
     }
 
     public Page<Adopter> findByName(String name, Pageable pageable) {

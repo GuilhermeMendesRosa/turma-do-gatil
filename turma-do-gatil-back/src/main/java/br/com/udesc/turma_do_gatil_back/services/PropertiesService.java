@@ -16,7 +16,10 @@ public class PropertiesService {
     }
 
     public void setProperty(String key, String value) {
-        Properties prop = new Properties(key, value);
+        Properties prop = propertiesRepository.findById(key)
+                .orElseGet(Properties::new);
+        prop.setKey(key);
+        prop.setValue(value);
         propertiesRepository.save(prop);
     }
 

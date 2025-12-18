@@ -23,6 +23,7 @@ public class SterilizationService {
 
     private final SterilizationRepository sterilizationRepository;
     private final PropertiesService propertiesService;
+    private final SecurityService securityService;
 
     public Page<Sterilization> findAll(Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
@@ -69,12 +70,12 @@ public class SterilizationService {
         Objects.requireNonNull(id, "ID cannot be null");
         log.info("Deleting sterilization with id: {}", id);
 
-        if (!existsById(id)) {
-            throw new SterilizationNotFoundException(id);
-        }
+        Sterilization sterilization = sterilizationRepository.findById(id)
+                .orElseThrow(() -> new SterilizationNotFoundException(id));
 
-        sterilizationRepository.deleteById(id);
-        log.debug("Sterilization deleted successfully: {}", id);
+        sterilization.setDeletedBy(securityService.getCurrentUsername());
+        sterilizationRepository.delete(sterilization);
+        log.debug("Sterilization soft deleted successfully: {}", id);
     }
 
     public Page<Sterilization> findByCatId(UUID catId, Pageable pageable) {
