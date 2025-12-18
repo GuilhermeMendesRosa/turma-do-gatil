@@ -90,7 +90,14 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       phone: ['', [Validators.required]],
       email: ['', [Validators.email]],
       instagram: [''],
-      address: ['', [Validators.required, Validators.minLength(5)]],
+      // Address fields
+      street: ['', [Validators.required]],
+      number: ['', [Validators.required]],
+      neighborhood: ['', [Validators.required]],
+      city: ['', [Validators.required]],
+      state: ['', [Validators.required, Validators.maxLength(2)]],
+      zipCode: ['', [Validators.required]],
+      complement: [''],
       registrationDate: [todayString, Validators.required]
     });
 
@@ -115,7 +122,14 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
         phone: this.adopter.phone,
         email: this.adopter.email || '',
         instagram: this.adopter.instagram || '',
-        address: this.adopter.address,
+        // Address fields
+        street: this.adopter.address?.street || '',
+        number: this.adopter.address?.number || '',
+        neighborhood: this.adopter.address?.neighborhood || '',
+        city: this.adopter.address?.city || '',
+        state: this.adopter.address?.state || '',
+        zipCode: this.adopter.address?.zipCode || '',
+        complement: this.adopter.address?.complement || '',
         registrationDate: registrationDate
       });
     } else {
@@ -151,6 +165,7 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
       // Limpar formatação do CPF e telefone antes de enviar
       const cleanCpf = formValue.cpf.replace(/\D/g, ''); // Remove tudo que não é dígito
       const cleanPhone = formValue.phone.replace(/\D/g, ''); // Remove tudo que não é dígito
+      const cleanZipCode = formValue.zipCode.replace(/\D/g, ''); // Remove tudo que não é dígito
       
       // Converter datas para string ISO
       const adopterData: AdopterRequest = {
@@ -161,7 +176,15 @@ export class AdopterCreateModalComponent implements OnInit, OnChanges {
         phone: cleanPhone,
         email: formValue.email || undefined,
         instagram: formValue.instagram || undefined,
-        address: formValue.address,
+        address: {
+          street: formValue.street,
+          number: formValue.number,
+          neighborhood: formValue.neighborhood,
+          city: formValue.city,
+          state: formValue.state.toUpperCase(),
+          zipCode: cleanZipCode,
+          complement: formValue.complement || undefined
+        },
         registrationDate: new Date(formValue.registrationDate).toISOString()
       };
 

@@ -1,3 +1,14 @@
+export interface Address {
+  id?: string;
+  street: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  number: string;
+  zipCode: string;
+  complement?: string;
+}
+
 export interface Adopter {
   id: string;
   firstName: string;
@@ -7,7 +18,7 @@ export interface Adopter {
   phone: string;
   email?: string;
   instagram?: string;
-  address: string;
+  address: Address;
   registrationDate: string;
 }
 
@@ -19,7 +30,7 @@ export interface AdopterRequest {
   phone: string;
   email?: string;
   instagram?: string;
-  address: string;
+  address: Address;
   registrationDate: string;
 }
 

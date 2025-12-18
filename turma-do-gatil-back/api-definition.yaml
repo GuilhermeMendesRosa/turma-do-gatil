@@ -1516,7 +1516,7 @@ components:
           type: string
           description: Instagram do adotante
         address:
-          type: string
+          $ref: '#/components/schemas/Address'
           description: Endereço do adotante
         registrationDate:
           type: string
@@ -1557,12 +1557,49 @@ components:
           type: string
           description: Instagram do adotante
         address:
-          type: string
+          $ref: '#/components/schemas/Address'
           description: Endereço do adotante
         registrationDate:
           type: string
           format: date-time
           description: Data de cadastro do adotante
+
+    Address:
+      type: object
+      required:
+        - street
+        - neighborhood
+        - city
+        - state
+        - number
+        - zipCode
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único do endereço
+        street:
+          type: string
+          description: Rua/Logradouro
+        neighborhood:
+          type: string
+          description: Bairro
+        city:
+          type: string
+          description: Cidade
+        state:
+          type: string
+          maxLength: 2
+          description: Estado (sigla com 2 caracteres)
+        number:
+          type: string
+          description: Número
+        zipCode:
+          type: string
+          description: CEP
+        complement:
+          type: string
+          description: Complemento (opcional)
 
     Adoption:
       type: object

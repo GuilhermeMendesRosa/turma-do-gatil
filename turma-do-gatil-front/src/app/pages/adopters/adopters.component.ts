@@ -546,7 +546,14 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       phone: ['', [Validators.required]],
       email: ['', [Validators.email]],
       instagram: [''],
-      address: ['', [Validators.required, Validators.minLength(ADOPTERS_CONFIG.MIN_ADDRESS_LENGTH)]],
+      // Address fields
+      street: ['', [Validators.required]],
+      number: ['', [Validators.required]],
+      neighborhood: ['', [Validators.required]],
+      city: ['', [Validators.required]],
+      state: ['', [Validators.required, Validators.maxLength(2)]],
+      zipCode: ['', [Validators.required]],
+      complement: [''],
       registrationDate: [today, Validators.required]
     });
 
@@ -598,7 +605,14 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       phone: adopter.phone,
       email: adopter.email || '',
       instagram: adopter.instagram || '',
-      address: adopter.address,
+      // Address fields
+      street: adopter.address?.street || '',
+      number: adopter.address?.number || '',
+      neighborhood: adopter.address?.neighborhood || '',
+      city: adopter.address?.city || '',
+      state: adopter.address?.state || '',
+      zipCode: adopter.address?.zipCode || '',
+      complement: adopter.address?.complement || '',
       registrationDate: this.formattingUtils.toInputDateFormat(adopter.registrationDate)
     };
   }
@@ -686,6 +700,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     // Limpar formatação do CPF e telefone antes de enviar
     const cleanCpf = formValue.cpf.replace(/\D/g, ''); // Remove tudo que não é dígito
     const cleanPhone = formValue.phone.replace(/\D/g, ''); // Remove tudo que não é dígito
+    const cleanZipCode = formValue.zipCode.replace(/\D/g, ''); // Remove tudo que não é dígito
     
     return {
       firstName: formValue.firstName,
@@ -695,7 +710,15 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       phone: cleanPhone,
       email: formValue.email || undefined,
       instagram: formValue.instagram || undefined,
-      address: formValue.address,
+      address: {
+        street: formValue.street,
+        number: formValue.number,
+        neighborhood: formValue.neighborhood,
+        city: formValue.city,
+        state: formValue.state.toUpperCase(),
+        zipCode: cleanZipCode,
+        complement: formValue.complement || undefined
+      },
       registrationDate: new Date(formValue.registrationDate).toISOString()
     };
   }

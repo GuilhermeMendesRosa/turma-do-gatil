@@ -206,21 +206,6 @@
             class="form-input">
         </div>
 
-        <!-- Endereço -->
-        <div class="form-field form-field-full">
-          <label for="address">Endereço Completo *</label>
-          <input 
-            pInputText 
-            id="address" 
-            formControlName="address"
-            placeholder="Rua, número, bairro, cidade - CEP"
-            [class.ng-invalid]="isFieldInvalid('address')"
-            class="form-input">
-          <small class="error-message" *ngIf="getFieldError('address')">
-            {{ getFieldError('address') }}
-          </small>
-        </div>
-
         <!-- Data de Cadastro -->
         <div class="form-field">
           <label for="registrationDate">Data de Cadastro *</label>
@@ -232,6 +217,120 @@
             class="form-input date-input">
           <small class="error-message" *ngIf="getFieldError('registrationDate')">
             {{ getFieldError('registrationDate') }}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Endereço -->
+    <div class="form-section">
+      <h3>
+        <i class="fas fa-map-marker-alt"></i>
+        Endereço
+      </h3>
+      
+      <div class="form-grid">
+        <!-- Rua -->
+        <div class="form-field form-field-full">
+          <label for="street">Rua *</label>
+          <input 
+            pInputText 
+            id="street" 
+            formControlName="street"
+            placeholder="Nome da rua/logradouro"
+            [class.ng-invalid]="isFieldInvalid('street')"
+            class="form-input">
+          <small class="error-message" *ngIf="getFieldError('street')">
+            {{ getFieldError('street') }}
+          </small>
+        </div>
+
+        <!-- Número -->
+        <div class="form-field">
+          <label for="number">Número *</label>
+          <input 
+            pInputText 
+            id="number" 
+            formControlName="number"
+            placeholder="Nº"
+            [class.ng-invalid]="isFieldInvalid('number')"
+            class="form-input">
+          <small class="error-message" *ngIf="getFieldError('number')">
+            {{ getFieldError('number') }}
+          </small>
+        </div>
+
+        <!-- Complemento -->
+        <div class="form-field">
+          <label for="complement">Complemento</label>
+          <input 
+            pInputText 
+            id="complement" 
+            formControlName="complement"
+            placeholder="Apto, Bloco, etc."
+            class="form-input">
+        </div>
+
+        <!-- Bairro -->
+        <div class="form-field">
+          <label for="neighborhood">Bairro *</label>
+          <input 
+            pInputText 
+            id="neighborhood" 
+            formControlName="neighborhood"
+            placeholder="Nome do bairro"
+            [class.ng-invalid]="isFieldInvalid('neighborhood')"
+            class="form-input">
+          <small class="error-message" *ngIf="getFieldError('neighborhood')">
+            {{ getFieldError('neighborhood') }}
+          </small>
+        </div>
+
+        <!-- Cidade -->
+        <div class="form-field">
+          <label for="city">Cidade *</label>
+          <input 
+            pInputText 
+            id="city" 
+            formControlName="city"
+            placeholder="Nome da cidade"
+            [class.ng-invalid]="isFieldInvalid('city')"
+            class="form-input">
+          <small class="error-message" *ngIf="getFieldError('city')">
+            {{ getFieldError('city') }}
+          </small>
+        </div>
+
+        <!-- Estado -->
+        <div class="form-field">
+          <label for="state">Estado *</label>
+          <input 
+            pInputText 
+            id="state" 
+            formControlName="state"
+            placeholder="UF"
+            maxlength="2"
+            [class.ng-invalid]="isFieldInvalid('state')"
+            class="form-input"
+            style="text-transform: uppercase;">
+          <small class="error-message" *ngIf="getFieldError('state')">
+            {{ getFieldError('state') }}
+          </small>
+        </div>
+
+        <!-- CEP -->
+        <div class="form-field">
+          <label for="zipCode">CEP *</label>
+          <p-inputMask 
+            id="zipCode"
+            formControlName="zipCode"
+            mask="99999-999"
+            placeholder="00000-000"
+            [class.ng-invalid]="isFieldInvalid('zipCode')"
+            class="form-input">
+          </p-inputMask>
+          <small class="error-message" *ngIf="getFieldError('zipCode')">
+            {{ getFieldError('zipCode') }}
           </small>
         </div>
       </div>

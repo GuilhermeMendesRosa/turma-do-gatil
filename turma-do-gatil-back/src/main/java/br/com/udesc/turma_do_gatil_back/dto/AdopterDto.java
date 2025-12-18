@@ -19,6 +19,6 @@ public class AdopterDto {
     private String phone;
     private String email;
     private String instagram;
-    private String address;
+    private AddressDto address;
     private LocalDateTime registrationDate;
 }

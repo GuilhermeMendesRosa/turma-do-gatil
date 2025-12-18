@@ -41,8 +41,8 @@ public class Adopter {
     @Column
     private String instagram;
 
-    @Column(nullable = false)
-    private String address;
+    @OneToOne(mappedBy = "adopter", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Address address;
 
     @Column(name = "registration_date", nullable = false)
     private LocalDateTime registrationDate;

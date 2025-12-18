@@ -365,7 +365,7 @@
                     <i class="fas fa-map-marker-alt"></i>
                     Endereço
                   </div>
-                  <div class="detail-value">{{ adopter.address }}</div>
+                  <div class="detail-value">{{ formatAddress(adopter.address) }}</div>
                 </div>
 
                 <div class="detail-card" *ngIf="adopter.registrationDate">

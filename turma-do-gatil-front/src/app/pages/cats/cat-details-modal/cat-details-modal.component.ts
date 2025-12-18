@@ -15,7 +15,7 @@ import { Cat, Color, Sex, CatAdoptionStatus } from '../../../models/cat.model';
 import { Note, NoteRequest } from '../../../models/note.model';
 import { SterilizationDto } from '../../../models/sterilization.model';
 import { Adoption } from '../../../models/adoption.model';
-import { Adopter } from '../../../models/adopter.model';
+import { Adopter, Address } from '../../../models/adopter.model';
 import { NoteService } from '../../../services/note.service';
 import { SterilizationService } from '../../../services/sterilization.service';
 import { AdoptionService } from '../../../services/adoption.service';
@@ -598,5 +598,42 @@ export class CatDetailsModalComponent implements OnInit, OnChanges {
       default:
         return this.adoption.status;
     }
+  }
+
+  /**
+   * Formata o endereço estruturado para exibição
+   */
+  formatAddress(address: Address): string {
+    if (!address) return '-';
+    
+    const parts = [];
+    
+    if (address.street) {
+      let streetPart = address.street;
+      if (address.number) {
+        streetPart += `, ${address.number}`;
+      }
+      if (address.complement) {
+        streetPart += ` - ${address.complement}`;
+      }
+      parts.push(streetPart);
+    }
+    
+    if (address.neighborhood) {
+      parts.push(address.neighborhood);
+    }
+    
+    if (address.city && address.state) {
+      parts.push(`${address.city}/${address.state}`);
+    } else if (address.city) {
+      parts.push(address.city);
+    }
+    
+    if (address.zipCode) {
+      const formattedZip = address.zipCode.replace(/(\d{5})(\d{3})/, '$1-$2');
+      parts.push(`CEP: ${formattedZip}`);
+    }
+    
+    return parts.join(' - ') || '-';
   }
 }
