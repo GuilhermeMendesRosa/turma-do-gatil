@@ -39,6 +39,35 @@ public class EntityMapper {
         return cat;
     }
 
+    // Address mappings
+    public static AddressDto toAddressDto(Address address) {
+        if (address == null) return null;
+        return new AddressDto(
+            address.getId(),
+            address.getStreet(),
+            address.getNeighborhood(),
+            address.getCity(),
+            address.getState(),
+            address.getNumber(),
+            address.getZipCode(),
+            address.getComplement()
+        );
+    }
+
+    public static Address toAddressEntity(AddressDto addressDto) {
+        if (addressDto == null) return null;
+        Address address = new Address();
+        address.setId(addressDto.getId());
+        address.setStreet(addressDto.getStreet());
+        address.setNeighborhood(addressDto.getNeighborhood());
+        address.setCity(addressDto.getCity());
+        address.setState(addressDto.getState());
+        address.setNumber(addressDto.getNumber());
+        address.setZipCode(addressDto.getZipCode());
+        address.setComplement(addressDto.getComplement());
+        return address;
+    }
+
     // Adopter mappings
     public static AdopterDto toAdopterDto(Adopter adopter) {
         if (adopter == null) return null;
@@ -51,7 +80,7 @@ public class EntityMapper {
             adopter.getPhone(),
             adopter.getEmail(),
             adopter.getInstagram(),
-            adopter.getAddress(),
+            toAddressDto(adopter.getAddress()),
             adopter.getRegistrationDate()
         );
     }
@@ -67,7 +96,14 @@ public class EntityMapper {
         adopter.setPhone(adopterDto.getPhone());
         adopter.setEmail(adopterDto.getEmail());
         adopter.setInstagram(adopterDto.getInstagram());
-        adopter.setAddress(adopterDto.getAddress());
+        
+        // Map address
+        Address address = toAddressEntity(adopterDto.getAddress());
+        if (address != null) {
+            address.setAdopter(adopter);
+        }
+        adopter.setAddress(address);
+        
         adopter.setRegistrationDate(adopterDto.getRegistrationDate());
         return adopter;
     }

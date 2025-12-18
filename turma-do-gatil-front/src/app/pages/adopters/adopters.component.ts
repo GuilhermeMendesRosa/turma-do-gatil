@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputMaskModule } from 'primeng/inputmask';
-import { DividerModule } from 'primeng/divider';
 import { Subject, takeUntil } from 'rxjs';
 
 import { AdopterService } from '../../services/adopter.service';
@@ -18,8 +16,6 @@ import {
   RefreshButtonComponent,
   PaginationComponent,
   PaginationInfo,
-  GenericModalComponent,
-  ModalAction,
   ModalButtonComponent,
   ConfirmationModalComponent,
   ConfirmationConfig,
@@ -28,15 +24,14 @@ import {
 import { FormattingUtilsService } from '../../shared/services/formatting-utils.service';
 
 // Imports das configurações locais
-import { AdopterFormData } from './models/adopter-form.interface';
 import { 
   AdopterTableAction, 
   ModalType, 
   SortDirection,
-  ADOPTERS_CONFIG,
-  VALIDATION_MESSAGES 
+  ADOPTERS_CONFIG 
 } from './constants/adopters.constants';
 import { AdopterDetailsModalComponent } from './adopter-details-modal/adopter-details-modal.component';
+import { AdopterCreateModalComponent } from './adopter-create-modal/adopter-create-modal.component';
 
 /**
  * Componente responsável pela gestão de adotantes
@@ -55,11 +50,7 @@ import { AdopterDetailsModalComponent } from './adopter-details-modal/adopter-de
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule,
     InputTextModule,
-    InputMaskModule,
-    DividerModule,
-    GenericModalComponent,
     DataTableComponent,
     ContentCardComponent,
     PageHeaderComponent,
@@ -68,7 +59,8 @@ import { AdopterDetailsModalComponent } from './adopter-details-modal/adopter-de
     ModalButtonComponent,
     ConfirmationModalComponent,
     LoadingStateComponent,
-    AdopterDetailsModalComponent
+    AdopterDetailsModalComponent,
+    AdopterCreateModalComponent
   ],
   templateUrl: './adopters.component.html',
   styleUrls: ['./adopters.component.css']
@@ -76,7 +68,6 @@ import { AdopterDetailsModalComponent } from './adopter-details-modal/adopter-de
 export class AdoptersComponent implements OnInit, OnDestroy {
   // ==================== DEPENDENCY INJECTION ====================
   private readonly adopterService = inject(AdopterService);
-  private readonly fb = inject(FormBuilder);
   private readonly formattingUtils = inject(FormattingUtilsService);
   private readonly destroy$ = new Subject<void>();
 
@@ -93,9 +84,6 @@ export class AdoptersComponent implements OnInit, OnDestroy {
   showCreateModal = false;
   showDetailsModal = false;
   selectedAdopter: Adopter | null = null;
-  currentModalType: ModalType = ModalType.CREATE;
-  adopterForm!: FormGroup<any>;
-  modalActions: ModalAction[] = [];
   
   // ==================== CONFIRMATION MODAL ====================
   confirmationModalVisible = false;
@@ -120,21 +108,6 @@ export class AdoptersComponent implements OnInit, OnDestroy {
     message: 'Nenhum adotante encontrado.'
   };
 
-  // ==================== COMPUTED PROPERTIES ====================
-  /**
-   * Verifica se o modal está em modo de edição
-   */
-  get isEditMode(): boolean {
-    return this.currentModalType === ModalType.EDIT;
-  }
-
-  /**
-   * Obtém o título do modal baseado no modo atual
-   */
-  get modalTitle(): string {
-    return this.isEditMode ? 'Editar Adotante' : 'Adicionar Novo Adotante';
-  }
-
   // ==================== LIFECYCLE HOOKS ====================
   ngOnInit(): void {
     this.initializeComponent();
@@ -150,8 +123,6 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    * Inicializa o componente
    */
   private initializeComponent(): void {
-    this.initForm();
-    this.setupModalActions();
     this.loadAdopters();
   }
 
@@ -495,10 +466,7 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    * Abre modal para criação de novo adotante
    */
   openCreateModal(): void {
-    this.resetModalState();
-    this.currentModalType = ModalType.CREATE;
-    this.resetForm();
-    this.setupModalActions();
+    this.selectedAdopter = null;
     this.showCreateModal = true;
   }
 
@@ -506,113 +474,17 @@ export class AdoptersComponent implements OnInit, OnDestroy {
    * Abre modal para edição de adotante
    */
   openEditModal(adopter: Adopter): void {
-    this.resetModalState();
     this.selectedAdopter = adopter;
-    this.currentModalType = ModalType.EDIT;
-    this.updateFormForEditing();
-    this.setupModalActions();
     this.showCreateModal = true;
   }
 
   /**
-   * Reseta estado do modal
+   * Callback quando adotante é salvo (criado ou atualizado)
    */
-  private resetModalState(): void {
-    this.selectedAdopter = null;
-    this.currentModalType = ModalType.CREATE;
-  }
-
-  /**
-   * Cancela ação do modal
-   */
-  onModalCancel(): void {
+  onAdopterSaved(): void {
+    this.loadAdopters();
     this.showCreateModal = false;
-    this.resetForm();
-    this.resetModalState();
-  }
-
-  // ==================== MÉTODOS DO FORMULÁRIO ====================
-  /**
-   * Inicializa o formulário reativo
-   */
-  initForm(): void {
-    const today = this.formattingUtils.getCurrentDateForInput();
-    
-    this.adopterForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(ADOPTERS_CONFIG.MIN_NAME_LENGTH)]],
-      lastName: ['', [Validators.required, Validators.minLength(ADOPTERS_CONFIG.MIN_NAME_LENGTH)]],
-      birthDate: [''],
-      cpf: ['', [Validators.required]],
-      phone: ['', [Validators.required]],
-      email: ['', [Validators.email]],
-      instagram: [''],
-      address: ['', [Validators.required, Validators.minLength(ADOPTERS_CONFIG.MIN_ADDRESS_LENGTH)]],
-      registrationDate: [today, Validators.required]
-    });
-
-    this.setupFormStatusSubscription();
-  }
-
-  /**
-   * Configura subscription para mudanças no status do formulário
-   */
-  private setupFormStatusSubscription(): void {
-    this.adopterForm.statusChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        if (this.showCreateModal) {
-          this.updateModalSaveButton();
-        }
-      });
-  }
-
-  /**
-   * Atualiza estado do botão salvar no modal
-   */
-  private updateModalSaveButton(): void {
-    const saveAction = this.modalActions.find(action => action.icon === 'pi pi-check');
-    if (saveAction) {
-      saveAction.disabled = this.isFormInvalid();
-    }
-  }
-
-  /**
-   * Atualiza formulário para modo de edição
-   */
-  updateFormForEditing(): void {
-    if (this.selectedAdopter) {
-      const formData = this.mapAdopterToFormData(this.selectedAdopter);
-      this.adopterForm.patchValue(formData);
-    }
-  }
-
-  /**
-   * Mapeia dados do adotante para formato do formulário
-   */
-  private mapAdopterToFormData(adopter: Adopter): Partial<AdopterFormData> {
-    return {
-      firstName: adopter.firstName,
-      lastName: adopter.lastName,
-      birthDate: adopter.birthDate ? this.formattingUtils.toInputDateFormat(adopter.birthDate) : '',
-      cpf: adopter.cpf,
-      phone: adopter.phone,
-      email: adopter.email || '',
-      instagram: adopter.instagram || '',
-      address: adopter.address,
-      registrationDate: this.formattingUtils.toInputDateFormat(adopter.registrationDate)
-    };
-  }
-
-  /**
-   * Reseta o formulário para estado inicial
-   */
-  resetForm(): void {
-    this.adopterForm.reset();
-    const today = this.formattingUtils.getCurrentDateForInput();
-    
-    this.adopterForm.patchValue({
-      registrationDate: today
-    });
+    this.selectedAdopter = null;
   }
 
   // ==================== CONFIGURAÇÃO DE BOTÕES E AÇÕES ====================
@@ -626,175 +498,5 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       severity: 'primary' as const,
       action: this.openCreateModal.bind(this)
     };
-  }
-
-  /**
-   * Configura ações do modal
-   */
-  setupModalActions(): void {
-    this.modalActions = [
-      {
-        label: 'Cancelar',
-        icon: 'pi pi-times',
-        severity: 'secondary',
-        outlined: true,
-        action: () => this.onModalCancel()
-      },
-      {
-        label: this.isEditMode ? 'Salvar Alterações' : 'Salvar Adotante',
-        icon: 'pi pi-check',
-        severity: 'primary',
-        loading: this.loading,
-        disabled: this.isFormInvalid(),
-        action: () => this.onSubmit()
-      }
-    ];
-  }
-
-  /**
-   * Verifica se o formulário é inválido
-   */
-  private isFormInvalid(): boolean {
-    return !this.adopterForm?.valid;
-  }
-
-  // ==================== SUBMISSÃO DO FORMULÁRIO ====================
-  /**
-   * Manipula submissão do formulário
-   */
-  onSubmit(): void {
-    if (this.adopterForm.valid) {
-      this.loading = true;
-      const adopterData = this.buildAdopterRequest();
-      
-      if (this.isEditMode && this.selectedAdopter) {
-        this.updateAdopter(adopterData);
-      } else {
-        this.createAdopter(adopterData);
-      }
-    } else {
-      this.markFormGroupTouched();
-    }
-  }
-
-  /**
-   * Constrói objeto de requisição do adotante
-   */
-  private buildAdopterRequest(): AdopterRequest {
-    const formValue = this.adopterForm.value;
-    
-    // Limpar formatação do CPF e telefone antes de enviar
-    const cleanCpf = formValue.cpf.replace(/\D/g, ''); // Remove tudo que não é dígito
-    const cleanPhone = formValue.phone.replace(/\D/g, ''); // Remove tudo que não é dígito
-    
-    return {
-      firstName: formValue.firstName,
-      lastName: formValue.lastName,
-      birthDate: formValue.birthDate ? new Date(formValue.birthDate).toISOString() : undefined,
-      cpf: cleanCpf,
-      phone: cleanPhone,
-      email: formValue.email || undefined,
-      instagram: formValue.instagram || undefined,
-      address: formValue.address,
-      registrationDate: new Date(formValue.registrationDate).toISOString()
-    };
-  }
-
-  /**
-   * Cria novo adotante
-   */
-  private createAdopter(adopterData: AdopterRequest): void {
-    this.adopterService.createAdopter(adopterData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => this.handleAdopterSaved(),
-        error: (error) => this.handleSaveError(error),
-        complete: () => this.loading = false
-      });
-  }
-
-  /**
-   * Atualiza adotante existente
-   */
-  private updateAdopter(adopterData: AdopterRequest): void {
-    if (!this.selectedAdopter) return;
-    
-    this.adopterService.updateAdopter(this.selectedAdopter.id, adopterData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => this.handleAdopterSaved(),
-        error: (error) => this.handleSaveError(error),
-        complete: () => this.loading = false
-      });
-  }
-
-  /**
-   * Manipula sucesso na gravação
-   */
-  private handleAdopterSaved(): void {
-    this.loadAdopters();
-    this.showCreateModal = false;
-    this.resetForm();
-    this.resetModalState();
-  }
-
-  /**
-   * Manipula erro na gravação
-   */
-  private handleSaveError(error: any): void {
-    console.error('Erro ao salvar adotante:', error);
-  }
-
-  /**
-   * Marca todos os campos do formulário como tocados
-   */
-  private markFormGroupTouched(): void {
-    Object.keys(this.adopterForm.controls).forEach(key => {
-      const control = this.adopterForm.get(key);
-      control?.markAsTouched();
-    });
-  }
-
-  // ==================== VALIDAÇÃO E MENSAGENS DE ERRO ====================
-  /**
-   * Obtém mensagem de erro para um campo específico
-   */
-  getFieldError(fieldName: string): string | null {
-    const field = this.adopterForm.get(fieldName);
-    if (field?.errors && field.touched) {
-      const errorType = Object.keys(field.errors)[0];
-      const fieldMessages = VALIDATION_MESSAGES[fieldName as keyof typeof VALIDATION_MESSAGES];
-      
-      if (fieldMessages && (fieldMessages as any)[errorType]) {
-        return (fieldMessages as any)[errorType];
-      }
-      
-      return this.getGenericErrorMessage(errorType, field.errors[errorType]);
-    }
-    return null;
-  }
-
-  /**
-   * Obtém mensagem de erro genérica
-   */
-  private getGenericErrorMessage(errorType: string, errorValue: any): string {
-    switch (errorType) {
-      case 'required':
-        return 'Este campo é obrigatório';
-      case 'minlength':
-        return `Mínimo de ${errorValue.requiredLength} caracteres`;
-      case 'email':
-        return 'Email inválido';
-      default:
-        return 'Campo inválido';
-    }
-  }
-
-  /**
-   * Verifica se um campo é inválido
-   */
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.adopterForm.get(fieldName);
-    return !!(field?.invalid && field.touched);
   }
 }

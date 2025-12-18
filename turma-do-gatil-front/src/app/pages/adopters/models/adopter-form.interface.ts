@@ -9,7 +9,14 @@ export interface AdopterFormData {
   phone: string;
   email?: string;
   instagram?: string;
-  address: string;
+  // Address fields
+  street: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  complement?: string;
   registrationDate: string;
 }
 
