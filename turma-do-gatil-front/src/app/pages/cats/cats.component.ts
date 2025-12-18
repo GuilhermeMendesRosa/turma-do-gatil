@@ -44,6 +44,7 @@ import {
 // Components
 import { CatDetailsModalComponent } from './cat-details-modal/cat-details-modal.component';
 import { CatCreateModalComponent } from './cat-create-modal/cat-create-modal.component';
+import { SterilizationScheduleModalComponent } from '../sterilizations/sterilization-schedule-modal/sterilization-schedule-modal.component';
 import { 
   PageHeaderComponent,
   StatsGridComponent, 
@@ -74,6 +75,7 @@ import {
     ToastModule,
     CatDetailsModalComponent,
     CatCreateModalComponent,
+    SterilizationScheduleModalComponent,
     // Componentes genéricos
     PageHeaderComponent,
     StatsGridComponent,
@@ -121,6 +123,10 @@ export class CatsComponent implements OnInit, OnDestroy {
     catCreateEdit: { visible: false, cat: null },
     deleteConfirm: { visible: false, cat: null }
   };
+
+  // Estado do modal de agendamento de castração
+  sterilizationScheduleVisible = false;
+  catForSterilization: Cat | null = null;
 
   paginationConfig: PaginationConfig = {
     currentPage: 0,
@@ -537,6 +543,30 @@ export class CatsComponent implements OnInit, OnDestroy {
       severity: 'success',
       summary: 'Sucesso',
       detail: 'Gato cadastrado com sucesso!'
+    });
+  }
+
+  /**
+   * Manipula a solicitação de agendamento de castração após criar o gato
+   */
+  onScheduleSterilization(cat: Cat): void {
+    this.dialogsState.catCreateEdit = { visible: false, cat: null };
+    this.catForSterilization = cat;
+    this.sterilizationScheduleVisible = true;
+  }
+
+  /**
+   * Manipula o sucesso no agendamento de castração
+   */
+  onSterilizationScheduled(): void {
+    this.sterilizationScheduleVisible = false;
+    this.catForSterilization = null;
+    this.loadCats();
+    this.loadStats();
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: 'Castração agendada com sucesso!'
     });
   }
 

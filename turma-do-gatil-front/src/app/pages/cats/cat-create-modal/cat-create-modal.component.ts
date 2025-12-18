@@ -11,6 +11,7 @@ import { Select } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { DividerModule } from 'primeng/divider';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { TooltipModule } from 'primeng/tooltip';
 
 // RxJS
 import { Observable, of } from 'rxjs';
@@ -18,7 +19,7 @@ import { switchMap, catchError, finalize } from 'rxjs/operators';
 
 // Models
 import { Cat, CatRequest, Color, Sex } from '../../../models/cat.model';
-import { SterilizationRequest } from '../../../models/sterilization.model';
+import { SterilizationRequest, SterilizationDays } from '../../../models/sterilization.model';
 import { Adopter } from '../../../models/adopter.model';
 import { AdoptionRequest, AdoptionStatus } from '../../../models/adoption.model';
 
@@ -47,6 +48,7 @@ import { AdopterCreateModalComponent } from '../../adopters/adopter-create-modal
     DividerModule,
     CheckboxModule,
     AutoCompleteModule,
+    TooltipModule,
     GenericButtonComponent,
     AdopterCreateModalComponent
   ],
@@ -59,6 +61,7 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() catCreated = new EventEmitter<void>();
   @Output() catUpdated = new EventEmitter<void>();
+  @Output() scheduleSterilizationForCat = new EventEmitter<Cat>();
 
   catForm!: FormGroup;
   loading = false;
@@ -71,6 +74,11 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
   allAdopters: Adopter[] = [];
   filteredAdopters: Adopter[] = [];
   showCreateAdopterModal = false;
+
+  // Sterilization eligibility
+  minSterilizationDays: number = 90;
+  sterilizationEligible: boolean = false;
+  sterilizationDisabledReason: string = '';
 
   colorOptions = [
     { label: 'Branco', value: Color.WHITE },
@@ -142,12 +150,82 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
       shelterEntryDate: [todayString, Validators.required],
       alreadySterilized: [false], // Novo campo para indicar se o gato já é castrado
       sterilizationDate: [''], // Data da castração (se já foi castrado)
+      scheduleSterilization: [false], // Novo campo para agendar castração
       alreadyAdopted: [false], // Campo para indicar se o gato já foi adotado
       adoptionDate: [todayString] // Data da adoção
     });
 
+    // Carregar dias mínimos de castração
+    this.loadSterilizationDays();
+
+    // Observar mudanças nos campos de data para recalcular elegibilidade
+    this.catForm.get('birthDate')?.valueChanges.subscribe(() => this.updateSterilizationEligibility());
+    this.catForm.get('shelterEntryDate')?.valueChanges.subscribe(() => this.updateSterilizationEligibility());
+
+    // Desmarcar scheduleSterilization quando alreadySterilized é marcado e vice-versa
+    this.catForm.get('alreadySterilized')?.valueChanges.subscribe((value) => {
+      if (value) {
+        this.catForm.get('scheduleSterilization')?.setValue(false);
+      }
+    });
+
     // Atualizar o formulário se estiver editando
     this.updateFormForEditing();
+  }
+
+  /**
+   * Carrega os dias mínimos de castração do backend
+   */
+  loadSterilizationDays(): void {
+    this.sterilizationService.getSterilizationDays().subscribe({
+      next: (days: SterilizationDays) => {
+        this.minSterilizationDays = days.minDays;
+        this.updateSterilizationEligibility();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar dias de castração:', error);
+        // Usar valor padrão
+        this.minSterilizationDays = 90;
+        this.updateSterilizationEligibility();
+      }
+    });
+  }
+
+  /**
+   * Calcula a elegibilidade para castração baseado na idade do gato
+   * Usa birthDate se disponível, senão usa shelterEntryDate
+   */
+  updateSterilizationEligibility(): void {
+    const birthDate = this.catForm.get('birthDate')?.value;
+    const shelterEntryDate = this.catForm.get('shelterEntryDate')?.value;
+    
+    // Usa birthDate se disponível, senão usa shelterEntryDate
+    const referenceDate = birthDate || shelterEntryDate;
+    
+    if (!referenceDate) {
+      this.sterilizationEligible = false;
+      this.sterilizationDisabledReason = 'Informe a data de nascimento ou entrada no abrigo';
+      return;
+    }
+
+    const refDate = new Date(referenceDate);
+    const today = new Date();
+    const diffTime = today.getTime() - refDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays >= this.minSterilizationDays) {
+      this.sterilizationEligible = true;
+      this.sterilizationDisabledReason = '';
+    } else {
+      this.sterilizationEligible = false;
+      const daysRemaining = this.minSterilizationDays - diffDays;
+      const dateType = birthDate ? 'idade' : 'tempo no abrigo';
+      this.sterilizationDisabledReason = `O gato precisa ter pelo menos ${this.minSterilizationDays} dias de ${dateType} para ser castrado. Faltam ${daysRemaining} dias.`;
+      // Desmarcar scheduleSterilization se não for elegível
+      if (this.catForm.get('scheduleSterilization')?.value) {
+        this.catForm.get('scheduleSterilization')?.setValue(false);
+      }
+    }
   }
 
   updateFormForEditing(): void {
@@ -415,6 +493,12 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
    * @returns Observable que completa após o processamento
    */
   private handleSterilization(cat: Cat, formValue: any): Observable<void> {
+    // Verificar se há castração agendada (nova funcionalidade)
+    if (formValue.scheduleSterilization && !formValue.alreadySterilized) {
+      this.createScheduledSterilization(cat);
+      return of(void 0);
+    }
+
     if (!formValue.alreadySterilized) {
       // Sem castração, verificar se há adoção
       if (this.isEditMode) {
@@ -437,6 +521,16 @@ export class CatCreateModalComponent implements OnInit, OnChanges {
 
     // Retornar observable vazio já que a castração é tratada separadamente
     return of(void 0);
+  }
+
+  /**
+   * Emite evento para abrir o modal de agendamento de castração
+   */
+  private createScheduledSterilization(cat: Cat): void {
+    this.scheduleSterilizationForCat.emit(cat);
+    this.catCreated.emit();
+    this.loading = false;
+    this.onHide();
   }
 
   /**

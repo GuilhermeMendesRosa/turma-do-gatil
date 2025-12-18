@@ -177,6 +177,11 @@
   user-select: none;
 }
 
+.checkbox-label.disabled-label {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
 /* Info Message */
 .info-message {
   color: var(--p-primary-color);
