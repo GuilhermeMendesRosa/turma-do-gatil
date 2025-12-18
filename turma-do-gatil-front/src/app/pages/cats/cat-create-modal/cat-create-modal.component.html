@@ -183,7 +183,111 @@
         </div>
       </div>
     </div>
+
+    <!-- Informações de Adoção (apenas para criação) -->
+    <div class="form-section" *ngIf="!isEditMode">
+      <h3>
+        <i class="fas fa-heart"></i>
+        Adoção
+      </h3>
+      
+      <div class="form-grid">
+        <!-- Checkbox para indicar se já foi adotado -->
+        <div class="form-field full-width">
+          <div class="checkbox-field">
+            <p-checkbox 
+              formControlName="alreadyAdopted"
+              [binary]="true"
+              inputId="alreadyAdopted">
+            </p-checkbox>
+            <label for="alreadyAdopted" class="checkbox-label">
+              Este gato já foi adotado
+            </label>
+          </div>
+        </div>
+
+        <!-- Campos de adoção (aparecem apenas se marcou como adotado) -->
+        <ng-container *ngIf="catForm.get('alreadyAdopted')?.value">
+          <!-- Seleção do Adotante -->
+          <div class="form-field full-width">
+            <label for="adopter">
+              <i class="fas fa-user"></i>
+              Adotante *
+            </label>
+            
+            <div class="adopter-selection">
+              <p-autoComplete
+                id="adopter"
+                [(ngModel)]="selectedAdopter"
+                [ngModelOptions]="{standalone: true}"
+                [suggestions]="filteredAdopters"
+                (completeMethod)="searchAdopters($event)"
+                (onSelect)="selectAdopter($event)"
+                (onClear)="clearAdopterSelection()"
+                [optionLabel]="getAdopterLabel"
+                placeholder="Digite o nome, email ou CPF do adotante..."
+                [minLength]="2"
+                styleClass="form-input adopter-autocomplete">
+                
+                <ng-template let-adopter pTemplate="item">
+                  <div class="adopter-item">
+                    <div class="adopter-avatar">
+                      <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="adopter-info">
+                      <div class="adopter-name">{{ adopter.firstName }} {{ adopter.lastName }}</div>
+                      <div class="adopter-contact">{{ adopter.email || 'Sem email' }} • {{ formatCpf(adopter.cpf) }}</div>
+                    </div>
+                  </div>
+                </ng-template>
+                
+                <ng-template let-adopter pTemplate="selectedItem">
+                  <div class="selected-adopter-item">
+                    <div class="adopter-avatar">
+                      <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="adopter-info">
+                      <div class="adopter-name">{{ adopter.firstName }} {{ adopter.lastName }}</div>
+                      <div class="adopter-contact">{{ adopter.email || 'Sem email' }} • {{ formatCpf(adopter.cpf) }}</div>
+                    </div>
+                  </div>
+                </ng-template>
+              </p-autoComplete>
+              
+              <button
+                type="button"
+                class="create-adopter-button"
+                (click)="openCreateAdopterModal()"
+                title="Criar novo adotante">
+                <i class="pi pi-plus"></i>
+                <span class="button-text">Novo Adotante</span>
+              </button>
+            </div>
+            
+            <small class="error-message" *ngIf="catForm.get('alreadyAdopted')?.value && !selectedAdopter">
+              Selecione um adotante para registrar a adoção
+            </small>
+          </div>
+
+          <!-- Data da Adoção -->
+          <div class="form-field">
+            <label for="adoptionDate">Data da Adoção *</label>
+            <input 
+              type="date" 
+              id="adoptionDate" 
+              formControlName="adoptionDate"
+              class="form-input date-input">
+          </div>
+        </ng-container>
+      </div>
+    </div>
   </form>
+
+  <!-- Modal de Criação de Adotante -->
+  <app-adopter-create-modal
+    [(visible)]="showCreateAdopterModal"
+    (adopterCreated)="onAdopterCreated()">
+  </app-adopter-create-modal>
 
   <ng-template pTemplate="footer">
     <div class="dialog-footer">

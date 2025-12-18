@@ -276,3 +276,148 @@
 .file-info i {
   color: var(--p-primary-color);
 }
+
+/* ===== ESTILOS DE ADOÇÃO ===== */
+
+/* Adopter Selection */
+.adopter-selection {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.adopter-autocomplete {
+  flex: 1;
+  width: 100%;
+}
+
+/* Estilos para o item do autocomplete */
+.adopter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white !important;
+  color: var(--p-text-color) !important;
+  width: 100%;
+  border-radius: 6px;
+}
+
+.adopter-item:hover {
+  background: var(--p-surface-ground) !important;
+  transform: translateX(2px);
+}
+
+.adopter-item .adopter-avatar,
+.selected-adopter-item .adopter-avatar {
+  color: var(--p-primary-color);
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(242, 187, 174, 0.1);
+  border-radius: 50%;
+}
+
+.adopter-item .adopter-name,
+.selected-adopter-item .adopter-name {
+  font-weight: 600;
+  color: var(--p-text-color);
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adopter-item .adopter-contact,
+.selected-adopter-item .adopter-contact {
+  font-size: 0.75rem;
+  color: var(--p-text-color-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adopter-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Selected adopter item */
+.selected-adopter-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+  border: 2px solid #0ea5e9 !important;
+  border-radius: 8px !important;
+  color: var(--p-text-color) !important;
+  width: 100%;
+}
+
+.selected-adopter-item .adopter-avatar {
+  color: #0ea5e9;
+  background: rgba(14, 165, 233, 0.1);
+}
+
+.selected-adopter-item .adopter-name {
+  color: #0c4a6e;
+}
+
+.selected-adopter-item .adopter-contact {
+  color: #0369a1;
+}
+
+/* Botão de criar adotante */
+.create-adopter-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 48px;
+  min-width: 48px;
+  padding: 0 1rem;
+  background: linear-gradient(135deg, var(--p-primary-color, #F2BBAE) 0%, var(--p-primary-600, #E5A693) 100%);
+  border: 2px solid var(--p-primary-color, #F2BBAE);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.create-adopter-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.create-adopter-button i {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.create-adopter-button .button-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .adopter-selection {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .create-adopter-button {
+    width: 100%;
+  }
+}
