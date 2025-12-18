@@ -8,6 +8,7 @@ export interface PaginationInfo {
   last: boolean;
   totalPages: number;
   currentPage: number;
+  pageSize: number;
 }
 
 @Component({
@@ -17,7 +18,7 @@ export interface PaginationInfo {
   template: `
     <div class="pagination-container" *ngIf="pagination.totalElements > 0">
       <div class="pagination-info">
-        Mostrando {{ pagination.numberOfElements }} de {{ pagination.totalElements }} resultados
+        Mostrando {{ (pagination.currentPage * pagination.pageSize) + pagination.numberOfElements }} de {{ pagination.totalElements }} resultados
       </div>
       <div class="pagination-controls">
         <button 

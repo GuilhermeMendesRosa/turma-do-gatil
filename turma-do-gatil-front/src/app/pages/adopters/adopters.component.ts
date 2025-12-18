@@ -387,7 +387,8 @@ export class AdoptersComponent implements OnInit, OnDestroy {
       first: this.first === 0,
       last: this.first + this.rows >= this.totalRecords,
       totalPages: Math.ceil(this.totalRecords / this.rows),
-      currentPage: Math.floor(this.first / this.rows)
+      currentPage: Math.floor(this.first / this.rows),
+      pageSize: this.rows
     };
   }
 

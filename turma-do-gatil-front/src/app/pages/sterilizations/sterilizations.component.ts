@@ -642,7 +642,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       first: pagination.first,
       last: pagination.last,
       totalPages: pagination.totalPages,
-      currentPage: this.paginationState.scheduled.currentPage
+      currentPage: this.paginationState.scheduled.currentPage,
+      pageSize: this.paginationState.scheduled.pageSize
     };
   }
 
@@ -657,7 +658,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       first: pagination.first,
       last: pagination.last,
       totalPages: pagination.totalPages,
-      currentPage: this.paginationState.completed.currentPage
+      currentPage: this.paginationState.completed.currentPage,
+      pageSize: this.paginationState.completed.pageSize
     };
   }
 
@@ -672,7 +674,8 @@ export class SterilizationsComponent implements OnInit, OnDestroy {
       first: pagination.first,
       last: pagination.last,
       totalPages: pagination.totalPages,
-      currentPage: this.paginationState.cats.currentPage
+      currentPage: this.paginationState.cats.currentPage,
+      pageSize: this.paginationState.cats.pageSize
     };
   }
 

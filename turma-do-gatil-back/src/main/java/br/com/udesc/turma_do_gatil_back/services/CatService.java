@@ -27,6 +27,7 @@ public class CatService {
 
     private final CatRepository catRepository;
     private final PropertiesService propertiesService;
+    private final SecurityService securityService;
 
     public Page<Cat> findAll(Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
@@ -76,13 +77,15 @@ public class CatService {
         Objects.requireNonNull(id, "Cat ID cannot be null");
         log.debug("Deleting cat with ID: {}", id);
 
-        if (!catRepository.existsById(id)) {
-            log.warn("Attempt to delete non-existent cat with ID: {}", id);
-            throw new CatNotFoundException("Cat not found with id: " + id);
-        }
+        Cat cat = catRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Attempt to delete non-existent cat with ID: {}", id);
+                    return new CatNotFoundException("Cat not found with id: " + id);
+                });
 
-        catRepository.deleteById(id);
-        log.info("Cat deleted successfully with ID: {}", id);
+        cat.setDeletedBy(securityService.getCurrentUsername());
+        catRepository.delete(cat);
+        log.info("Cat soft deleted successfully with ID: {}", id);
     }
 
     public Page<Cat> findByAdoptionStatus(CatAdoptionStatus adoptionStatus, Pageable pageable) {

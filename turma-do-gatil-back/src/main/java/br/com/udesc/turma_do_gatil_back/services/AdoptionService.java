@@ -28,6 +28,7 @@ public class AdoptionService {
 
     private final AdoptionRepository adoptionRepository;
     private final CatRepository catRepository;
+    private final SecurityService securityService;
 
     public Page<Adoption> findAll(Pageable pageable) {
         Objects.requireNonNull(pageable, "Pageable cannot be null");
@@ -119,10 +120,11 @@ public class AdoptionService {
                 });
 
         UUID catId = adoption.getCatId();
-        adoptionRepository.deleteById(id);
+        adoption.setDeletedBy(securityService.getCurrentUsername());
+        adoptionRepository.delete(adoption);
         updateCatAdoptionStatus(catId);
 
-        log.info("Successfully deleted adoption with ID: {} for cat ID: {}", id, catId);
+        log.info("Successfully soft deleted adoption with ID: {} for cat ID: {}", id, catId);
     }
 
     public Page<Adoption> findByStatus(AdoptionStatus status, Pageable pageable) {

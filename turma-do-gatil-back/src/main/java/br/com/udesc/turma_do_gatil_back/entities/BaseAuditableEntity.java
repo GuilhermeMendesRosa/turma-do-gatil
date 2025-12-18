@@ -1,12 +1,8 @@
 package br.com.udesc.turma_do_gatil_back.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -14,26 +10,20 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Entity
-@Table(name = "properties")
+@MappedSuperclass
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@SQLDelete(sql = "UPDATE properties SET deleted_at = NOW() WHERE key = ?")
-@SQLRestriction("deleted_at IS NULL")
-public class Properties {
+public abstract class BaseAuditableEntity {
 
     @Id
-    private String key;
-
-    @Column(nullable = false)
-    private String value;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @CreatedDate
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
@@ -53,4 +43,8 @@ public class Properties {
 
     @Column(name = "deleted_by")
     private String deletedBy;
+
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
 }
